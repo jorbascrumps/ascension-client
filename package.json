@@ -1,0 +1,19 @@
+{
+  "name": "ascension-requirejs",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamchristopher/ascension-requirejs.git"
+  },
+  "author": "Chris Wright",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iamchristopher/ascension-requirejs/issues"
+  },
+  "homepage": "https://github.com/iamchristopher/ascension-requirejs#readme"
+}
