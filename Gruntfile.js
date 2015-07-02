@@ -19,29 +19,29 @@ module.exports = function(grunt) {
         "concat": {
             phaser: {
                 files: {
-                    'build/js/lib/phaser/phaser.js': ['bower_components/phaser-official/build/phaser.js'],
-                    'build/js/lib/phaser/phaser.map': ['bower_components/phaser-official/build/phaser.map']
+                    'source/script/lib/phaser/phaser.js': ['bower_components/phaser-official/source/phaser.js'],
+                    'source/script/lib/phaser/phaser.map': ['bower_components/phaser-official/source/phaser.map']
                 }
             },
             requirejs: {
                 files: {
-                    'build/js/lib/requirejs/require.js': ['bower_components/requirejs/require.js']
+                    'source/script/lib/requirejs/require.js': ['bower_components/requirejs/require.js']
                 }
             },
             underscore: {
                 files: {
-                    'build/js/lib/underscore/underscore.js': ['bower_components/underscore/underscore.js'],
-                    'deploy/js/lib/underscore/underscore-min.map': ['bower_components/underscore/underscore-min.map']
+                    'source/script/lib/underscore/underscore.js': ['bower_components/underscore/underscore.js'],
+                    'public/script/lib/underscore/underscore-min.map': ['bower_components/underscore/underscore-min.map']
                 }
             },
             jquery: {
                 files: {
-                    'build/js/lib/jquery/jquery.js': ['bower_components/jquery/dist/jquery.js']
+                    'source/script/lib/jquery/jquery.js': ['bower_components/jquery/dist/jquery.js']
                 }
             }
         },
         "jshint": {
-            files: ['Gruntfile.js', 'build/js/app/**/*.js'],
+            files: ['Gruntfile.js', 'source/script/app/**/*.js'],
             options: {
                 globals: {
                     jQuery: false
@@ -52,14 +52,14 @@ module.exports = function(grunt) {
             build: {
                 options: {
                     port: 8000,
-                    base: 'build',
+                    base: 'source',
                     keepalive: true
                 }
             },
             deploy: {
                 options: {
                     port: 8001,
-                    base: 'deploy',
+                    base: 'public',
                     keepalive: true
                 }
             }
@@ -67,8 +67,8 @@ module.exports = function(grunt) {
         "requirejs": {
             compile: {
                 options: {
-                    dir: "deploy",
-                    appDir: "build",
+                    dir: "public",
+                    appDir: "source",
                     optimize: "uglify",
                     fileExclusionRegExp: /^assets$/ // ignore assets directory, imagemin will handle this instead
                 }
@@ -82,9 +82,9 @@ module.exports = function(grunt) {
                 files: [
                         {
                         expand: true,
-                        cwd: 'build/assets/',
+                        cwd: 'source/assets/',
                         src: ['**/*.png'],
-                        dest: 'deploy/assets/',
+                        dest: 'public/assets/',
                         ext: '.png'
                     }
                 ]
@@ -96,9 +96,9 @@ module.exports = function(grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: 'build/assets/',
+                        cwd: 'source/assets/',
                         src: ['**/*.jpg'],
-                        dest: 'deploy/assets/',
+                        dest: 'public/assets/',
                         ext: '.jpg'
                     }
                 ]
