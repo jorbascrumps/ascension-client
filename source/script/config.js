@@ -1,7 +1,12 @@
 requirejs.config({
-    baseUrl: 'script/lib',
+    baseUrl: 'script/lib/',
     paths: {
         app: '../app',
-        Phaser: 'phaser'
+        phaser: 'phaser/phaser'
+    },
+    shim: {
+        'phaser': {
+            exports: 'Phaser'
+        }
     }
 });
