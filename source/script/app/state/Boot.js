@@ -1,13 +1,10 @@
 'use strict';
 
-define(['phaser', 'isometric'], function (Phaser, Isometric) {
+define(['phaser'], function (Phaser) {
     function Boot () {}
 
     Boot.prototype = {
-        preload: function () {
-            this.game.plugins.add(new Isometric(this.game));
-            this.game.iso.anchor.setTo(0.5, 0.5);
-        },
+        preload: function () {},
 
         create: function () {
             this.input.maxPointers = 1;
