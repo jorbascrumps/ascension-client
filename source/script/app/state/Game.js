@@ -11,6 +11,7 @@ define(['phaser', 'component/Tile'], function (Phaser, Tile) {
         preload: function () {
             this.load.image('tile', 'image/tile.png');
             this.load.image('tile2', 'image/tile2.png');
+            this.load.image('tile3', 'image/tile3.png');
 
             this.load.text('level', 'data/level.json');
         },

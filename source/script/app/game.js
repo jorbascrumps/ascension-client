@@ -5,7 +5,7 @@ define(['phaser', 'app/state/Boot', 'app/state/Preload', 'app/state/Game'], func
 
     Game.prototype = {
         start: function () {
-            var game = new Phaser.Game(800, 600, Phaser.AUTO, '');
+            var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '');
             game.state.add('Boot', BootState);
             game.state.add('Preload', PreloadState);
             game.state.add('Game', GameState);

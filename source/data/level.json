@@ -18,5 +18,15 @@
             },
             "rotation": 1
         }
+    },
+    {
+        "asset": "tile3",
+        "transform": {
+            "position": {
+                "x": 300,
+                "y": 300
+            },
+            "rotation": 1
+        }
     }
 ]

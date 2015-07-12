@@ -19,6 +19,7 @@ define(['phaser'], function (Phaser) {
 
     Tile.prototype._setupEvents = function () {
         this.inputEnabled = true;
+        this.input.useHandCursor = true;
 
         this.events.onInputDown.add(this._click, this);
         this.events.onInputOver.add(this._mouseOver, this);
