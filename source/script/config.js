@@ -3,7 +3,8 @@ requirejs.config({
     paths: {
         app: '../app',
         phaser: 'phaser/phaser',
-        isometric: 'phaser/isometric'
+        isometric: 'phaser/isometric',
+        component: '../app/component'
     },
     shim: {
         'phaser': {

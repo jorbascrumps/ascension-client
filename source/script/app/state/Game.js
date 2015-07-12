@@ -1,6 +1,6 @@
 'use strict';
 
-define(['phaser'], function (Phaser) {
+define(['phaser', 'component/Tile'], function (Phaser, Tile) {
     function Game () {
         this._cursor_position;
         this._player;
@@ -24,24 +24,12 @@ define(['phaser'], function (Phaser) {
             }, this);
         },
 
-        _selectTile: function (tile, cursor) {
-            console.log(tile);
-        },
-
         _spawnTiles: function () {
             var tile_data = JSON.parse(this.game.cache.getText('level'));
             this._tiles = this.game.add.group();
 
             tile_data.forEach(function (tile, index, tiles) {
-                var tile_sprite = this.game.add.sprite(
-                    tile.transform.position.x,
-                    tile.transform.position.y,
-                    tile.asset,
-                    0,
-                    this._tiles
-                );
-                tile_sprite.inputEnabled = true;
-                tile_sprite.events.onInputDown.add(this._selectTile, this);
+                var test = new Tile(this.game, this._tiles, tile);
             }, this);
         }
     }
