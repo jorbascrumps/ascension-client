@@ -1,0 +1,22 @@
+[
+    {
+        "asset": "tile",
+        "transform": {
+            "position": {
+                "x": 0,
+                "y": 0
+            },
+            "rotation": 1
+        }
+    },
+    {
+        "asset": "tile2",
+        "transform": {
+            "position": {
+                "x": 300,
+                "y": 0
+            },
+            "rotation": 1
+        }
+    }
+]

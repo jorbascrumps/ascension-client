@@ -9,59 +9,40 @@ define(['phaser'], function (Phaser) {
 
     Game.prototype = {
         preload: function () {
-            this._tiles = this.game.add.group();
-            this._spawnTiles();
-            this._cursor_position = new Phaser.Plugin.Isometric.Point3();
+            this.load.image('tile', 'image/tile.png');
+            this.load.image('tile2', 'image/tile2.png');
+
+            this.load.text('level', 'data/level.json');
         },
 
         create: function () {
-            this.game.state.start('Game');
+            this._spawnTiles();
         },
 
         update: function () {
-            this.game.iso.unproject(
-                this.game.input.activePointer.position,
-                this._cursor_position
-            );
-
-            this._tiles.forEach(function (tile) {
-                var in_bounds = tile.isoBounds.containsXY(
-                    this._cursor_position.x,
-                    this._cursor_position.y
-                );
-
-                if (!tile.selected && in_bounds) {
-                    tile.selected = true;
-                    tile.tint = 0x86bfda;
-                }
+            this._tiles.forEach(function (tile, index, tiles) {
             }, this);
         },
 
-        _movePlayer: function () {
-            var in_bounds = sprite.isoBounds.containsXY(
-                this._cursor_position.x,
-                this._cursor_position.y
-            );
+        _selectTile: function (tile, cursor) {
+            console.log(tile);
         },
 
         _spawnTiles: function () {
-            var tile,
-                min_height = -110,
-                max_height = 110,
-                min_width = -110,
-                max_width = 110;
+            var tile_data = JSON.parse(this.game.cache.getText('level'));
+            this._tiles = this.game.add.group();
 
-            for (var xx = min_width; xx < max_width; xx += 55) {
-                for (var yy = min_height; yy < max_height; yy += 55) {
-                    tile = this.game.add.isoSprite(xx, yy, 0, 'tile', 0, this._tiles);
-                    tile.anchor.set(0.5, 0);
-                    tile.boundsPadding = 50;
-                    tile.inputEnabled = true;
-                    tile.name= '' + xx + yy;
-                    tile.events.onInputDown.add(this._movePlayer, this);
-                    // tile.events.onEnterBounds.add(this.trace, this);
-                }
-            }
+            tile_data.forEach(function (tile, index, tiles) {
+                var tile_sprite = this.game.add.sprite(
+                    tile.transform.position.x,
+                    tile.transform.position.y,
+                    tile.asset,
+                    0,
+                    this._tiles
+                );
+                tile_sprite.inputEnabled = true;
+                tile_sprite.events.onInputDown.add(this._selectTile, this);
+            }, this);
         }
     }
 

@@ -5,8 +5,6 @@ define(['phaser'], function (Phaser) {
 
     Preload.prototype = {
         preload: function () {
-            this.load.image('tile', 'image/tile1.png');
-            this.load.image('player', 'image/tile2.png');
         },
 
         create: function () {
