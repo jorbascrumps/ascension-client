@@ -1,10 +1,11 @@
 'use strict';
 
-define(['phaser', 'component/Tile'], function (Phaser, Tile) {
+define(['phaser', 'component/Tile', 'component/Camera'], function (Phaser, Tile, Camera) {
     function Game () {
         this._cursor_position;
         this._player;
         this._tiles;
+        this._camera;
     }
 
     Game.prototype = {
@@ -23,11 +24,19 @@ define(['phaser', 'component/Tile'], function (Phaser, Tile) {
         },
 
         create: function () {
-            this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'grid');
+            this._camera = new Camera(this.game);
+            this.game.world.setBounds(0, 0, 10000, 10000);
+            console.log(this.game.world);
+            this.game.add.tileSprite(0, 0, this.game.world.bounds.width, this.game.world.bounds.height, 'grid');
             this._spawnTiles();
         },
 
+        render: function () {
+            this.game.debug.cameraInfo(this.game.camera, 32, 32);
+        },
+
         update: function () {
+            this._camera.update();
             this._tiles.forEach(function (tile, index, tiles) {
             }, this);
         },
