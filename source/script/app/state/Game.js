@@ -25,9 +25,8 @@ define(['phaser', 'component/Tile', 'component/Camera'], function (Phaser, Tile,
 
         create: function () {
             this._camera = new Camera(this.game);
-            this.game.world.setBounds(0, 0, 10000, 10000);
-            console.log(this.game.world);
-            this.game.add.tileSprite(0, 0, this.game.world.bounds.width, this.game.world.bounds.height, 'grid');
+            this.game.world.setBounds(-1000, -1000, 2000, 2000);
+            this.game.add.tileSprite(-1000, -1000, this.game.world.bounds.width * 2, this.game.world.bounds.height * 2, 'grid');
             this._spawnTiles();
         },
 
