@@ -6,27 +6,33 @@
                 "x": 0,
                 "y": 0
             },
-            "rotation": 1
+            "rotation": 1,
+            "width": 160,
+            "height": 160
         }
     },
     {
         "asset": "tile2",
         "transform": {
             "position": {
-                "x": 300,
+                "x": 280,
                 "y": 0
             },
-            "rotation": 1
+            "rotation": 1,
+            "width": 80,
+            "height": 160
         }
     },
     {
         "asset": "tile3",
         "transform": {
             "position": {
-                "x": 300,
-                "y": 300
+                "x": 280,
+                "y": 280
             },
-            "rotation": 1
+            "rotation": 1,
+            "width": 160,
+            "height": 160
         }
     }
 ]

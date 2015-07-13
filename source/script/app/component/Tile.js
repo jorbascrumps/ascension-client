@@ -10,6 +10,9 @@ define(['phaser'], function (Phaser) {
             options.asset
         );
 
+        this.height = options.transform.height;
+        this.width = options.transform.width;
+
         this._setupEvents();
         game.add.existing(this);
     }
