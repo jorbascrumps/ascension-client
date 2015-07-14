@@ -1,6 +1,6 @@
 [
     {
-        "asset": "tile",
+        "asset": "tile3",
         "transform": {
             "position": {
                 "x": 0,
@@ -12,14 +12,14 @@
         }
     },
     {
-        "asset": "tile2",
+        "asset": "tile3",
         "transform": {
             "position": {
-                "x": 280,
+                "x": 160,
                 "y": 0
             },
             "rotation": 1,
-            "width": 80,
+            "width": 160,
             "height": 160
         }
     },
@@ -27,8 +27,20 @@
         "asset": "tile3",
         "transform": {
             "position": {
-                "x": 280,
-                "y": 280
+                "x": 160,
+                "y": 160
+            },
+            "rotation": 1,
+            "width": 160,
+            "height": 160
+        }
+    },
+    {
+        "asset": "tile3",
+        "transform": {
+            "position": {
+                "x": 0,
+                "y": 160
             },
             "rotation": 1,
             "width": 160,

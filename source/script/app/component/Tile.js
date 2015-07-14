@@ -18,7 +18,7 @@ define(['phaser'], function (Phaser) {
         game.physics.p2.enable(this, true);
 
         this.body.clearShapes();
-        this.body.loadPolygon('tile3_physics', 'tile3')
+        this.body.loadPolygon('tile3_physics', 'tile3');
         this._setupEvents();
     }
 
