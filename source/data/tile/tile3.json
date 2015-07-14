@@ -1,0 +1,26 @@
+{ 
+    
+    "tile3": [
+        
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   51, 46  ,  50, 150  ,  0, 150  ,  0, 46  ]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   51, 46  ,  151, 152  ,  152, 200  ,  50, 200  ]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   151, 152  ,  51, 46  ,  51, 0  ,  151, 0  ]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   151, 152  ,  151, 48  ,  200, 48  ,  200, 152  ]
+        }
+    ]
+}

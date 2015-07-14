@@ -19,11 +19,14 @@ define(['phaser', 'component/Tile', 'component/Camera'], function (Phaser, Tile,
             this.load.image('tile', 'image/tile.png');
             this.load.image('tile2', 'image/tile2.png');
             this.load.image('tile3', 'image/tile3.png');
+            this.load.physics('tile3_physics', 'data/tile/tile3.json');
 
             this.load.text('level', 'data/level.json');
         },
 
         create: function () {
+            this.game.physics.startSystem(Phaser.Physics.P2JS);
+
             this._camera = new Camera(this.game);
             this.game.world.setBounds(-1000, -1000, 2000, 2000);
             this.game.add.tileSprite(-1000, -1000, this.game.world.bounds.width * 2, this.game.world.bounds.height * 2, 'grid');
@@ -36,8 +39,6 @@ define(['phaser', 'component/Tile', 'component/Camera'], function (Phaser, Tile,
 
         update: function () {
             this._camera.update();
-            this._tiles.forEach(function (tile, index, tiles) {
-            }, this);
         },
 
         _spawnTiles: function () {

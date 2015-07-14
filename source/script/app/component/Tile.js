@@ -13,8 +13,13 @@ define(['phaser'], function (Phaser) {
         this.height = options.transform.height;
         this.width = options.transform.width;
 
-        this._setupEvents();
         game.add.existing(this);
+        group.add(this);
+        game.physics.p2.enable(this, true);
+
+        this.body.clearShapes();
+        this.body.loadPolygon('tile3_physics', 'tile3')
+        this._setupEvents();
     }
 
     Tile.prototype = Object.create(Phaser.Sprite.prototype);
@@ -23,6 +28,7 @@ define(['phaser'], function (Phaser) {
     Tile.prototype._setupEvents = function () {
         this.inputEnabled = true;
         this.input.useHandCursor = true;
+        this.input.pixelPerfectOver = true;
 
         this.events.onInputDown.add(this._click, this);
         this.events.onInputOver.add(this._mouseOver, this);
