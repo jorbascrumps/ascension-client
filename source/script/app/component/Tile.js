@@ -36,16 +36,13 @@ define(['phaser'], function (Phaser) {
     };
 
     Tile.prototype._click = function () {
-        console.log('_click');
     };
 
     Tile.prototype._mouseOver = function () {
-        console.log('_mouseOver');
         this.tint = 0x990000;
     };
 
     Tile.prototype._mouseOut = function () {
-        console.log('_mouseOut');
         this.tint = 0xffffff;
     };
 

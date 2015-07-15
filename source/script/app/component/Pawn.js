@@ -10,10 +10,14 @@ define(['phaser'], function (Phaser) {
             options.asset
         );
 
+        this._game = game;
+        this._graphics = this._game.add.graphics();
+
         this.height = options.transform.height;
         this.width = options.transform.width;
+        this._transform = options.transform;
 
-        game.add.existing(this);
+        this._game.add.existing(this);
         group.add(this);
 
         this._setupEvents();
@@ -25,6 +29,15 @@ define(['phaser'], function (Phaser) {
     Pawn.prototype._setupEvents = function () {
         this.inputEnabled = true;
         this.input.useHandCursor = true;
+
+        this.events.onInputOver.add(this._mouseOver, this);
+        this.events.onInputOut.add(this._mouseOut, this);
+    };
+
+    Pawn.prototype._mouseOver = function () {
+    };
+
+    Pawn.prototype._mouseOut = function () {
     };
 
     return Pawn;

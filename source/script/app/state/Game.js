@@ -41,8 +41,8 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
                 "asset": "nathan",
                 "transform": {
                     "position": {
-                        "x": 0,
-                        "y": 0
+                        "x": 160,
+                        "y": 160
                     },
                     "rotation": 1,
                     "width": 40,
