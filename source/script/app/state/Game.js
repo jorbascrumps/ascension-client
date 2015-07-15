@@ -1,11 +1,13 @@
 'use strict';
 
-define(['phaser', 'component/Tile', 'component/Camera'], function (Phaser, Tile, Camera) {
+define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], function (Phaser, Tile, Camera, Hero) {
     function Game () {
         this._cursor_position;
         this._player;
         this._tiles;
         this._camera;
+        this._pawns;
+        this._hero;
     }
 
     Game.prototype = {
@@ -16,9 +18,11 @@ define(['phaser', 'component/Tile', 'component/Camera'], function (Phaser, Tile,
             background.src = grid_data;
             this.game.cache.addImage('grid', grid_data, background);
 
-            this.load.image('tile', 'image/tile.png');
-            this.load.image('tile2', 'image/tile2.png');
-            this.load.image('tile3', 'image/tile3.png');
+            this.load.image('nathan', 'image/pawn/nathan.png');
+
+            this.load.image('tile', 'image/tile/tile.png');
+            this.load.image('tile2', 'image/tile/tile2.png');
+            this.load.image('tile3', 'image/tile/tile3.png');
             this.load.physics('tile3_physics', 'data/tile/tile3.json');
 
             this.load.text('level', 'data/level.json');
@@ -31,6 +35,20 @@ define(['phaser', 'component/Tile', 'component/Camera'], function (Phaser, Tile,
             this.game.world.setBounds(-1000, -1000, 2000, 2000);
             this.game.add.tileSprite(-1000, -1000, this.game.world.bounds.width * 2, this.game.world.bounds.height * 2, 'grid');
             this._spawnTiles();
+
+            this._pawns = this.game.add.group();
+            this._hero = new Hero(this.game, this._pawns, {
+                "asset": "nathan",
+                "transform": {
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "rotation": 1,
+                    "width": 40,
+                    "height": 40
+                }
+            });
         },
 
         render: function () {
