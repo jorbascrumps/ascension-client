@@ -1,6 +1,6 @@
 'use strict';
 
-define(['phaser'], function (Phaser) {
+define(['phaser', 'state/Game'], function (Phaser, Game) {
     function Pawn (game, group, options) {
         Phaser.Sprite.call(
             this,
@@ -11,7 +11,10 @@ define(['phaser'], function (Phaser) {
         );
 
         this._game = game;
-        this._graphics = this._game.add.graphics();
+        this._graphics = this._game.add.sprite(0, 0);
+        var graphics = this._game.add.graphics();
+        this._graphics.addChild(graphics);
+        this._game.physics.enable(this._graphics, Phaser.Physics.ARCADE);
 
         this.height = options.transform.height;
         this.width = options.transform.width;

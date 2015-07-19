@@ -9,7 +9,7 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
     Hero.prototype.constructor = Hero;
 
     Hero.prototype._mouseOut = function () {
-        this._graphics.removeChildren();
+        this._graphics.children[0].removeChildren();
     }
 
     Hero.prototype._mouseOver = function () {
@@ -17,15 +17,16 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
         square.beginFill(0x00ff00, 0.5);
         square.lineStyle(1, 0x00ff00, 0.75);
 
-        square.drawRect(this._transform.position.x - 40, this._transform.position.y + 40, 40, 40); // bottom left
-        square.drawRect(this._transform.position.x - 40, this._transform.position.y, 40, 40); // left
-        square.drawRect(this._transform.position.x - 40, this._transform.position.y - 40, 40, 40); // top left
-        square.drawRect(this._transform.position.x, this._transform.position.y - 40, 40, 40); // top
-        square.drawRect(this._transform.position.x + 40, this._transform.position.y - 40, 40, 40); // top right
-        square.drawRect(this._transform.position.x + 40, this._transform.position.y, 40, 40); // right
-        square.drawRect(this._transform.position.x + 40, this._transform.position.y + 40, 40, 40); // bottom right
-        square.drawRect(this._transform.position.x, this._transform.position.y + 40, 40, 40); // bottom
-        this._graphics.addChild(square);
+        square.drawRect(this._transform.position.x - 50, this._transform.position.y + 50, 50, 50); // bottom left
+        square.drawRect(this._transform.position.x - 50, this._transform.position.y, 50, 50); // left
+        square.drawRect(this._transform.position.x - 50, this._transform.position.y - 50, 50, 50); // top left
+        square.drawRect(this._transform.position.x, this._transform.position.y - 50, 50, 50); // top
+        square.drawRect(this._transform.position.x + 50, this._transform.position.y - 50, 50, 50); // top right
+        square.drawRect(this._transform.position.x + 50, this._transform.position.y, 50, 50); // right
+        square.drawRect(this._transform.position.x + 50, this._transform.position.y + 50, 50, 50); // bottom right
+        square.drawRect(this._transform.position.x, this._transform.position.y + 50, 50, 50); // bottom
+
+        this._graphics.children[0].addChild(square);
     }
 
     return Hero;
