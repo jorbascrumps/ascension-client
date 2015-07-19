@@ -16,15 +16,16 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
         var square = this._game.add.graphics();
         square.beginFill(0x00ff00, 0.5);
         square.lineStyle(1, 0x00ff00, 0.75);
+        console.log(this);
 
-        square.drawRect(this._transform.position.x - 50, this._transform.position.y + 50, 50, 50); // bottom left
-        square.drawRect(this._transform.position.x - 50, this._transform.position.y, 50, 50); // left
-        square.drawRect(this._transform.position.x - 50, this._transform.position.y - 50, 50, 50); // top left
-        square.drawRect(this._transform.position.x, this._transform.position.y - 50, 50, 50); // top
-        square.drawRect(this._transform.position.x + 50, this._transform.position.y - 50, 50, 50); // top right
-        square.drawRect(this._transform.position.x + 50, this._transform.position.y, 50, 50); // right
-        square.drawRect(this._transform.position.x + 50, this._transform.position.y + 50, 50, 50); // bottom right
-        square.drawRect(this._transform.position.x, this._transform.position.y + 50, 50, 50); // bottom
+        square.drawRect(this.position.x - 50, this.position.y + 50, 50, 50); // bottom left
+        square.drawRect(this.position.x - 50, this.position.y, 50, 50); // left
+        square.drawRect(this.position.x - 50, this.position.y - 50, 50, 50); // top left
+        square.drawRect(this.position.x, this.position.y - 50, 50, 50); // top
+        square.drawRect(this.position.x + 50, this.position.y - 50, 50, 50); // top right
+        square.drawRect(this.position.x + 50, this.position.y, 50, 50); // right
+        square.drawRect(this.position.x + 50, this.position.y + 50, 50, 50); // bottom right
+        square.drawRect(this.position.x, this.position.y + 50, 50, 50); // bottom
 
         this._graphics.children[0].addChild(square);
     }

@@ -53,14 +53,31 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
                 "asset": "nathan",
                 "transform": {
                     "position": {
-                        "x": 160,
-                        "y": 160
+                        "x": 150,
+                        "y": 150
                     },
                     "rotation": 1,
-                    "width": 40,
-                    "height": 40
+                    "width": 50,
+                    "height": 50
                 }
             });
+
+            this.game.input.onDown.add(function (pointer, event) {
+                var position = {
+                    x: pointer.position.x - (pointer.position.x % 50),
+                    y: pointer.position.y - (pointer.position.y % 50)
+                };
+                var line = new Phaser.Line(
+                    this._hero.position.x,
+                    this._hero.position.y,
+                    position.x,
+                    position.y
+                );
+                var length = Math.floor(line.length);
+                var duration = (length - (length % 50)) * 10;
+                console.log(duration);
+                var movement_tween = this.game.add.tween(this._hero).to(position, duration, Phaser.Easing.Linear.None).start();
+            }, this);
         },
 
         getCollisionSprites: function (layer, group, tileX, tileY) {
@@ -102,7 +119,9 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
                 this._hero.body.velocity.x -= 8;
             }
 
-            this.game.physics.arcade.collide(this._hero, this.collisions);
+            this.game.physics.arcade.collide(this._hero, this.collisions, function (origin, target) {
+                console.log('colliding');
+            }, null, this);
         }
     }
 
