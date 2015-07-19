@@ -4,6 +4,7 @@ requirejs.config({
         app: '../app',
         phaser: 'phaser/phaser',
         isometric: 'phaser/isometric',
+        state: '../app/state',
         component: '../app/component'
     },
     shim: {

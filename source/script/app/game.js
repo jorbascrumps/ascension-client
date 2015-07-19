@@ -1,6 +1,6 @@
 'use strict';
 
-define(['phaser', 'app/state/Boot', 'app/state/Preload', 'app/state/Game'], function (Phaser, BootState, PreloadState, GameState) {
+define(['phaser', 'state/Boot', 'state/Preload', 'state/Game'], function (Phaser, BootState, PreloadState, GameState) {
     function Game () {}
 
     Game.prototype = {
