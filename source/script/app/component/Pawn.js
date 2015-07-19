@@ -46,5 +46,24 @@ define(['phaser', 'state/Game'], function (Phaser, Game) {
     Pawn.prototype._mouseOut = function () {
     };
 
+    Pawn.prototype._moveTo = function (position, callback) {
+        var new_pos = {
+                x: position.x - (position.x % 50),
+                y: position.y - (position.y % 50)
+            },
+            line = new Phaser.Line(
+                this.position.x,
+                this.position.y,
+                new_pos.x,
+                new_pos.y
+            ),
+            length = Math.floor(line.length),
+            movement_duration = (length - (length % 50)) * 10;
+
+        this.game.add.tween(this)
+            .to(new_pos, movement_duration, Phaser.Easing.Linear.None)
+            .start();
+    }
+
     return Pawn;
 });

@@ -43,7 +43,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
 
             this.tilemap = this.game.add.tilemap('tilemap');
             this.tilemap.addTilesetImage('level', 'map_image', 50, 50);
-            var map_layer = this.tilemap.createLayer('map')
+            this.map_layer = this.tilemap.createLayer('map');
 
             this.collision_group = this.game.add.group();
             this.collisions = this.getCollisionSprites('collision', this.collision_group);
@@ -63,20 +63,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
             });
 
             this.game.input.onDown.add(function (pointer, event) {
-                var position = {
-                    x: pointer.position.x - (pointer.position.x % 50),
-                    y: pointer.position.y - (pointer.position.y % 50)
-                };
-                var line = new Phaser.Line(
-                    this._hero.position.x,
-                    this._hero.position.y,
-                    position.x,
-                    position.y
-                );
-                var length = Math.floor(line.length);
-                var duration = (length - (length % 50)) * 10;
-                console.log(duration);
-                var movement_tween = this.game.add.tween(this._hero).to(position, duration, Phaser.Easing.Linear.None).start();
+                this._hero._moveTo(pointer.position);
             }, this);
         },
 

@@ -16,7 +16,6 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
         var square = this._game.add.graphics();
         square.beginFill(0x00ff00, 0.5);
         square.lineStyle(1, 0x00ff00, 0.75);
-        console.log(this);
 
         square.drawRect(this.position.x - 50, this.position.y + 50, 50, 50); // bottom left
         square.drawRect(this.position.x - 50, this.position.y, 50, 50); // left
