@@ -14,7 +14,9 @@ define(['phaser', 'state/Game'], function (Phaser, Game) {
         this._graphics = this._game.add.sprite(0, 0);
         var graphics = this._game.add.graphics();
         this._graphics.addChild(graphics);
-        this._game.physics.enable(this._graphics, Phaser.Physics.ARCADE);
+        this._game.physics.arcade.enable(this._graphics);
+        this._game.physics.arcade.enable(this);
+        this.body.setSize(50, 50, 0, 0);
 
         this.height = options.transform.height;
         this.width = options.transform.width;

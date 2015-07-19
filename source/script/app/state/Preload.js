@@ -8,6 +8,7 @@ define(['phaser'], function (Phaser) {
         },
 
         create: function () {
+            this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.state.start('Game');
         }
     }

@@ -25,16 +25,28 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
             this.load.image('tile3', 'image/tile/tile3.png');
             this.load.physics('tile3_physics', 'data/tile/tile3.json');
 
-            this.load.text('level', 'data/level.json');
+            this.load.tilemap('tilemap', 'data/map/source/collision_test.json', null, Phaser.Tilemap.TILED_JSON);
+            this.load.image('map_image', 'image/tile/level01.png');
         },
 
         create: function () {
-            this.game.physics.startSystem(Phaser.Physics.P2JS);
+            this._cursors = this.game.input.keyboard.createCursorKeys();
+            this._cursors.w = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
+            this._cursors.s = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
+            this._cursors.a = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
+            this._cursors.d = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
 
             this._camera = new Camera(this.game);
+            this.game.add.tileSprite(0, 0, this.game.world.bounds.width, this.game.world.bounds.height, 'grid');
             this.game.world.setBounds(-1000, -1000, 2000, 2000);
             this.game.add.tileSprite(-1000, -1000, this.game.world.bounds.width * 2, this.game.world.bounds.height * 2, 'grid');
-            this._spawnTiles();
+
+            this.tilemap = this.game.add.tilemap('tilemap');
+            this.tilemap.addTilesetImage('level', 'map_image', 50, 50);
+            var map_layer = this.tilemap.createLayer('map')
+
+            this.collision_group = this.game.add.group();
+            this.collisions = this.getCollisionSprites('collision', this.collision_group);
 
             this._pawns = this.game.add.group();
             this._hero = new Hero(this.game, this._pawns, {
@@ -51,21 +63,46 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
             });
         },
 
+        getCollisionSprites: function (layer, group, tileX, tileY) {
+            tileX = tileX || 0;
+            tileY = tileY || 0;
+
+            var self = this;
+            var result = [];
+            var sprite;
+
+            this.tilemap.objects[layer].forEach(function(element) {
+                element.y -= self.tilemap.tileHeight;
+                sprite = group.create(element.x + tileX*50, element.y + tileY*50);
+                self.game.physics.arcade.enable(sprite);
+                sprite.body.setSize(parseInt(element.properties.width, 10), parseInt(element.properties.height, 10));
+                sprite.body.immovable = true;
+                result.push(sprite);
+            });
+
+            return result;
+        },
+
         render: function () {
-            this.game.debug.cameraInfo(this.game.camera, 32, 32);
+            this.game.debug.cameraInfo(this.game.camera, 10, 20);
         },
 
         update: function () {
             this._camera.update();
-        },
 
-        _spawnTiles: function () {
-            var tile_data = JSON.parse(this.game.cache.getText('level'));
-            this._tiles = this.game.add.group();
+            if (this._cursors.w.isDown) {
+                this._hero.body.velocity.y -= 8;
+            } else if (this._cursors.s.isDown) {
+                this._hero.body.velocity.y += 8;
+            }
 
-            tile_data.forEach(function (tile, index, tiles) {
-                var test = new Tile(this.game, this._tiles, tile);
-            }, this);
+            if (this._cursors.d.isDown) {
+                this._hero.body.velocity.x += 8;
+            } else if (this._cursors.a.isDown) {
+                this._hero.body.velocity.x -= 8;
+            }
+
+            this.game.physics.arcade.collide(this._hero, this.collisions);
         }
     }
 

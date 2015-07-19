@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="50" tileheight="50" nextobjectid="27">
+ <tileset firstgid="1" name="level" tilewidth="50" tileheight="50">
+  <image source="../../../image/tile/level01.png" width="500" height="250"/>
+ </tileset>
+ <layer name="map" width="10" height="10">
+  <data encoding="csv">
+43,0,0,0,0,0,0,0,0,0,
+0,1,2,3,4,0,0,0,0,0,
+0,11,12,13,14,0,0,0,0,0,
+0,21,22,23,24,0,0,0,0,0,
+0,31,32,33,34,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup name="collision">
+  <object id="1" gid="41" x="250" y="250" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="250"/>
+    <property name="y" value="250"/>
+   </properties>
+  </object>
+  <object id="12" gid="41" x="250" y="200" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="250"/>
+    <property name="y" value="200"/>
+   </properties>
+  </object>
+  <object id="13" gid="41" x="250" y="150" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="250"/>
+    <property name="y" value="150"/>
+   </properties>
+  </object>
+  <object id="14" gid="41" x="0" y="250" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="0"/>
+    <property name="y" value="250"/>
+   </properties>
+  </object>
+  <object id="15" gid="41" x="50" y="300" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="50"/>
+    <property name="y" value="300"/>
+   </properties>
+  </object>
+  <object id="16" gid="41" x="100" y="300" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="100"/>
+    <property name="y" value="300"/>
+   </properties>
+  </object>
+  <object id="17" gid="41" x="150" y="300" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="150"/>
+    <property name="y" value="300"/>
+   </properties>
+  </object>
+  <object id="18" gid="41" x="200" y="300" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="200"/>
+    <property name="y" value="300"/>
+   </properties>
+  </object>
+  <object id="19" gid="41" x="250" y="100" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="250"/>
+    <property name="y" value="100"/>
+   </properties>
+  </object>
+  <object id="20" gid="41" x="200" y="50" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="200"/>
+    <property name="y" value="50"/>
+   </properties>
+  </object>
+  <object id="21" gid="41" x="150" y="50" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="150"/>
+    <property name="y" value="50"/>
+   </properties>
+  </object>
+  <object id="22" gid="41" x="100" y="50" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="100"/>
+    <property name="y" value="50"/>
+   </properties>
+  </object>
+  <object id="23" gid="41" x="50" y="50" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="50"/>
+    <property name="y" value="50"/>
+   </properties>
+  </object>
+  <object id="24" gid="41" x="0" y="100" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="0"/>
+    <property name="y" value="100"/>
+   </properties>
+  </object>
+  <object id="25" gid="41" x="0" y="150" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="0"/>
+    <property name="y" value="150"/>
+   </properties>
+  </object>
+  <object id="26" gid="41" x="0" y="200" width="50" height="50">
+   <properties>
+    <property name="height" value="50"/>
+    <property name="width" value="50"/>
+    <property name="x" value="0"/>
+    <property name="y" value="200"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>
