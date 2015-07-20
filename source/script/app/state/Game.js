@@ -12,11 +12,12 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
 
     Game.prototype = {
         preload: function () {
-            var grid_data = 'data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABHNCSVQICAgIfAhkiAAAAFFJREFUWIXtzjERACAQBDFgMPOKzr8ScADFFlBsFKRX1WqfStLG68SNQcogZZAySBmkDFIGKYOUQcogZZAySBmkDFIGKYOUQcog9X1wJnl9ONrTcwPWLGFOywAAAABJRU5ErkJggg==',
+            var grid_data = 'data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAARUlEQVR42u3PsQ0AAAjDsP7/NEh8UeQM2Z15Um7lgYCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtEA+tJyODR6OptJ5AAAAAElFTkSuQmCC',
                 background = new Image();
 
             background.src = grid_data;
             this.game.cache.addImage('grid', grid_data, background);
+            this.game.stage.backgroundColor = 0x0e1718;
 
             this.load.image('nathan', 'image/pawn/nathan.png');
 
