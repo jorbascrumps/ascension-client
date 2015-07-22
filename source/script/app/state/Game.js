@@ -67,7 +67,10 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
             });
 
             this.game.input.onDown.add(function (pointer, event) {
-                this._hero._moveTo(pointer.position);
+                this._hero._moveTo({
+                    x: this.game.input.mousePointer.x + this.game.camera.x,
+                    y: this.game.input.mousePointer.y + this.game.camera.y
+                });
             }, this);
 
             this.line = new Phaser.Line();
