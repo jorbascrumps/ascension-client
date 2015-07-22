@@ -16,6 +16,7 @@ define(['phaser', 'state/Game'], function (Phaser, Game) {
         this.height = options.transform.height;
         this.width = options.transform.width;
         this._graphics = this._game.add.sprite(0, 0);
+        this._moving = false;
 
         // Setup graphics object for drawing UI elememts for this pawn
         var graphics = this._game.add.graphics();
@@ -63,9 +64,13 @@ define(['phaser', 'state/Game'], function (Phaser, Game) {
             length = Math.floor(line.length),
             movement_duration = (length - (length % 50)) * 10;
 
+        this._moving = true;
         this.game.add.tween(this)
             .to(new_pos, movement_duration, Phaser.Easing.Linear.None)
-            .start();
+            .start()
+            .onComplete.add(function () {
+                this._moving = false;
+            }, this);
     }
 
     return Pawn;

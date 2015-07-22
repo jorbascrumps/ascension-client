@@ -13,6 +13,10 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
     }
 
     Hero.prototype._mouseOver = function () {
+        if (this._moving) {
+            return;
+        }
+
         var square = this._game.add.graphics();
         square.beginFill(0x00ff00, 0.5);
         square.lineStyle(1, 0x00ff00, 0.75);
