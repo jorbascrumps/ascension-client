@@ -31,6 +31,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
         },
 
         create: function () {
+            this.stage.disableVisibilityChange = true;
             this._cursors = this.game.input.keyboard.createCursorKeys();
             this._cursors.w = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
             this._cursors.s = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
@@ -45,6 +46,8 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
             this.tilemap = this.game.add.tilemap('tilemap');
             this.tilemap.addTilesetImage('level', 'map_image', 50, 50);
             this.map_layer = this.tilemap.createLayer('map');
+            this.test_layer = this.tilemap.createLayer('test');
+            this.tilemap.setCollisionBetween(0, 100)
 
             this.collision_group = this.game.add.group();
             this.collisions = this.getCollisionSprites('collision', this.collision_group);
@@ -66,6 +69,8 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
             this.game.input.onDown.add(function (pointer, event) {
                 this._hero._moveTo(pointer.position);
             }, this);
+
+            this.line = new Phaser.Line();
         },
 
         getCollisionSprites: function (layer, group, tileX, tileY) {
@@ -90,6 +95,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
 
         render: function () {
             this.game.debug.cameraInfo(this.game.camera, 10, 20);
+            this.game.debug.geom(this.line);
         },
 
         update: function () {
@@ -110,6 +116,23 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
             this.game.physics.arcade.collide(this._hero, this.collisions, function (origin, target) {
                 console.log('colliding');
             }, null, this);
+
+            this.line.start.set(0, 0);
+            this.line.end.set(
+                this.game.input.mousePointer.x + this.game.camera.x,
+                this.game.input.mousePointer.y + this.game.camera.y
+            );
+
+            var hits = this.test_layer.getRayCastTiles(this.line, 1, false, false);
+            hits.forEach(function (tile) {
+                if (tile.index >= 0) {
+                    console.log('hit');
+                    tile.debug = true
+                    tile.tint = 0x990000;
+                } else {
+                    tile.debug = false;
+                }
+            });
         }
     }
 
