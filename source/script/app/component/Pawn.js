@@ -10,21 +10,24 @@ define(['phaser', 'state/Game'], function (Phaser, Game) {
             options.asset
         );
 
+        group.add(this);
+
         this._game = game;
+        this.height = options.transform.height;
+        this.width = options.transform.width;
         this._graphics = this._game.add.sprite(0, 0);
+
+        // Setup graphics object for drawing UI elememts for this pawn
         var graphics = this._game.add.graphics();
         this._graphics.addChild(graphics);
         this._game.physics.arcade.enable(this._graphics);
         this._game.physics.arcade.enable(this);
+
+        // Physics settings
         this.body.setSize(50, 50, 0, 0);
         this.body.moves = false;
 
-        this.height = options.transform.height;
-        this.width = options.transform.width;
-        this._transform = options.transform;
-
         this._game.add.existing(this);
-        group.add(this);
 
         this._setupEvents();
     }
