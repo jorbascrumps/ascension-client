@@ -102,23 +102,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
         },
 
         update: function () {
-            Event.emit('game.update', null);
-
-            if (this._cursors.w.isDown) {
-                this._hero.body.velocity.y -= 8;
-            } else if (this._cursors.s.isDown) {
-                this._hero.body.velocity.y += 8;
-            }
-
-            if (this._cursors.d.isDown) {
-                this._hero.body.velocity.x += 8;
-            } else if (this._cursors.a.isDown) {
-                this._hero.body.velocity.x -= 8;
-            }
-
-            this.game.physics.arcade.collide(this._hero, this.collisions, function (origin, target) {
-                console.log('colliding');
-            }, null, this);
+            Event.emit('game.update', this);
 
             this.line.start.set(0, 0);
             this.line.end.set(

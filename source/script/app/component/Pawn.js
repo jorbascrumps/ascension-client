@@ -32,9 +32,12 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
 
         this._setupEvents();
 
-        Event.on('game.update', function () {
-            console.log('here');
-        })
+        var self = this;
+        Event.on('game.update', function (game_state) {
+            self._update.apply(self, [
+                game_state.collisions
+            ]);
+        });
     }
 
     Pawn.prototype = Object.create(Phaser.Sprite.prototype);
@@ -49,6 +52,10 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
     };
 
     Pawn.prototype._mouseOver = function () {
+    };
+
+    Pawn.prototype._update = function () {
+        console.warn('Default [%s] update. You might want to consider overriding this.', this.constructor.name);
     };
 
     Pawn.prototype._mouseOut = function () {

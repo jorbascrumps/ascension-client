@@ -10,7 +10,7 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
 
     Hero.prototype._mouseOut = function () {
         this._graphics.children[0].removeChildren();
-    }
+    };
 
     Hero.prototype._mouseOver = function () {
         if (this._moving) {
@@ -31,7 +31,13 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
         square.drawRect(this.position.x, this.position.y + 50, 50, 50); // bottom
 
         this._graphics.children[0].addChild(square);
-    }
+    };
+
+    Hero.prototype._update = function (collisions) {
+        this._game.physics.arcade.collide(this, collisions, function (origin, target) {
+            console.log('colliding');
+        }, null, this);
+    };
 
     return Hero;
 });

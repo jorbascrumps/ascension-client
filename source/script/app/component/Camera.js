@@ -7,14 +7,14 @@ define(['phaser', 'component/Event'], function (Phaser, Event) {
 
         var self = this;
         Event.on('game.update', function () {
-            self.update();
+            self._update();
         });
     }
 
     Camera.prototype = Object.create(Phaser.Camera.prototype);
     Camera.prototype.constructor = Camera;
 
-    Camera.prototype.update = function () {
+    Camera.prototype._update = function () {
         if (this._cursors.up.isDown) {
             this._game.camera.y -= 8;
         } else if (this._cursors.down.isDown) {
