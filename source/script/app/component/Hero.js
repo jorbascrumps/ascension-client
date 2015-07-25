@@ -9,7 +9,7 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
     Hero.prototype.constructor = Hero;
 
     Hero.prototype._mouseOut = function () {
-        this._graphics.children[0].removeChildren();
+        this._tile_traces.removeChildren();
     };
 
     Hero.prototype._mouseOver = function () {
@@ -17,25 +17,33 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
             return;
         }
 
-        var square = this._game.add.graphics();
-        square.beginFill(0x00ff00, 0.5);
-        square.lineStyle(1, 0x00ff00, 0.75);
 
-        square.drawRect(this.position.x - 50, this.position.y + 50, 50, 50); // bottom left
-        square.drawRect(this.position.x - 50, this.position.y, 50, 50); // left
-        square.drawRect(this.position.x - 50, this.position.y - 50, 50, 50); // top left
-        square.drawRect(this.position.x, this.position.y - 50, 50, 50); // top
-        square.drawRect(this.position.x + 50, this.position.y - 50, 50, 50); // top right
-        square.drawRect(this.position.x + 50, this.position.y, 50, 50); // right
-        square.drawRect(this.position.x + 50, this.position.y + 50, 50, 50); // bottom right
-        square.drawRect(this.position.x, this.position.y + 50, 50, 50); // bottom
+        var positions = [
+            { x : this.position.x - 50, y: this.position.y + 50 }, // bottom left
+            { x : this.position.x - 50, y: this.position.y },      // left
+            { x : this.position.x - 50, y: this.position.y - 50 }, // top left
+            { x : this.position.x,      y: this.position.y - 50 }, // top
+            { x : this.position.x + 50, y: this.position.y - 50 }, // top right
+            { x : this.position.x + 50, y: this.position.y },      // right
+            { x : this.position.x + 50, y: this.position.y + 50 }, // bottom right
+            { x : this.position.x,      y: this.position.y + 50 }, // bottom
+        ];
 
-        this._graphics.children[0].addChild(square);
+        positions.forEach(function (position, index) {
+            var sprite = this._tile_traces.create(position.x, position.y);
+            this._game.physics.arcade.enable(sprite);
+            sprite.body.setSize(50, 50);
+            sprite.body.immovable = true;
+        }, this);
     };
 
     Hero.prototype._update = function (collisions) {
-        this._game.physics.arcade.collide(this, collisions, function (origin, target) {
-            console.log('colliding');
+        this._game.physics.arcade.overlap(collisions, this._tile_traces, function (origin, target) {
+            var square = this._game.add.graphics();
+            square.beginFill(0xff0000, 0.05);
+            square.lineStyle(1, 0xff0000, 0.75);
+            square.drawRect(origin.position.x, origin.position.y, 50, 50);
+            this._tile_traces.addChild(square);
         }, null, this);
     };
 

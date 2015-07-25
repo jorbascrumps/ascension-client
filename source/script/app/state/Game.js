@@ -46,7 +46,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             this.tilemap = this.game.add.tilemap('tilemap');
             this.tilemap.addTilesetImage('level', 'map_image', 50, 50);
             this.map_layer = this.tilemap.createLayer('map');
-            this.test_layer = this.tilemap.createLayer('test');
+            this.map_bounds = this.tilemap.createLayer('test');
             this.tilemap.setCollisionBetween(0, 100)
 
             this.collision_group = this.game.add.group();
@@ -110,7 +110,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                 this.game.input.mousePointer.y + this.game.camera.y
             );
 
-            var hits = this.test_layer.getRayCastTiles(this.line, 1, false, false);
+            var hits = this.map_bounds.getRayCastTiles(this.line, 1, false, false);
             hits.forEach(function (tile) {
                 if (tile.index >= 0) {
                     console.log('hit');

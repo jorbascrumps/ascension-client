@@ -19,12 +19,11 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         this._moving = false;
 
         // Setup graphics object for drawing UI elememts for this pawn
-        var graphics = this._game.add.graphics();
-        this._graphics.addChild(graphics);
-        this._game.physics.arcade.enable(this._graphics);
-        this._game.physics.arcade.enable(this);
+        this._tile_traces = game.add.group();
 
         // Physics settings
+        this._game.physics.arcade.enable(this._tile_traces);
+        this._game.physics.arcade.enable(this);
         this.body.setSize(50, 50, 0, 0);
         this.body.moves = false;
 
@@ -35,7 +34,7 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         var self = this;
         Event.on('game.update', function (game_state) {
             self._update.apply(self, [
-                game_state.collisions
+                game_state.collision_group
             ]);
         });
     }
