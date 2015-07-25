@@ -1,6 +1,6 @@
 'use strict';
 
-define(['phaser', 'state/Game'], function (Phaser, Game) {
+define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Event) {
     function Pawn (game, group, options) {
         Phaser.Sprite.call(
             this,
@@ -31,6 +31,10 @@ define(['phaser', 'state/Game'], function (Phaser, Game) {
         this._game.add.existing(this);
 
         this._setupEvents();
+
+        Event.on('game.update', function () {
+            console.log('here');
+        })
     }
 
     Pawn.prototype = Object.create(Phaser.Sprite.prototype);

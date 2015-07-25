@@ -1,9 +1,14 @@
 'use strict';
 
-define(['phaser'], function (Phaser) {
+define(['phaser', 'component/Event'], function (Phaser, Event) {
     function Camera (game, options) {
         this._game = game;
         this._cursors = this._game.input.keyboard.createCursorKeys();
+
+        var self = this;
+        Event.on('game.update', function () {
+            self.update();
+        });
     }
 
     Camera.prototype = Object.create(Phaser.Camera.prototype);

@@ -1,6 +1,6 @@
 'use strict';
 
-define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], function (Phaser, Tile, Camera, Hero) {
+define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'component/Event'], function (Phaser, Tile, Camera, Hero, Event) {
     function Game () {
         this._cursor_position;
         this._player;
@@ -102,7 +102,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
         },
 
         update: function () {
-            this._camera.update();
+            Event.emit('game.update', null);
 
             if (this._cursors.w.isDown) {
                 this._hero.body.velocity.y -= 8;
