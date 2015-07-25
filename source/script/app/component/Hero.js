@@ -9,7 +9,9 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
     Hero.prototype.constructor = Hero;
 
     Hero.prototype._mouseOut = function () {
+        this._tracing = false;
         this._tile_traces.removeChildren();
+        this._tile_collisions.removeChildren();
     };
 
     Hero.prototype._mouseOver = function () {
@@ -17,20 +19,20 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
             return;
         }
 
-
+        this._tracing = true;
         var positions = [
             { x : this.position.x - 50, y: this.position.y + 50 }, // bottom left
-            { x : this.position.x - 50, y: this.position.y },      // left
+            { x : this.position.x - 50, y: this.position.y      }, // left
             { x : this.position.x - 50, y: this.position.y - 50 }, // top left
             { x : this.position.x,      y: this.position.y - 50 }, // top
             { x : this.position.x + 50, y: this.position.y - 50 }, // top right
-            { x : this.position.x + 50, y: this.position.y },      // right
+            { x : this.position.x + 50, y: this.position.y      }, // right
             { x : this.position.x + 50, y: this.position.y + 50 }, // bottom right
-            { x : this.position.x,      y: this.position.y + 50 }, // bottom
+            { x : this.position.x,      y: this.position.y + 50 }  // bottom
         ];
 
         positions.forEach(function (position, index) {
-            var sprite = this._tile_traces.create(position.x, position.y);
+            var sprite = this._tile_collisions.create(position.x, position.y);
             this._game.physics.arcade.enable(sprite);
             sprite.body.setSize(50, 50);
             sprite.body.immovable = true;
@@ -38,10 +40,18 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
     };
 
     Hero.prototype._update = function (collisions) {
-        this._game.physics.arcade.overlap(collisions, this._tile_traces, function (origin, target) {
+        if (!this._tracing) {
+            return;
+        }
+
+        if (this._tile_traces.length) {
+            return;
+        }
+
+        this._game.physics.arcade.overlap(collisions, this._tile_collisions, function (origin, target) {
             var square = this._game.add.graphics();
-            square.beginFill(0xff0000, 0.05);
-            square.lineStyle(1, 0xff0000, 0.75);
+            square.beginFill(0xff0000, 0.5);
+            square.lineStyle(2, 0xff0000, 1);
             square.drawRect(origin.position.x, origin.position.y, 50, 50);
             this._tile_traces.addChild(square);
         }, null, this);

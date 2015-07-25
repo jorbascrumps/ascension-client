@@ -20,9 +20,10 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
 
         // Setup graphics object for drawing UI elememts for this pawn
         this._tile_traces = game.add.group();
+        this._tile_collisions = game.add.group();
 
         // Physics settings
-        this._game.physics.arcade.enable(this._tile_traces);
+        this._game.physics.arcade.enable(this._tile_collisions);
         this._game.physics.arcade.enable(this);
         this.body.setSize(50, 50, 0, 0);
         this.body.moves = false;
