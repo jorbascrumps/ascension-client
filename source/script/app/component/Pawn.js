@@ -52,14 +52,12 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         this.events.onInputOut.add(this._mouseOut, this);
     };
 
-    Pawn.prototype._mouseOver = function () {
-    };
+    Pawn.prototype._mouseOver = function () {};
+
+    Pawn.prototype._mouseOut = function () {};
 
     Pawn.prototype._update = function () {
         console.warn('Default [%s] update. You might want to consider overriding this.', this.constructor.name);
-    };
-
-    Pawn.prototype._mouseOut = function () {
     };
 
     Pawn.prototype._moveTo = function (position, callback) {
@@ -84,7 +82,57 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
                 this._moving = false;
                 this._traceAdjacentTiles();
             }, this);
-    }
+    };
+
+    Pawn.prototype._traceAdjacentTiles = function () {
+        this._tracing = true;
+
+        var positions = [
+            { x : this.position.x - 50, y: this.position.y + 50 }, // bottom left
+            { x : this.position.x - 50, y: this.position.y      }, // left
+            { x : this.position.x - 50, y: this.position.y - 50 }, // top left
+            { x : this.position.x,      y: this.position.y - 50 }, // top
+            { x : this.position.x + 50, y: this.position.y - 50 }, // top right
+            { x : this.position.x + 50, y: this.position.y      }, // right
+            { x : this.position.x + 50, y: this.position.y + 50 }, // bottom right
+            { x : this.position.x,      y: this.position.y + 50 }  // bottom
+        ];
+
+        positions.forEach(this._traceAtPosition, this);
+    };
+
+    Pawn.prototype._clearTrace = function () {
+        this._tracing = false;
+        this._tile_traces.removeChildren();
+        this._tile_collisions.removeChildren();
+    };
+
+    Pawn.prototype._canMoveToTile = function (tile, pointer) {
+        if (tile.valid) {
+            console.log(pointer);
+            this._clearTrace();
+            this._moveTo({
+                x: pointer.position.x + this._game.camera.x,
+                y: pointer.position.y + this._game.camera.y
+            });
+        }
+    };
+
+    Pawn.prototype._traceAtPosition = function (position, index) {
+        var sprite = this._tile_collisions.create(position.x, position.y);
+        this._game.physics.arcade.enable(sprite);
+        sprite.inputEnabled = true;
+        sprite.valid = true;
+        sprite.events.onInputDown.add(this._canMoveToTile, this);
+        sprite.body.setSize(50, 50);
+        sprite.body.immovable = true;
+
+        var square = this._game.add.graphics();
+        square.beginFill(0x00ff00, 0.5);
+        square.lineStyle(2, 0x00ff00, 1);
+        square.drawRect(position.x, position.y, 50, 50);
+        this._tile_traces.addChild(square);
+    };
 
     return Pawn;
 });
