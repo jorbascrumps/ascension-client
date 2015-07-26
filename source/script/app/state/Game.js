@@ -58,7 +58,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                 "transform": {
                     "position": {
                         "x": 150,
-                        "y": 200
+                        "y": 150
                     },
                     "rotation": 1,
                     "width": 50,
