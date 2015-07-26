@@ -30,31 +30,34 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
             { x : this.position.x + 50, y: this.position.y + 50 }, // bottom right
             { x : this.position.x,      y: this.position.y + 50 }  // bottom
         ];
-
-        positions.forEach(function (position, index) {
-            var sprite = this._tile_collisions.create(position.x, position.y);
-            this._game.physics.arcade.enable(sprite);
-            sprite.body.setSize(50, 50);
-            sprite.body.immovable = true;
-        }, this);
+        positions.forEach(this._traceAdjacentTiles, this);
     };
 
     Hero.prototype._update = function (collisions) {
-        if (!this._tracing) {
-            return;
-        }
+        this._game.physics.arcade.overlap(
+            collisions,
+            this._tile_collisions,
+            function (collider, tile) {
+                var index = this._tile_collisions.getChildIndex(tile),
+                    traced_tile = this._tile_traces.getChildAt(index);
+                traced_tile.clear();
+            },
+            null,
+            this
+        );
+    };
 
-        if (this._tile_traces.length) {
-            return;
-        }
+    Hero.prototype._traceAdjacentTiles = function (position, index) {
+        var sprite = this._tile_collisions.create(position.x, position.y);
+        this._game.physics.arcade.enable(sprite);
+        sprite.body.setSize(50, 50);
+        sprite.body.immovable = true;
 
-        this._game.physics.arcade.overlap(collisions, this._tile_collisions, function (origin, target) {
-            var square = this._game.add.graphics();
-            square.beginFill(0xff0000, 0.5);
-            square.lineStyle(2, 0xff0000, 1);
-            square.drawRect(origin.position.x, origin.position.y, 50, 50);
-            this._tile_traces.addChild(square);
-        }, null, this);
+        var square = this._game.add.graphics();
+        square.beginFill(0x00ff00, 0.5);
+        square.lineStyle(2, 0x00ff00, 1);
+        square.drawRect(position.x, position.y, 50, 50);
+        this._tile_traces.addChild(square);
     };
 
     return Hero;
