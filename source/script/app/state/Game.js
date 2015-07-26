@@ -33,10 +33,6 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
         create: function () {
             this.stage.disableVisibilityChange = true;
             this._cursors = this.game.input.keyboard.createCursorKeys();
-            this._cursors.w = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
-            this._cursors.s = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
-            this._cursors.a = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
-            this._cursors.d = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
 
             this._camera = new Camera(this.game);
             this.game.add.tileSprite(0, 0, this.game.world.bounds.width, this.game.world.bounds.height, 'grid');

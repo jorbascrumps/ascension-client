@@ -9,16 +9,6 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
     Hero.prototype = Object.create(Pawn.prototype);
     Hero.prototype.constructor = Hero;
 
-    Hero.prototype._mouseOut = function () {
-    };
-
-    Hero.prototype._mouseOver = function () {
-        if (this._moving) {
-            return;
-        }
-
-    };
-
     Hero.prototype._update = function (collisions) {
         this._game.physics.arcade.overlap(
             collisions,
