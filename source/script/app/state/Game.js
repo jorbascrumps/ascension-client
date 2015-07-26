@@ -58,20 +58,13 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                 "transform": {
                     "position": {
                         "x": 150,
-                        "y": 150
+                        "y": 200
                     },
                     "rotation": 1,
                     "width": 50,
                     "height": 50
                 }
             });
-
-            this.game.input.onDown.add(function (pointer, event) {
-                this._hero._moveTo({
-                    x: this.game.input.mousePointer.x + this.game.camera.x,
-                    y: this.game.input.mousePointer.y + this.game.camera.y
-                });
-            }, this);
 
             this.line = new Phaser.Line();
         },

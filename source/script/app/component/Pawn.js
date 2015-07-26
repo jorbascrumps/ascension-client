@@ -17,6 +17,7 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         this.width = options.transform.width;
         this._graphics = this._game.add.sprite(0, 0);
         this._moving = false;
+        this._tracing = false;
 
         // Setup graphics object for drawing UI elememts for this pawn
         this._tile_traces = game.add.group();
