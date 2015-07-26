@@ -19,18 +19,7 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
             return;
         }
 
-        this._tracing = true;
-        var positions = [
-            { x : this.position.x - 50, y: this.position.y + 50 }, // bottom left
-            { x : this.position.x - 50, y: this.position.y      }, // left
-            { x : this.position.x - 50, y: this.position.y - 50 }, // top left
-            { x : this.position.x,      y: this.position.y - 50 }, // top
-            { x : this.position.x + 50, y: this.position.y - 50 }, // top right
-            { x : this.position.x + 50, y: this.position.y      }, // right
-            { x : this.position.x + 50, y: this.position.y + 50 }, // bottom right
-            { x : this.position.x,      y: this.position.y + 50 }  // bottom
-        ];
-        positions.forEach(this._traceAdjacentTiles, this);
+        this._traceAdjacentTiles();
     };
 
     Hero.prototype._update = function (collisions) {
@@ -47,7 +36,24 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
         );
     };
 
-    Hero.prototype._traceAdjacentTiles = function (position, index) {
+    Hero.prototype._traceAdjacentTiles = function () {
+        this._tracing = true;
+
+        var positions = [
+            { x : this.position.x - 50, y: this.position.y + 50 }, // bottom left
+            { x : this.position.x - 50, y: this.position.y      }, // left
+            { x : this.position.x - 50, y: this.position.y - 50 }, // top left
+            { x : this.position.x,      y: this.position.y - 50 }, // top
+            { x : this.position.x + 50, y: this.position.y - 50 }, // top right
+            { x : this.position.x + 50, y: this.position.y      }, // right
+            { x : this.position.x + 50, y: this.position.y + 50 }, // bottom right
+            { x : this.position.x,      y: this.position.y + 50 }  // bottom
+        ];
+
+        positions.forEach(this._traceAtPosition, this);
+    };
+
+    Hero.prototype._traceAtPosition = function (position, index) {
         var sprite = this._tile_collisions.create(position.x, position.y);
         this._game.physics.arcade.enable(sprite);
         sprite.body.setSize(50, 50);
