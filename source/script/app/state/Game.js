@@ -63,6 +63,8 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             });
 
             this.line = new Phaser.Line();
+
+            this._blocked_tiles = this.game.add.group();
         },
 
         getCollisionSprites: function (layer, group, tileX, tileY) {
@@ -93,22 +95,41 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
         update: function () {
             Event.emit('game.update', this);
 
+            this._drawLineOfSight();
+        },
+
+        _drawLineOfSight: function () {
             this.line.start.set(0, 0);
             this.line.end.set(
                 this.game.input.mousePointer.x + this.game.camera.x,
                 this.game.input.mousePointer.y + this.game.camera.y
             );
 
-            var hits = this.map_bounds.getRayCastTiles(this.line, 1, false, false);
-            hits.forEach(function (tile) {
-                if (tile.index >= 0) {
-                    console.log('hit');
-                    tile.debug = true
-                    tile.tint = 0x990000;
-                } else {
-                    tile.debug = false;
+            this._highlightInvalidTiles();
+        },
+
+        _highlightInvalidTiles: function () {
+
+            // Empty group to avoid too much overdraw
+            this._blocked_tiles.removeChildren();
+
+            var hits = this.map_bounds.getRayCastTiles(this.line, 1, false, false),
+                filtered_hits = hits.filter(this._filterVisibleTiles);
+
+            filtered_hits.forEach(function (tile, index) {
+                var square = this.game.add.graphics();
+                square.beginFill(0xff0000, 0.5);
+                square.lineStyle(2, 0xff0000, 1);
+
+                if (this._blocked_tiles.getAt(index) < 0) {
+                    square.drawRect(tile.worldX, tile.worldY, 50, 50);
+                    this._blocked_tiles.addAt(square, index);
                 }
-            });
+            }, this);
+        },
+
+        _filterVisibleTiles: function (tile, index) {
+            return tile.index >= 0;
         }
     }
 
