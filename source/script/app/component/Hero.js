@@ -9,11 +9,8 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
     Hero.prototype = Object.create(Pawn.prototype);
     Hero.prototype.constructor = Hero;
 
-    // Hero.prototype._mouseOut = function () {
-    //     this._tracing = false;
-    //     this._tile_traces.removeChildren();
-    //     this._tile_collisions.removeChildren();
-    // };
+    Hero.prototype._mouseOut = function () {
+    };
 
     Hero.prototype._mouseOver = function () {
         if (this._moving) {
@@ -55,8 +52,15 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
         positions.forEach(this._traceAtPosition, this);
     };
 
+    Hero.prototype._clearTrace = function () {
+        this._tracing = false;
+        this._tile_traces.removeChildren();
+        this._tile_collisions.removeChildren();
+    };
+
     Hero.prototype._canMoveToTile = function (tile, pointer) {
         if (tile.valid) {
+            this._clearTrace();
             this._moveTo({
                 x: this._game.input.mousePointer.x + this._game.camera.x,
                 y: this._game.input.mousePointer.y + this._game.camera.y
@@ -79,7 +83,6 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
         square.drawRect(position.x, position.y, 50, 50);
         this._tile_traces.addChild(square);
     };
-
 
     return Hero;
 });

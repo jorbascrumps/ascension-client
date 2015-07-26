@@ -82,6 +82,7 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
             .start()
             .onComplete.add(function () {
                 this._moving = false;
+                this._traceAdjacentTiles();
             }, this);
     }
 
