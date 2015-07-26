@@ -1,6 +1,6 @@
 'use strict';
 
-define(['phaser', 'state/Game'], function (Phaser, Game) {
+define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Event) {
     function Pawn (game, group, options) {
         Phaser.Sprite.call(
             this,
@@ -16,20 +16,29 @@ define(['phaser', 'state/Game'], function (Phaser, Game) {
         this.height = options.transform.height;
         this.width = options.transform.width;
         this._graphics = this._game.add.sprite(0, 0);
+        this._moving = false;
+        this._tracing = false;
 
         // Setup graphics object for drawing UI elememts for this pawn
-        var graphics = this._game.add.graphics();
-        this._graphics.addChild(graphics);
-        this._game.physics.arcade.enable(this._graphics);
-        this._game.physics.arcade.enable(this);
+        this._tile_traces = game.add.group();
+        this._tile_collisions = game.add.group();
 
         // Physics settings
+        this._game.physics.arcade.enable(this._tile_collisions);
+        this._game.physics.arcade.enable(this);
         this.body.setSize(50, 50, 0, 0);
         this.body.moves = false;
 
         this._game.add.existing(this);
 
         this._setupEvents();
+
+        var self = this;
+        Event.on('game.update', function (game_state) {
+            self._update.apply(self, [
+                game_state.collision_group
+            ]);
+        });
     }
 
     Pawn.prototype = Object.create(Phaser.Sprite.prototype);
@@ -44,6 +53,10 @@ define(['phaser', 'state/Game'], function (Phaser, Game) {
     };
 
     Pawn.prototype._mouseOver = function () {
+    };
+
+    Pawn.prototype._update = function () {
+        console.warn('Default [%s] update. You might want to consider overriding this.', this.constructor.name);
     };
 
     Pawn.prototype._mouseOut = function () {
@@ -63,9 +76,14 @@ define(['phaser', 'state/Game'], function (Phaser, Game) {
             length = Math.floor(line.length),
             movement_duration = (length - (length % 50)) * 10;
 
+        this._moving = true;
         this.game.add.tween(this)
             .to(new_pos, movement_duration, Phaser.Easing.Linear.None)
-            .start();
+            .start()
+            .onComplete.add(function () {
+                this._moving = false;
+                this._traceAdjacentTiles();
+            }, this);
     }
 
     return Pawn;

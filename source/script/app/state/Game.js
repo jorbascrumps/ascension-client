@@ -1,6 +1,6 @@
 'use strict';
 
-define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], function (Phaser, Tile, Camera, Hero) {
+define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'component/Event'], function (Phaser, Tile, Camera, Hero, Event) {
     function Game () {
         this._cursor_position;
         this._player;
@@ -46,7 +46,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
             this.tilemap = this.game.add.tilemap('tilemap');
             this.tilemap.addTilesetImage('level', 'map_image', 50, 50);
             this.map_layer = this.tilemap.createLayer('map');
-            this.test_layer = this.tilemap.createLayer('test');
+            this.map_bounds = this.tilemap.createLayer('test');
             this.tilemap.setCollisionBetween(0, 100)
 
             this.collision_group = this.game.add.group();
@@ -58,17 +58,13 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
                 "transform": {
                     "position": {
                         "x": 150,
-                        "y": 150
+                        "y": 200
                     },
                     "rotation": 1,
                     "width": 50,
                     "height": 50
                 }
             });
-
-            this.game.input.onDown.add(function (pointer, event) {
-                this._hero._moveTo(pointer.position);
-            }, this);
 
             this.line = new Phaser.Line();
         },
@@ -99,23 +95,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
         },
 
         update: function () {
-            this._camera.update();
-
-            if (this._cursors.w.isDown) {
-                this._hero.body.velocity.y -= 8;
-            } else if (this._cursors.s.isDown) {
-                this._hero.body.velocity.y += 8;
-            }
-
-            if (this._cursors.d.isDown) {
-                this._hero.body.velocity.x += 8;
-            } else if (this._cursors.a.isDown) {
-                this._hero.body.velocity.x -= 8;
-            }
-
-            this.game.physics.arcade.collide(this._hero, this.collisions, function (origin, target) {
-                console.log('colliding');
-            }, null, this);
+            Event.emit('game.update', this);
 
             this.line.start.set(0, 0);
             this.line.end.set(
@@ -123,7 +103,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero'], funct
                 this.game.input.mousePointer.y + this.game.camera.y
             );
 
-            var hits = this.test_layer.getRayCastTiles(this.line, 1, false, false);
+            var hits = this.map_bounds.getRayCastTiles(this.line, 1, false, false);
             hits.forEach(function (tile) {
                 if (tile.index >= 0) {
                     console.log('hit');
