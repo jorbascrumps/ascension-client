@@ -42,8 +42,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             this.tilemap = this.game.add.tilemap('tilemap');
             this.tilemap.addTilesetImage('level', 'map_image', 50, 50);
             this.map_layer = this.tilemap.createLayer('map');
-            this.map_bounds = this.tilemap.createLayer('test');
-            this.tilemap.setCollisionBetween(0, 100)
+            this.map_blocked_tiles = this.tilemap.createLayer('blocked');
 
             this.collision_group = this.game.add.group();
             this.collisions = this.getCollisionSprites('collision', this.collision_group);
@@ -113,7 +112,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             // Empty group to avoid too much overdraw
             this._blocked_tiles.removeChildren();
 
-            var hits = this.map_bounds.getRayCastTiles(this.line, 1, false, false),
+            var hits = this.map_blocked_tiles.getRayCastTiles(this.line, 1, false, false),
                 filtered_hits = hits.filter(this._filterVisibleTiles);
 
             filtered_hits.forEach(function (tile, index) {

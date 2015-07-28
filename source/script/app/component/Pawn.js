@@ -24,19 +24,17 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         this._tile_collisions = game.add.group();
 
         // Physics settings
-        this._game.physics.arcade.enable(this._tile_collisions);
         this._game.physics.arcade.enable(this);
         this.body.setSize(50, 50, 0, 0);
         this.body.moves = false;
-
-        this._game.add.existing(this);
 
         this._setupEvents();
 
         var self = this;
         Event.on('game.update', function (game_state) {
             self._update.apply(self, [
-                game_state.collision_group
+                game_state.collision_group,
+                game_state.map_blocked_tiles
             ]);
         });
     }
@@ -120,17 +118,21 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
 
     Pawn.prototype._traceAtPosition = function (position, index) {
         var sprite = this._tile_collisions.create(position.x, position.y);
-        this._game.physics.arcade.enable(sprite);
+        this._tile_collisions.add(sprite)
         sprite.inputEnabled = true;
         sprite.valid = true;
         sprite.events.onInputDown.add(this._canMoveToTile, this);
-        sprite.body.setSize(50, 50);
-        sprite.body.immovable = true;
+
+        this._game.physics.arcade.enable(sprite);
+        sprite.body.setSize(50, 50, 0, 0);
+        sprite.body.moves = false;
+        sprite.tint = 0x00ff00
+        this.tint = 0x0000ff
 
         var square = this._game.add.graphics();
         square.beginFill(0x00ff00, 0.5);
-        square.lineStyle(2, 0x00ff00, 1);
-        square.drawRect(position.x, position.y, 50, 50);
+        square.lineStyle(1, 0x00ff00, 1);
+        square.drawRect(position.x + 1, position.y + 1, 48, 48);
         this._tile_traces.addChild(square);
     };
 
