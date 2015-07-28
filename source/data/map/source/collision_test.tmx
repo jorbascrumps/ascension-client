@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="50" tileheight="50" nextobjectid="68">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="50" tileheight="50" nextobjectid="69">
  <tileset firstgid="1" name="level" tilewidth="50" tileheight="50">
   <image source="../../../image/tile/level01.png" width="500" height="250"/>
  </tileset>
@@ -307,10 +307,10 @@
    </properties>
   </object>
  </objectgroup>
- <layer name="test" width="10" height="10" visible="0">
+ <layer name="test" width="10" height="10">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,41,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,41,0,0,
 0,0,0,0,0,0,0,0,0,0,
 0,41,0,0,0,0,0,0,0,0,
