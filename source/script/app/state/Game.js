@@ -54,14 +54,15 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             );
 
             this._grid = this.game.add.tileSprite(
-                -this.game.world.bounds.width,
-                -this.game.world.bounds.height,
-                this.game.world.bounds.width * 2,
-                this.game.world.bounds.height * 2,
+                0,
+                0,
+                this.game.world.bounds.width,
+                this.game.world.bounds.height,
                 'grid'
             );
-            this._grid.x -= 19;
-            this._grid.y += 10;
+            this._grid.x = 0;
+            this._grid.y = 0;
+            this._grid.fixedToCamera = true;
             this._grid.tint = 0x111111;
 
             this.tilemap = this.game.add.tilemap('tilemap');
@@ -118,8 +119,19 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
 
         update: function () {
             Event.emit('game.update', this);
-this._background.tilePosition.x = this.game.camera.x * 0.05;
-this._background.tilePosition.y = this.game.camera.y * 0.05;
+
+            // Scroll the grid with the camera
+            this._grid.tilePosition.set(
+                -this.game.camera.x,
+                -this.game.camera.y
+            );
+
+            // Scroll the background against the camera to create parallax effect
+            this._background.tilePosition.set(
+                this.game.camera.x * 0.05,
+                this.game.camera.y * 0.05
+            );
+
             this._drawLineOfSight();
         },
 
