@@ -36,13 +36,11 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             this._cursors = this.game.input.keyboard.createCursorKeys();
 
             this._camera = new Camera(this.game);
-            this.game.add.tileSprite(0, 0, this.game.world.bounds.width, this.game.world.bounds.height, 'grid');
             this.game.world.setBounds(
                 -this.game.world.bounds.width,
                 -this.game.world.bounds.height,
                 this.game.world.bounds.width * 2,
-                this.game.world.bounds.height * 2,
-                'grass'
+                this.game.world.bounds.height * 2
             );
 
             this._background = this.game.add.tileSprite(
@@ -60,8 +58,6 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                 this.game.world.bounds.height,
                 'grid'
             );
-            this._grid.x = 0;
-            this._grid.y = 0;
             this._grid.fixedToCamera = true;
             this._grid.tint = 0x111111;
 
