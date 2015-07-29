@@ -12,7 +12,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
 
     Game.prototype = {
         preload: function () {
-            var grid_data = 'data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAARUlEQVR42u3PsQ0AAAjDsP7/NEh8UeQM2Z15Um7lgYCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtEA+tJyODR6OptJ5AAAAAElFTkSuQmCC',
+            var grid_data = 'data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAAGUExURf///////1V89WwAAAACdFJOU/8A5bcwSgAAACZJREFUeNrsy6EBAAAIA6D5/9PeMIsFOsnBtBRFURRFUZTfsgIMAM7aCWItTDiIAAAAAElFTkSuQmCC',
                 background = new Image();
 
             background.src = grid_data;
@@ -24,6 +24,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             this.load.image('tile', 'image/tile/tile.png');
             this.load.image('tile2', 'image/tile/tile2.png');
             this.load.image('tile3', 'image/tile/tile3.png');
+            this.load.image('grass', 'image/scene/star_field.png');
             this.load.physics('tile3_physics', 'data/tile/tile3.json');
 
             this.load.tilemap('tilemap', 'data/map/source/collision_test.json', null, Phaser.Tilemap.TILED_JSON);
@@ -36,8 +37,32 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
 
             this._camera = new Camera(this.game);
             this.game.add.tileSprite(0, 0, this.game.world.bounds.width, this.game.world.bounds.height, 'grid');
-            this.game.world.setBounds(-1000, -1000, 2000, 2000);
-            this.game.add.tileSprite(-1000, -1000, this.game.world.bounds.width * 2, this.game.world.bounds.height * 2, 'grid');
+            this.game.world.setBounds(
+                -this.game.world.bounds.width,
+                -this.game.world.bounds.height,
+                this.game.world.bounds.width * 2,
+                this.game.world.bounds.height * 2,
+                'grass'
+            );
+
+            this._background = this.game.add.tileSprite(
+                -this.game.world.bounds.width,
+                -this.game.world.bounds.height,
+                this.game.world.bounds.width * 2,
+                this.game.world.bounds.height * 2,
+                'grass'
+            );
+
+            this._grid = this.game.add.tileSprite(
+                -this.game.world.bounds.width,
+                -this.game.world.bounds.height,
+                this.game.world.bounds.width * 2,
+                this.game.world.bounds.height * 2,
+                'grid'
+            );
+            this._grid.x -= 19;
+            this._grid.y += 10;
+            this._grid.tint = 0x111111;
 
             this.tilemap = this.game.add.tilemap('tilemap');
             this.tilemap.addTilesetImage('level', 'map_image', 50, 50);
@@ -93,7 +118,8 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
 
         update: function () {
             Event.emit('game.update', this);
-
+this._background.tilePosition.x = this.game.camera.x * 0.05;
+this._background.tilePosition.y = this.game.camera.y * 0.05;
             this._drawLineOfSight();
         },
 
