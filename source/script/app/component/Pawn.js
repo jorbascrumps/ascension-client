@@ -107,7 +107,6 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
 
     Pawn.prototype._canMoveToTile = function (tile, pointer) {
         if (tile.valid) {
-            console.log(pointer);
             this._clearTrace();
             this._moveTo({
                 x: pointer.position.x + this._game.camera.x,
@@ -118,16 +117,13 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
 
     Pawn.prototype._traceAtPosition = function (position, index) {
         var sprite = this._tile_collisions.create(position.x, position.y);
-        this._tile_collisions.add(sprite)
-        sprite.inputEnabled = true;
         sprite.valid = true;
+        sprite.height = 50;
+        sprite.width = 50;
+        sprite.inputEnabled = true;
         sprite.events.onInputDown.add(this._canMoveToTile, this);
-
         this._game.physics.arcade.enable(sprite);
-        sprite.body.setSize(50, 50, 0, 0);
-        sprite.body.moves = false;
-        sprite.tint = 0x00ff00
-        this.tint = 0x0000ff
+        this._tile_collisions.add(sprite);
 
         var square = this._game.add.graphics();
         square.beginFill(0x00ff00, 0.5);
