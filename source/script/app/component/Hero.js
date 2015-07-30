@@ -9,7 +9,7 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
     Hero.prototype = Object.create(Pawn.prototype);
     Hero.prototype.constructor = Hero;
 
-    Hero.prototype._update = function (collisions, blocked) {
+    Hero.prototype._update = function (collisions, blocked, tagged) {
         this._tile_collisions.children.forEach(function (tile, index, tiles) {
             var layer_tile = blocked.getTiles(tile.position.x, tile.position.y, 50, 50).shift(),
                 bounds = new Phaser.Rectangle(layer_tile.worldX, layer_tile.worldY, layer_tile.width, layer_tile.height);
@@ -25,6 +25,13 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
                 collided_tile.valid = false;
             }
         }, this);
+
+        var tagged_tile = tagged.getTiles(this.position.x, this.position.y, 50, 50).shift();
+        if (tagged_tile.index > 0) {
+            console.log('tile trigger');
+        } else {
+            console.log('nothing');
+        }
 
         this._game.physics.arcade.overlap(
             collisions,

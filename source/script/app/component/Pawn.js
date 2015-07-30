@@ -34,7 +34,8 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         Event.on('game.update', function (game_state) {
             self._update.apply(self, [
                 game_state.collision_group,
-                game_state.map_blocked_tiles
+                game_state.map_blocked_tiles,
+                game_state.map_tagged_tiles
             ]);
         });
     }
