@@ -83,6 +83,8 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                 }
             });
 
+            this.map_tagged_tiles = this.tilemap.createLayer('tagged');
+
             this.line = new Phaser.Line();
 
             this._blocked_tiles = this.game.add.group();
