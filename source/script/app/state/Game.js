@@ -155,7 +155,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                 square.lineStyle(2, 0xff0000, 1);
 
                 if (this._blocked_tiles.getAt(index) < 0) {
-                    square.drawRect(tile.worldX, tile.worldY, 50, 50);
+                    square.drawRect(tile.worldX + 1, tile.worldY + 1, 48, 48);
                     this._blocked_tiles.addAt(square, index);
                 }
             }, this);
