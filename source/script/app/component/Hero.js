@@ -28,9 +28,13 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
 
         var tagged_tile = tagged.getTiles(this.position.x, this.position.y, 50, 50).shift();
         if (tagged_tile.index > 0) {
-            console.log('tile trigger');
+            if (!this._trigger_tag) {
+                this._event.emit('pawn.tagged.enter');
+            }
         } else {
-            console.log('nothing');
+            if (this._trigger_tag) {
+                this._event.emit('pawn.tagged.exit');
+            }
         }
 
         this._game.physics.arcade.overlap(
