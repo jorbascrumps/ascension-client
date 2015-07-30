@@ -13,11 +13,10 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         group.add(this);
 
         this._game = game;
-        this.height = options.transform.height;
-        this.width = options.transform.width;
         this._graphics = this._game.add.sprite(0, 0);
         this._moving = false;
         this._tracing = false;
+        this._trigger_tag = false;
 
         // Setup graphics object for drawing UI elememts for this pawn
         this._tile_traces = game.add.group();
@@ -31,12 +30,22 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         this._setupEvents();
 
         var self = this;
-        Event.on('game.update', function (game_state) {
+        this._event = Event;
+        this._event.on('game.update', function (game_state) {
             self._update.apply(self, [
                 game_state.collision_group,
-                game_state.map_blocked_tiles
+                game_state.map_blocked_tiles,
+                game_state.map_tagged_tiles
             ]);
         });
+        this._event.on('pawn.tagged.enter', function () {
+            self._trigger_tag = true;
+            console.warn('Entering [TAGGED] tile');
+        })
+        this._event.on('pawn.tagged.exit', function () {
+            self._trigger_tag = false;
+            console.warn('Exiting [TAGGED] tile');
+        })
     }
 
     Pawn.prototype = Object.create(Phaser.Sprite.prototype);
