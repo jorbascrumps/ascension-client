@@ -3,8 +3,8 @@ requirejs.config({
     paths: {
         app: '../app',
         phaser: 'phaser/phaser',
-        isometric: 'phaser/isometric',
         smokesignals: 'smokesignals/smokesignals',
+        io: 'socket.io/socket.io',
         state: '../app/state',
         component: '../app/component'
     },
@@ -14,10 +14,6 @@ requirejs.config({
         },
         'smokesignals': {
             exports: 'smokesignals'
-        },
-        'isometric': {
-            deps: ['phaser'],
-            exports: 'Phaser.Plugin.Isometric'
         }
     }
 });
