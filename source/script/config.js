@@ -6,7 +6,8 @@ requirejs.config({
         smokesignals: 'smokesignals/smokesignals',
         io: 'socket.io/socket.io',
         state: '../app/state',
-        component: '../app/component'
+        component: '../app/component',
+        ui: '../app/ui'
     },
     shim: {
         'phaser': {
