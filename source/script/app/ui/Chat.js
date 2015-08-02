@@ -19,6 +19,7 @@ define(['component/Event'], function (Event) {
             }
 
             log.innerHTML += '\r\n' + sender + ': ' + message;
+            log.scrollTop = log.scrollHeight;
         },
 
         initialise: function () {
