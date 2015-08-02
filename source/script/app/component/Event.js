@@ -15,6 +15,7 @@ define(['phaser', 'smokesignals', 'component/Socket'], function (Phaser, smokesi
 
         on: function (event_name, handler) {
             this._internal.on(event_name, handler);
+            this._network.on(event_name, handler);
         }
     }
 });
