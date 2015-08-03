@@ -70,24 +70,22 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             this.collisions = this.getCollisionSprites('collision', this.collision_group);
 
             this._pawns = this.game.add.group();
-            this._hero = new Hero(this.game, this._pawns, {
-                "asset": "nathan",
-                "transform": {
-                    "position": {
-                        "x": 150,
-                        "y": 300
-                    },
-                    "rotation": 1,
-                    "width": 50,
-                    "height": 50
-                }
-            });
 
             this.map_tagged_tiles = this.tilemap.createLayer('tagged');
 
             this.line = new Phaser.Line();
 
             this._blocked_tiles = this.game.add.group();
+
+            Event.emit('game.player.create', {
+                room: 1,
+                type: 'hero'
+            }, true);
+            var self = this;
+            Event.on('game.player.spawn', function (pawn) {
+                console.log('spawn', pawn);
+                self._hero = new Hero(self.game, self._pawns, pawn);
+            });
         },
 
         getCollisionSprites: function (layer, group, tileX, tileY) {
