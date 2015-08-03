@@ -20,6 +20,7 @@ define(['phaser', 'smokesignals', 'component/Socket'], function (Phaser, smokesi
             }
 
             clearInterval(reconnect);
+            network.io.reconnect();
             Event.emit('network.connection.connect', {
                 message: 'Successfully reconnected.'
             });

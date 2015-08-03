@@ -58,6 +58,12 @@ define(['component/Event'], function (Event) {
 
             Event.on('network.connection.connect', function (payload) {
                 self._log(payload.message);
+
+                Event.emit('chat.channel.join', {
+                    id: self.id,
+                    room: self.room,
+                    sender: self.sender
+                }, true);
             });
         }
     };
