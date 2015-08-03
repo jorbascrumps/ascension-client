@@ -47,6 +47,18 @@ define(['component/Event'], function (Event) {
             Event.on('chat.message.receive', function (payload) {
                 self._log(payload.message, payload.sender);
             });
+
+            Event.on('network.connection.disconnect', function (payload) {
+                self._log(payload.message);
+            });
+
+            Event.on('network.connection.reconnect', function (payload) {
+                self._log(payload.message);
+            });
+
+            Event.on('network.connection.connect', function (payload) {
+                self._log(payload.message);
+            });
         }
     };
 
