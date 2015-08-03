@@ -5,6 +5,7 @@ define(['component/Event'], function (Event) {
         send_btn: send,
         room: null,
         id: null,
+        sender: null,
 
         _send: function (message, sender) {
             Event.emit('chat.message.send', {
@@ -26,24 +27,43 @@ define(['component/Event'], function (Event) {
         },
 
         initialise: function () {
-            var self = this,
-                sender = getQueryString('user');
+            var self = this;
 
+            this.sender = getQueryString('user');
             this.room = getQueryString('room');
             this.id = getQueryString('id');
 
             Event.emit('chat.channel.join', {
                 id: this.id,
-                room: this.room
+                room: this.room,
+                sender: this.sender
             }, true);
+            this._log('You\'ve joined the channel.');
 
             this.send_btn.addEventListener('click', function () {
-                self._send(message.value, sender);
+                self._send(message.value, self.sender);
             });
 
             Event.on('chat.message.receive', function (payload) {
-                console.log('receve');
                 self._log(payload.message, payload.sender);
+            });
+
+            Event.on('network.connection.disconnect', function (payload) {
+                self._log(payload.message);
+            });
+
+            Event.on('network.connection.reconnect', function (payload) {
+                self._log(payload.message);
+            });
+
+            Event.on('network.connection.connect', function (payload) {
+                self._log(payload.message);
+
+                Event.emit('chat.channel.join', {
+                    id: self.id,
+                    room: self.room,
+                    sender: self.sender
+                }, true);
             });
         }
     };
