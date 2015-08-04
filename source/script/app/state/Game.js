@@ -1,6 +1,6 @@
 'use strict';
 
-define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'component/Event'], function (Phaser, Tile, Camera, Hero, Event) {
+define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'component/Pawn', 'component/Event'], function (Phaser, Tile, Camera, Hero, Pawn, Event) {
     function Game () {
         this._cursor_position;
         this._player;
@@ -84,7 +84,12 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             var self = this;
             Event.on('game.player.spawn', function (pawn) {
                 console.log('spawn', pawn);
-                self._hero = new Hero(self.game, self._pawns, pawn);
+
+                if (pawn.current) {
+                    self._hero = new Hero(self.game, self._pawns, pawn);
+                } else {
+                    new Pawn(self.game, self._pawns, pawn);
+                }
             });
         },
 
