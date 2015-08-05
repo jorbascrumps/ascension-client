@@ -12,6 +12,7 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
 
         group.add(this);
 
+        this._id = options.id;
         this._game = game;
         this._graphics = this._game.add.sprite(0, 0);
         this._moving = false;
@@ -64,10 +65,12 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
     Pawn.prototype._mouseOut = function () {};
 
     Pawn.prototype._update = function () {
-        console.warn('Default [%s] update. You might want to consider overriding this.', this.constructor.name);
+        // console.warn('Default [%s] update. You might want to consider overriding this.', this.constructor.name);
     };
 
-    Pawn.prototype._moveTo = function (position, callback) {
+    Pawn.prototype._moveTo = function (position, sync) {
+        this._tile_traces.removeChildren();
+
         var new_pos = {
                 x: position.x - (position.x % 50),
                 y: position.y - (position.y % 50)
@@ -80,6 +83,13 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
             ),
             length = Math.floor(line.length),
             movement_duration = (length - (length % 50)) * 10;
+
+        if (sync) {
+            Event.emit('game.pawn.movement', {
+                id: this._id,
+                position: new_pos
+            }, true);
+        }
 
         this._moving = true;
         this.game.add.tween(this)
@@ -120,7 +130,7 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
             this._moveTo({
                 x: pointer.position.x + this._game.camera.x,
                 y: pointer.position.y + this._game.camera.y
-            });
+            }, true);
         }
     };
 

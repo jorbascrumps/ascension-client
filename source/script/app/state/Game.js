@@ -91,6 +91,17 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                     new Pawn(self.game, self._pawns, pawn);
                 }
             });
+
+            Event.on('server.pawn.movement', function (data) {
+                console.log(data);
+                self._pawns.forEach(function (pawn) {
+                    if (pawn._id == data.id) {
+                        pawn._moveTo(data.position, false);
+
+                        return;
+                    }
+                })
+            })
         },
 
         getCollisionSprites: function (layer, group, tileX, tileY) {
