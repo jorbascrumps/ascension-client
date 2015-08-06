@@ -79,11 +79,21 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
 
             Event.emit('game.player.create', {
                 room: 1,
-                type: 'hero'
+                position: {
+                    x: 2 * 50,
+                    y: (Math.floor(Math.random() * 7) + 3) * 50
+                }
             }, true);
+
             var self = this;
-            Event.on('game.player.spawn', function (pawn) {
-                console.log('spawn', pawn);
+            Event.on('server.pawn.spawn', function (pawn) {
+                var children = self._pawns.children.filter(function (child) {
+                    return child._id == pawn.id;
+                });
+
+                if (children.length) {
+                    return;
+                }
 
                 if (pawn.current) {
                     self._hero = new Hero(self.game, self._pawns, pawn);
@@ -92,16 +102,25 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                 }
             });
 
+            Event.on('server.pawn.kill', function (data) {
+                self._pawns.children.forEach(function (pawn, index) {
+                    if (pawn._id == data.id) {
+                        self._pawns.getChildAt(index).kill();
+
+                        return;
+                    }
+                });
+            });
+
             Event.on('server.pawn.movement', function (data) {
-                console.log(data);
-                self._pawns.forEach(function (pawn) {
+                self._pawns.children.forEach(function (pawn) {
                     if (pawn._id == data.id) {
                         pawn._moveTo(data.position, false);
 
                         return;
                     }
-                })
-            })
+                });
+            });
         },
 
         getCollisionSprites: function (layer, group, tileX, tileY) {
