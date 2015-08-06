@@ -12,6 +12,7 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
 
         group.add(this);
 
+        this._id = options.id;
         this._game = game;
         this._graphics = this._game.add.sprite(0, 0);
         this._moving = false;
@@ -57,6 +58,7 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
 
         this.events.onInputOver.add(this._mouseOver, this);
         this.events.onInputOut.add(this._mouseOut, this);
+        this.events.onKilled.add(this._kill, this);
     };
 
     Pawn.prototype._mouseOver = function () {};
@@ -64,10 +66,12 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
     Pawn.prototype._mouseOut = function () {};
 
     Pawn.prototype._update = function () {
-        console.warn('Default [%s] update. You might want to consider overriding this.', this.constructor.name);
+        // console.warn('Default [%s] update. You might want to consider overriding this.', this.constructor.name);
     };
 
-    Pawn.prototype._moveTo = function (position, callback) {
+    Pawn.prototype._moveTo = function (position, sync) {
+        this._tile_traces.removeChildren();
+
         var new_pos = {
                 x: position.x - (position.x % 50),
                 y: position.y - (position.y % 50)
@@ -80,6 +84,13 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
             ),
             length = Math.floor(line.length),
             movement_duration = (length - (length % 50)) * 10;
+
+        if (sync) {
+            Event.emit('game.pawn.movement', {
+                id: this._id,
+                position: position
+            }, true);
+        }
 
         this._moving = true;
         this.game.add.tween(this)
@@ -120,7 +131,7 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
             this._moveTo({
                 x: pointer.position.x + this._game.camera.x,
                 y: pointer.position.y + this._game.camera.y
-            });
+            }, true);
         }
     };
 
@@ -139,6 +150,11 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         square.lineStyle(1, 0x00ff00, 1);
         square.drawRect(position.x + 1, position.y + 1, 48, 48);
         this._tile_traces.addChild(square);
+    };
+
+    Pawn.prototype._kill = function () {
+        console.log('kill');
+        this._clearTrace();
     };
 
     return Pawn;

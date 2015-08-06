@@ -1,6 +1,6 @@
 'use strict';
 
-define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'component/Event'], function (Phaser, Tile, Camera, Hero, Event) {
+define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'component/Pawn', 'component/Event'], function (Phaser, Tile, Camera, Hero, Pawn, Event) {
     function Game () {
         this._cursor_position;
         this._player;
@@ -70,24 +70,57 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             this.collisions = this.getCollisionSprites('collision', this.collision_group);
 
             this._pawns = this.game.add.group();
-            this._hero = new Hero(this.game, this._pawns, {
-                "asset": "nathan",
-                "transform": {
-                    "position": {
-                        "x": 150,
-                        "y": 300
-                    },
-                    "rotation": 1,
-                    "width": 50,
-                    "height": 50
-                }
-            });
 
             this.map_tagged_tiles = this.tilemap.createLayer('tagged');
 
             this.line = new Phaser.Line();
 
             this._blocked_tiles = this.game.add.group();
+
+            Event.emit('game.player.create', {
+                room: 1,
+                position: {
+                    x: 2 * 50,
+                    y: (Math.floor(Math.random() * 7) + 3) * 50
+                }
+            }, true);
+
+            var self = this;
+            Event.on('server.pawn.spawn', function (pawn) {
+                var children = self._pawns.children.filter(function (child) {
+                    return child._id == pawn.id;
+                });
+
+                if (children.length) {
+                    return;
+                }
+
+                if (pawn.current) {
+                    self._hero = new Hero(self.game, self._pawns, pawn);
+                } else {
+                    new Pawn(self.game, self._pawns, pawn);
+                }
+            });
+
+            Event.on('server.pawn.kill', function (data) {
+                self._pawns.children.forEach(function (pawn, index) {
+                    if (pawn._id == data.id) {
+                        self._pawns.getChildAt(index).kill();
+
+                        return;
+                    }
+                });
+            });
+
+            Event.on('server.pawn.movement', function (data) {
+                self._pawns.children.forEach(function (pawn) {
+                    if (pawn._id == data.id) {
+                        pawn._moveTo(data.position, false);
+
+                        return;
+                    }
+                });
+            });
         },
 
         getCollisionSprites: function (layer, group, tileX, tileY) {

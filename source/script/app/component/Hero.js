@@ -27,16 +27,18 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
         }, this);
 
         var tagged_tile = tagged.getTiles(this.position.x, this.position.y, 50, 50).shift();
-        if (tagged_tile.index > 0) {
-            if (!this._trigger_tag) {
-                this._event.emit('pawn.tagged.enter', {
-                    x: 0,
-                    y: 0
-                }, true);
-            }
-        } else {
-            if (this._trigger_tag) {
-                this._event.emit('pawn.tagged.exit', null, true);
+        if (tagged_tile) {
+            if (tagged_tile.index > 0) {
+                if (!this._trigger_tag) {
+                    this._event.emit('pawn.tagged.enter', {
+                        x: 0,
+                        y: 0
+                    }, true);
+                }
+            } else {
+                if (this._trigger_tag) {
+                    this._event.emit('pawn.tagged.exit', null, true);
+                }
             }
         }
 
