@@ -106,6 +106,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                 self._pawns.children.forEach(function (pawn, index) {
                     if (pawn._id == data.id) {
                         self._pawns.getChildAt(index).kill();
+                        self._pawns.removeChildAt(index);
 
                         return;
                     }
