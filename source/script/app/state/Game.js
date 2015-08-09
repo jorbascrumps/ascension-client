@@ -96,7 +96,8 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                     return;
                 }
 
-                if (pawn.current) {
+                var session = DataStore.get('session');
+                if (session == pawn.id) {
                     self._hero = new Hero(self.game, self._pawns, pawn);
                 } else {
                     new Pawn(self.game, self._pawns, pawn);
