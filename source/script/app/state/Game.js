@@ -77,11 +77,16 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
 
             this._blocked_tiles = this.game.add.group();
 
+            Event.on('server.player.register', function (data) {
+                console.log('register', data);
+            }, true);
+
+            var pos = (Math.floor(Math.random() * 6) + 3) * 50;
             Event.emit('game.player.create', {
                 room: 1,
                 position: {
                     x: 2 * 50,
-                    y: (Math.floor(Math.random() * 7) + 3) * 50
+                    y: pos
                 }
             }, true);
 
@@ -100,7 +105,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                 } else {
                     new Pawn(self.game, self._pawns, pawn);
                 }
-            });
+            }, true);
 
             Event.on('server.pawn.kill', function (data) {
                 self._pawns.children.forEach(function (pawn, index) {
@@ -111,7 +116,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                         return;
                     }
                 });
-            });
+            }, true);
 
             Event.on('server.pawn.movement', function (data) {
                 self._pawns.children.forEach(function (pawn) {
@@ -121,7 +126,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                         return;
                     }
                 });
-            });
+            }, true);
         },
 
         getCollisionSprites: function (layer, group, tileX, tileY) {
