@@ -1,6 +1,6 @@
 'use strict';
 
-define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'component/Pawn', 'component/Event'], function (Phaser, Tile, Camera, Hero, Pawn, Event) {
+define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'component/Pawn', 'component/Event', 'component/DataStore'], function (Phaser, Tile, Camera, Hero, Pawn, Event, DataStore) {
     function Game () {
         this._cursor_position;
         this._player;
@@ -76,10 +76,6 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             this.line = new Phaser.Line();
 
             this._blocked_tiles = this.game.add.group();
-
-            Event.on('server.player.register', function (data) {
-                console.log('register', data);
-            }, true);
 
             var pos = (Math.floor(Math.random() * 6) + 3) * 50;
             Event.emit('game.player.create', {
