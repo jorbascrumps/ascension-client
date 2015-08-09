@@ -29,7 +29,6 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         this.body.moves = false;
 
         this._setupEvents();
-        this._traceAdjacentTiles();
 
         var self = this;
         this._event = Event;
@@ -78,8 +77,8 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
                 y: position.y - (position.y % 50)
             },
             line = new Phaser.Line(
-                this.x,
-                this.y,
+                this.position.x,
+                this.position.y,
                 new_pos.x,
                 new_pos.y
             ),
@@ -107,14 +106,14 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         this._tracing = true;
 
         var positions = [
-            { x : this.x - 50, y: this.y + 50 }, // bottom left
-            { x : this.x - 50, y: this.y      }, // left
-            { x : this.x - 50, y: this.y - 50 }, // top left
-            { x : this.x,      y: this.y - 50 }, // top
-            { x : this.x + 50, y: this.y - 50 }, // top right
-            { x : this.x + 50, y: this.y      }, // right
-            { x : this.x + 50, y: this.y + 50 }, // bottom right
-            { x : this.x,      y: this.y + 50 }  // bottom
+            { x : this.position.x - 50, y: this.position.y + 50 }, // bottom left
+            { x : this.position.x - 50, y: this.position.y      }, // left
+            { x : this.position.x - 50, y: this.position.y - 50 }, // top left
+            { x : this.position.x,      y: this.position.y - 50 }, // top
+            { x : this.position.x + 50, y: this.position.y - 50 }, // top right
+            { x : this.position.x + 50, y: this.position.y      }, // right
+            { x : this.position.x + 50, y: this.position.y + 50 }, // bottom right
+            { x : this.position.x,      y: this.position.y + 50 }  // bottom
         ];
 
         positions.forEach(this._traceAtPosition, this);
