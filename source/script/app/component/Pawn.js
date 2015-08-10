@@ -98,7 +98,7 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
             .start()
             .onComplete.add(function (pawn, tween) {
                 this._moving = false;
-                this._traceAdjacentTiles();
+                this._postMovement();
             }, this);
     };
 
@@ -155,6 +155,8 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
     Pawn.prototype._kill = function () {
         this._clearTrace();
     };
+
+    Pawn.prototype._postMovement = function () {};
 
     return Pawn;
 });
