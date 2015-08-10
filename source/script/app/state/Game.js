@@ -1,6 +1,6 @@
 'use strict';
 
-define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'component/Pawn', 'component/Event'], function (Phaser, Tile, Camera, Hero, Pawn, Event) {
+define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'component/Pawn', 'component/Event', 'component/DataStore'], function (Phaser, Tile, Camera, Hero, Pawn, Event, DataStore) {
     function Game () {
         this._cursor_position;
         this._player;
@@ -77,11 +77,12 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
 
             this._blocked_tiles = this.game.add.group();
 
+            var pos = (Math.floor(Math.random() * 6) + 3) * 50;
             Event.emit('game.player.create', {
                 room: 1,
                 position: {
                     x: 2 * 50,
-                    y: (Math.floor(Math.random() * 7) + 3) * 50
+                    y: pos
                 }
             }, true);
 
@@ -95,12 +96,13 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                     return;
                 }
 
-                if (pawn.current) {
+                var session = DataStore.get('session');
+                if (session == pawn.id) {
                     self._hero = new Hero(self.game, self._pawns, pawn);
                 } else {
                     new Pawn(self.game, self._pawns, pawn);
                 }
-            });
+            }, true);
 
             Event.on('server.pawn.kill', function (data) {
                 self._pawns.children.forEach(function (pawn, index) {
@@ -111,7 +113,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                         return;
                     }
                 });
-            });
+            }, true);
 
             Event.on('server.pawn.movement', function (data) {
                 self._pawns.children.forEach(function (pawn) {
@@ -121,7 +123,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                         return;
                     }
                 });
-            });
+            }, true);
         },
 
         getCollisionSprites: function (layer, group, tileX, tileY) {

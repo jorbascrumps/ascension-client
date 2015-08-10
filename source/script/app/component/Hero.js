@@ -57,5 +57,9 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
         );
     };
 
+    Hero.prototype._postMovement = function () {
+        this._traceAdjacentTiles();
+    };
+
     return Hero;
 });
