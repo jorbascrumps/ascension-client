@@ -11,7 +11,6 @@ define(['phaser'], function (Phaser) {
             this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
             this.scale.pageAlignHorizontally = true;
             this.scale.pageAlignVertically = true;
-            this.scale.setScreenSize(true);
 
             this.game.state.start('Preload');
         }
@@ -19,4 +18,3 @@ define(['phaser'], function (Phaser) {
 
     return Boot;
 });
-
