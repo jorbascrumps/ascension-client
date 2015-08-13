@@ -46,13 +46,15 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
             collisions,
             this._tile_collisions,
             function (collider, tile) {
-                var index = this._tile_collisions.getChildIndex(tile),
-                    collided_tile = this._tile_collisions.getChildAt(index),
-                    traced_tile = this._tile_traces.getChildAt(index);
+                var index = this._tile_collisions.getChildIndex(tile)
+                  , traced_tile = this._tile_traces.getChildAt(index);
+
                 traced_tile.clear();
-                collided_tile.valid = false;
+                tile.valid = false;
             },
-            null,
+            function (collider, tile) {
+                return tile.valid;
+            },
             this
         );
     };
