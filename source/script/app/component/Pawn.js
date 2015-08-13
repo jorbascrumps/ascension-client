@@ -40,13 +40,11 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
             ]);
         });
         this._event.on('pawn.tagged.enter', function () {
-            self._trigger_tag = true;
-            console.warn('Entering [TAGGED] tile');
-        })
+            self._onEnterTaggedTile();
+        });
         this._event.on('pawn.tagged.exit', function () {
-            self._trigger_tag = false;
-            console.warn('Exiting [TAGGED] tile');
-        })
+            self._onExitTaggedTile();
+        });
     }
 
     Pawn.prototype = Object.create(Phaser.Sprite.prototype);
@@ -154,6 +152,16 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
 
     Pawn.prototype._kill = function () {
         this._clearTrace();
+    };
+
+    Pawn.prototype._onEnterTaggedTile = function () {
+        this._trigger_tag = true;
+        console.warn('Entering [TAGGED] tile');
+    };
+
+    Pawn.prototype._onExitTaggedTile = function () {
+        this._trigger_tag = false;
+        console.warn('Exiting [TAGGED] tile');
     };
 
     Pawn.prototype._postMovement = function () {};
