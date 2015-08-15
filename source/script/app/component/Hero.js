@@ -34,12 +34,12 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
                         x: 0,
                         y: 0
                     }, true);
-                    this._onEnterTaggedTile();
+                    this._onEnterTaggedTile(tagged_tile);
                 }
             } else {
                 if (this._trigger_tag) {
                     this._event.emit('pawn.tagged.exit', null, true);
-                    this._onExitTaggedTile();
+                    this._onExitTaggedTile(tagged_tile);
                 }
             }
         }

@@ -124,6 +124,14 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                     }
                 });
             }, true);
+
+            Event.on('server.tagged.enter', function (payload) {
+                console.warn('%s has entered a [TAGGED] tile', payload.id);
+            }, true);
+
+            Event.on('server.tagged.exit', function (payload) {
+                console.warn('%s has exited a [TAGGED] tile', payload.id);
+            }, true);
         },
 
         getCollisionSprites: function (layer, group, tileX, tileY) {
