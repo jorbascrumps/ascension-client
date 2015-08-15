@@ -42,8 +42,8 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         this._event.on('pawn.tagged.enter', function (tile) {
             self._onEnterTaggedTile(tile);
         });
-        this._event.on('pawn.tagged.exit', function () {
-            self._onExitTaggedTile();
+        this._event.on('pawn.tagged.exit', function (tile) {
+            self._onExitTaggedTile(tile);
         });
     }
 
@@ -168,6 +168,13 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
 
     Pawn.prototype._onExitTaggedTile = function () {
         this._trigger_tag = false;
+        this._event.emit('game.tagged.exit', {
+            id: this._id,
+            position: {
+                x: tile.worldX,
+                y: tile.worldY
+            }
+        }, true);
         console.warn('Exiting [TAGGED] tile');
     };
 

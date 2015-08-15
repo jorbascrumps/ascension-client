@@ -39,7 +39,7 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
             } else {
                 if (this._trigger_tag) {
                     this._event.emit('pawn.tagged.exit', null, true);
-                    this._onExitTaggedTile();
+                    this._onExitTaggedTile(tagged_tile);
                 }
             }
         }
