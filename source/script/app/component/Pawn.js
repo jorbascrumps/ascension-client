@@ -166,7 +166,7 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         console.warn('Entering [TAGGED] tile');
     };
 
-    Pawn.prototype._onExitTaggedTile = function () {
+    Pawn.prototype._onExitTaggedTile = function (tile) {
         this._trigger_tag = false;
         this._event.emit('game.tagged.exit', {
             id: this._id,
