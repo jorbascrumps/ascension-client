@@ -34,7 +34,7 @@ define(['phaser', './Pawn'], function (Phaser, Pawn) {
                         x: 0,
                         y: 0
                     }, true);
-                    this._onEnterTaggedTile();
+                    this._onEnterTaggedTile(tagged_tile);
                 }
             } else {
                 if (this._trigger_tag) {
