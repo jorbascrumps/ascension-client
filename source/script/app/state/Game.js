@@ -12,21 +12,16 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
 
     Game.prototype = {
         preload: function () {
-            var grid_data = 'data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAAGUExURf///////1V89WwAAAACdFJOU/8A5bcwSgAAACZJREFUeNrsy6EBAAAIA6D5/9PeMIsFOsnBtBRFURRFUZTfsgIMAM7aCWItTDiIAAAAAElFTkSuQmCC',
-                background = new Image();
 
+            // Setup grid lines
+            var grid_data = 'data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAAGUExURf///////1V89WwAAAACdFJOU/8A5bcwSgAAACZJREFUeNrsy6EBAAAIA6D5/9PeMIsFOsnBtBRFURRFUZTfsgIMAM7aCWItTDiIAAAAAElFTkSuQmCC'
+              , background = new Image();
             background.src = grid_data;
             this.game.cache.addImage('grid', grid_data, background);
             this.game.stage.backgroundColor = 0x0e1718;
 
             this.load.image('nathan', 'image/pawn/nathan.png');
-
-            this.load.image('tile', 'image/tile/tile.png');
-            this.load.image('tile2', 'image/tile/tile2.png');
-            this.load.image('tile3', 'image/tile/tile3.png');
-            this.load.image('grass', 'image/scene/star_field.png');
-            this.load.physics('tile3_physics', 'data/tile/tile3.json');
-
+            this.load.image('background', 'image/scene/star_field.png');
             this.load.tilemap('tilemap', 'data/map/source/collision_test.json', null, Phaser.Tilemap.TILED_JSON);
             this.load.image('map_image', 'image/tile/level01.png');
         },
@@ -48,7 +43,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
                 -this.game.world.bounds.height,
                 this.game.world.bounds.width * 2,
                 this.game.world.bounds.height * 2,
-                'grass'
+                'background'
             );
 
             this._grid = this.game.add.tileSprite(
