@@ -16,7 +16,7 @@ define(['phaser'], function (Phaser) {
             loading.animations.play('load', 10, true);
 
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.state.game.state.start('Game');
+            this.game.state.start('Game');
         }
     }
 
