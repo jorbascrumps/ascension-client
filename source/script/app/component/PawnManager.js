@@ -13,6 +13,14 @@ define([
 ) {
     var _data = {};
 
+    function getGroups () {
+        return Object.keys(_data);
+    }
+
+    function getPawns (group) {
+        return Object.keys(_data[group]);
+    }
+
     var PawnManager = {
         add: function (pawn, group) {
             if (!_data[group.name]) {
@@ -51,6 +59,22 @@ define([
             }
 
             return _data[group][id] || false;
+        },
+
+        getByID: function (id) {
+            var pawns = [];
+
+            getGroups().forEach(function (group) {
+                getPawns(group).forEach(function (pawn) {
+                    if (pawn != id) {
+                        return;
+                    }
+
+                    pawns.push(_data[group][pawn]);
+                });
+            });
+
+            return pawns;
         }
     };
 

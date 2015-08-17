@@ -115,12 +115,8 @@ define([
             }, true);
 
             Event.on('server.pawn.movement', function (data) {
-                self._pawns.children.forEach(function (pawn) {
-                    if (pawn._id == data.id) {
-                        pawn._moveTo(data.position, false);
-
-                        return;
-                    }
+                PawnManager.getByID(data.id).forEach(function (pawn) {
+                    pawn._moveTo(data.position, false);
                 });
             }, true);
 
