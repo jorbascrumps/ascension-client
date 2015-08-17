@@ -1,6 +1,30 @@
 'use strict';
 
-define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'component/Pawn', 'component/Event', 'component/DataStore'], function (Phaser, Tile, Camera, Hero, Pawn, Event, DataStore) {
+define([
+    'phaser',
+    'component/Tile',
+    'component/Camera',
+    'component/Hero',
+    'component/Pawn',
+    'component/Event',
+    'component/DataStore',
+    'component/PawnManager',
+    'util/URL',
+    'component/player/Hero',
+    'component/player/Overlord'
+], function (
+    Phaser,
+    Tile,
+    Camera,
+    Hero,
+    Pawn,
+    Event,
+    DataStore,
+    PawnManager,
+    URL,
+    HeroPlayer,
+    OverlordPlayer
+) {
     function Game () {
         this._cursor_position;
         this._player;
@@ -64,7 +88,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             this.collision_group = this.game.add.group();
             this.collisions = this.getCollisionSprites('collision', this.collision_group);
 
-            this._pawns = this.game.add.group();
+            this._pawns = this.game.add.group(null, 'pawns', true);
 
             this.map_tagged_tiles = this.tilemap.createLayer('tagged');
 
@@ -83,20 +107,13 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
 
             var self = this;
             Event.on('server.pawn.spawn', function (pawn) {
-                var children = self._pawns.children.filter(function (child) {
-                    return child._id == pawn.id;
-                });
-
-                if (children.length) {
-                    return;
-                }
-
-                var session = DataStore.get('session');
-                if (session == pawn.id) {
-                    self._hero = new Hero(self.game, self._pawns, pawn);
-                } else {
-                    new Pawn(self.game, self._pawns, pawn);
-                }
+                PawnManager.add(pawn, self._pawns);
+                // var session = DataStore.get('session');
+                // if (session == pawn.id) {
+                //     self._hero = new Hero(self.game, self._pawns, pawn);
+                // } else {
+                //     new Pawn(self.game, self._pawns, pawn);
+                // }
             }, true);
 
             Event.on('server.pawn.kill', function (data) {
