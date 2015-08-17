@@ -1,10 +1,10 @@
 'use strict';
 
 define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Event) {
-    function Pawn (game, group, options) {
+    function Pawn (options, group) {
         Phaser.Sprite.call(
             this,
-            game,
+            group.game,
             options.transform.position.x,
             options.transform.position.y,
             options.asset
@@ -13,15 +13,15 @@ define(['phaser', 'state/Game', 'component/Event'], function (Phaser, Game, Even
         group.add(this);
 
         this._id = options.id;
-        this._game = game;
+        this._game = group.game;
         this._graphics = this._game.add.sprite(0, 0);
         this._moving = false;
         this._tracing = false;
         this._trigger_tag = false;
 
         // Setup graphics object for drawing UI elememts for this pawn
-        this._tile_traces = game.add.group();
-        this._tile_collisions = game.add.group();
+        this._tile_traces = this._game.add.group();
+        this._tile_collisions = this._game.add.group();
 
         // Physics settings
         this._game.physics.arcade.enable(this);
