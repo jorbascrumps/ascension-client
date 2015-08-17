@@ -3,10 +3,12 @@
 define([
     'phaser',
     'component/DataStore',
+    'component/Pawn',
     'component/Hero'
 ], function (
     Phaser,
     DataStore,
+    Pawn,
     Hero
 ) {
     var _data = {};
@@ -24,19 +26,10 @@ define([
 
             var session = DataStore.get('session');
             if (pawn.id == session) {
-                _data[group.name][pawn.id] = group.create(
-                    pawn.transform.position.x,
-                    pawn.transform.position.y,
-                    pawn.asset
-                );
+                _data[group.name][pawn.id] = new Hero(pawn, group);
             } else {
-                _data[group.name][pawn.id] = group.create(
-                    pawn.transform.position.x,
-                    pawn.transform.position.y,
-                    pawn.asset
-                );
+                _data[group.name][pawn.id] = new Pawn(pawn, group);
             }
-
         },
 
         remove: function (id) {
