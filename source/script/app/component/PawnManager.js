@@ -1,6 +1,14 @@
 'use strict';
 
-define(['phaser'], function (Phaser) {
+define([
+    'phaser',
+    'component/DataStore',
+    'component/Hero'
+], function (
+    Phaser,
+    DataStore,
+    Hero
+) {
     var _data = {};
 
     var PawnManager = {
@@ -14,11 +22,34 @@ define(['phaser'], function (Phaser) {
                 return existing;
             }
 
-            return _data[group.name][pawn.id] = group.create(
-                pawn.transform.position.x,
-                pawn.transform.position.y,
-                pawn.asset
-            );
+            var session = DataStore.get('session');
+            if (pawn.id == session) {
+                _data[group.name][pawn.id] = group.create(
+                    pawn.transform.position.x,
+                    pawn.transform.position.y,
+                    pawn.asset
+                );
+            } else {
+                _data[group.name][pawn.id] = group.create(
+                    pawn.transform.position.x,
+                    pawn.transform.position.y,
+                    pawn.asset
+                );
+            }
+
+        },
+
+        remove: function (id) {
+            Object.keys(_data).forEach(function (group) {
+                Object.keys(_data[group]).forEach(function (pawn, index) {
+                    if (pawn != id) {
+                        return;
+                    }
+
+                    _data[group][pawn].kill();
+                    delete _data[group][pawn];
+                });
+            });
         },
 
         getFromGroup: function (group, id) {

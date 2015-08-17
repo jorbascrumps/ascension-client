@@ -108,23 +108,10 @@ define([
             var self = this;
             Event.on('server.pawn.spawn', function (pawn) {
                 PawnManager.add(pawn, self._pawns);
-                // var session = DataStore.get('session');
-                // if (session == pawn.id) {
-                //     self._hero = new Hero(self.game, self._pawns, pawn);
-                // } else {
-                //     new Pawn(self.game, self._pawns, pawn);
-                // }
             }, true);
 
             Event.on('server.pawn.kill', function (data) {
-                self._pawns.children.forEach(function (pawn, index) {
-                    if (pawn._id == data.id) {
-                        self._pawns.getChildAt(index).kill();
-                        self._pawns.removeChildAt(index);
-
-                        return;
-                    }
-                });
+                PawnManager.remove(data.id);
             }, true);
 
             Event.on('server.pawn.movement', function (data) {
