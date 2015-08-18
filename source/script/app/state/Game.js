@@ -55,6 +55,8 @@ define([
             var player_type = URL.getParameter('type');
             if (player_type == 1) {
                 this._player = new HeroPlayer();
+            } else {
+                this._player = new OverlordPlayer();
             }
 
             this.stage.disableVisibilityChange = true;
