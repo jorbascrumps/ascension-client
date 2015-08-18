@@ -7,7 +7,8 @@ requirejs.config({
         io: 'socket.io/socket.io',
         state: '../app/state',
         component: '../app/component',
-        ui: '../app/ui'
+        ui: '../app/ui',
+        util: '../app/util'
     },
     shim: {
         'phaser': {
