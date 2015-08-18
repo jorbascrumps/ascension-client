@@ -45,12 +45,18 @@ define([
             this.game.stage.backgroundColor = 0x0e1718;
 
             this.load.image('nathan', 'image/pawn/nathan.png');
+            this.load.image('nega_nathan', 'image/pawn/nega_nathan.png');
             this.load.image('background', 'image/scene/star_field.png');
             this.load.tilemap('tilemap', 'data/map/source/collision_test.json', null, Phaser.Tilemap.TILED_JSON);
             this.load.image('map_image', 'image/tile/level01.png');
         },
 
         create: function () {
+            var player_type = URL.getParameter('type');
+            if (player_type == 1) {
+                this._player = new HeroPlayer();
+            }
+
             this.stage.disableVisibilityChange = true;
             this._cursors = this.game.input.keyboard.createCursorKeys();
 
@@ -95,15 +101,6 @@ define([
             this.line = new Phaser.Line();
 
             this._blocked_tiles = this.game.add.group();
-
-            var pos = (Math.floor(Math.random() * 6) + 3) * 50;
-            Event.emit('game.player.create', {
-                room: 1,
-                position: {
-                    x: 2 * 50,
-                    y: pos
-                }
-            }, true);
 
             var self = this;
             Event.on('server.pawn.spawn', function (pawn) {
