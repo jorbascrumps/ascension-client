@@ -1,9 +1,7 @@
 'use strict';
 
 define([], function () {
-    var _data = {
-        session: null
-    };
+    var _data = {};
 
     var DataStore = {
         get: function (key) {
@@ -11,10 +9,6 @@ define([], function () {
         },
 
         set: function (key, value) {
-            if (!_data.hasOwnProperty(key)) {
-                throw Error('Cannot set property [' + key + ']');
-            }
-
             return _data[key] = value;
         }
     };

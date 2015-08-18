@@ -1,6 +1,30 @@
 'use strict';
 
-define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'component/Pawn', 'component/Event', 'component/DataStore'], function (Phaser, Tile, Camera, Hero, Pawn, Event, DataStore) {
+define([
+    'phaser',
+    'component/Tile',
+    'component/Camera',
+    'component/Hero',
+    'component/Pawn',
+    'component/Event',
+    'component/DataStore',
+    'component/PawnManager',
+    'util/URL',
+    'component/player/Hero',
+    'component/player/Overlord'
+], function (
+    Phaser,
+    Tile,
+    Camera,
+    Hero,
+    Pawn,
+    Event,
+    DataStore,
+    PawnManager,
+    URL,
+    HeroPlayer,
+    OverlordPlayer
+) {
     function Game () {
         this._cursor_position;
         this._player;
@@ -21,12 +45,20 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             this.game.stage.backgroundColor = 0x0e1718;
 
             this.load.image('nathan', 'image/pawn/nathan.png');
+            this.load.image('nega_nathan', 'image/pawn/nega_nathan.png');
             this.load.image('background', 'image/scene/star_field.png');
             this.load.tilemap('tilemap', 'data/map/source/collision_test.json', null, Phaser.Tilemap.TILED_JSON);
             this.load.image('map_image', 'image/tile/level01.png');
         },
 
         create: function () {
+            var player_type = URL.getParameter('type');
+            if (player_type == 1) {
+                this._player = new HeroPlayer();
+            } else {
+                this._player = new OverlordPlayer();
+            }
+
             this.stage.disableVisibilityChange = true;
             this._cursors = this.game.input.keyboard.createCursorKeys();
 
@@ -64,7 +96,7 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
             this.collision_group = this.game.add.group();
             this.collisions = this.getCollisionSprites('collision', this.collision_group);
 
-            this._pawns = this.game.add.group();
+            this._pawns = this.game.add.group(null, 'pawns', true);
 
             this.map_tagged_tiles = this.tilemap.createLayer('tagged');
 
@@ -72,51 +104,18 @@ define(['phaser', 'component/Tile', 'component/Camera', 'component/Hero', 'compo
 
             this._blocked_tiles = this.game.add.group();
 
-            var pos = (Math.floor(Math.random() * 6) + 3) * 50;
-            Event.emit('game.player.create', {
-                room: 1,
-                position: {
-                    x: 2 * 50,
-                    y: pos
-                }
-            }, true);
-
             var self = this;
             Event.on('server.pawn.spawn', function (pawn) {
-                var children = self._pawns.children.filter(function (child) {
-                    return child._id == pawn.id;
-                });
-
-                if (children.length) {
-                    return;
-                }
-
-                var session = DataStore.get('session');
-                if (session == pawn.id) {
-                    self._hero = new Hero(self.game, self._pawns, pawn);
-                } else {
-                    new Pawn(self.game, self._pawns, pawn);
-                }
+                PawnManager.add(pawn, self._pawns);
             }, true);
 
             Event.on('server.pawn.kill', function (data) {
-                self._pawns.children.forEach(function (pawn, index) {
-                    if (pawn._id == data.id) {
-                        self._pawns.getChildAt(index).kill();
-                        self._pawns.removeChildAt(index);
-
-                        return;
-                    }
-                });
+                PawnManager.remove(data.id);
             }, true);
 
             Event.on('server.pawn.movement', function (data) {
-                self._pawns.children.forEach(function (pawn) {
-                    if (pawn._id == data.id) {
-                        pawn._moveTo(data.position, false);
-
-                        return;
-                    }
+                PawnManager.getByID(data.id).forEach(function (pawn) {
+                    pawn._moveTo(data.position, false);
                 });
             }, true);
 
