@@ -12,7 +12,7 @@ define([
     function Player () {
         Event.emit('game.player.create', {
             room: URL.getParameter('room')
-        });
+        }, true);
     }
 
     return Player;
