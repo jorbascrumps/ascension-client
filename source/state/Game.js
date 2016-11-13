@@ -30,9 +30,6 @@ export default class {
         const mapWidth = TILE_SIZE.WIDTH * 15 + 1;
         const mapHeight = TILE_SIZE.HEIGHT * 17 + 1;
 
-        const mapHorizontalOffset = mapWidth - window.innerWidth;
-        const mapVerticalOffset = mapHeight - window.innerHeight / 2;
-
         this.game.world.setBounds(
             0,
             0,
@@ -40,8 +37,6 @@ export default class {
             mapHeight
         );
         this.game.kineticScrolling.start();
-
-        console.log(this.game.camera);
 
         this._background = this.game.add.tileSprite(
             0,
