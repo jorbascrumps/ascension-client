@@ -3,8 +3,8 @@ import PreloadState from './state/Preload';
 import GameState from './state/Game';
 
 class Game extends Phaser.Game {
-    constructor (...args) {
-        super(...args);
+    constructor ({ width, height }) {
+        super(width, height, Phaser.AUTO, '');
     }
 
     start () {
@@ -16,5 +16,8 @@ class Game extends Phaser.Game {
     }
 }
 
-const game = new Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '');
+const game = new Game({
+    width: window.innerWidth,
+    height: window.innerHeight
+});
 game.start()
