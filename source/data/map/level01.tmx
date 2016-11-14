@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="10" tilewidth="50" tileheight="50" nextobjectid="1">
- <tileset firstgid="1" name="tile" tilewidth="50" tileheight="50" tilecount="16" columns="4">
-  <image source="../../../assets/tile/tile.png" width="200" height="200"/>
+ <tileset firstgid="1" name="level01" tilewidth="50" tileheight="50" tilecount="50" columns="10">
+  <image source="../../assets/tile/level01.png" width="500" height="250"/>
  </tileset>
  <layer name="map" width="15" height="10">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,1,2,3,4,0,0,0,0,0,0,0,0,0,0,
-0,5,6,7,8,0,0,0,0,0,0,0,0,0,0,
-0,9,10,11,12,0,0,0,0,0,0,0,0,0,0,
-0,13,14,15,16,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,1,2,3,4,0,0,0,0,0,0,0,0,0,
+0,0,11,12,13,14,0,0,0,0,0,0,0,0,0,
+0,0,21,22,23,24,0,0,0,0,0,0,0,0,0,
+0,0,31,32,33,34,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,6,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
 </map>
