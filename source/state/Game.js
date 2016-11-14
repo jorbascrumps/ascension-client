@@ -16,6 +16,9 @@ export default class {
 
         this.load.image('background', 'source/assets/scene/star_field.png');
 
+        this.game.load.tilemap('test', 'source/data/map/test.json', null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.image('map_image', 'source/assets/tile/tile.png');
+
         this.game.kineticScrolling = this.game.plugins.add(Phaser.Plugin.KineticScrolling);
         this.game.kineticScrolling.configure({
             kineticMovement: false,
@@ -27,31 +30,36 @@ export default class {
     }
 
     create () {
+        this.tilemap = this.game.add.tilemap('test');
+
         const mapWidth = TILE_SIZE.WIDTH * 15 + 1;
         const mapHeight = TILE_SIZE.HEIGHT * 17 + 1;
 
         this.game.world.setBounds(
             0,
             0,
-            mapWidth,
-            mapHeight
+            this.tilemap.widthInPixels + 1,
+            this.tilemap.heightInPixels + 1
         );
         this.game.kineticScrolling.start();
 
         this._background = this.game.add.tileSprite(
             0,
             0,
-            mapWidth,
-            mapHeight,
+            this.tilemap.widthInPixels + 1,
+            this.tilemap.heightInPixels + 1,
             'background'
         );
 
         this._grid = this.game.add.tileSprite(
             0,
             0,
-            mapWidth,
-            mapHeight,
+            this.tilemap.widthInPixels + 1,
+            this.tilemap.heightInPixels + 1,
             'grid'
         );
+
+        this.tilemap.addTilesetImage('tile', 'map_image', 50, 50);
+        this.map_layer = this.tilemap.createLayer('map');
     }
 }
