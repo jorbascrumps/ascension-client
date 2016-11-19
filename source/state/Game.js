@@ -1,9 +1,5 @@
-import Camera from '../components/Camera';
-
-const TILE_SIZE = {
-    HEIGHT: 50,
-    WIDTH: 50
-}
+import HeroPlayer from '../player/Hero';
+import Pawn from '../pawn/Pawn';
 
 export default class {
     preload () {
@@ -21,9 +17,6 @@ export default class {
 
     create () {
         this.tilemap = this.game.add.tilemap('level01');
-
-        const mapWidth = TILE_SIZE.WIDTH * 15 + 1;
-        const mapHeight = TILE_SIZE.HEIGHT * 17 + 1;
 
         this.game.world.setBounds(
             0,
@@ -48,8 +41,23 @@ export default class {
             this.tilemap.heightInPixels + 1,
             'grid'
         );
+        this._grid.tint = 0x7a7a7a;
 
         this.tilemap.addTilesetImage('level01', 'map_image', 50, 50);
         this.map_layer = this.tilemap.createLayer('map');
+
+        this.pawns = this.game.add.group(undefined, 'pawns');
+        new Pawn({
+            group: this.pawns,
+            asset: 'player_pawn',
+            position: {
+                x: 150,
+                y: 150
+            }
+        });
+    }
+
+    render () {
+        this.game.debug.cameraInfo(this.game.camera, 32, 32);
     }
 }
