@@ -16,6 +16,8 @@ export default class {
     }
 
     create () {
+        this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
         this.tilemap = this.game.add.tilemap('level01');
 
         this.game.world.setBounds(

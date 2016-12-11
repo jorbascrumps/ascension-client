@@ -21,10 +21,6 @@ export default class {
         this.load.onLoadComplete.add(() => this.ready = true);
     }
 
-    create () {
-        this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    }
-
     update () {
         if (!this.ready) {
             return;
