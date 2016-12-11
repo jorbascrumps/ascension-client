@@ -10,7 +10,7 @@ export default class extends Phaser.Sprite {
         };
 
         this.setupEvents();
-        this.spawnAdjacentThings();
+        this.traceAdjacentTiles();
     }
 
     setupEvents = () => {
@@ -26,7 +26,6 @@ export default class extends Phaser.Sprite {
 
     onInputDown = (tile, pointer) => {
         this.toggleAdjacentThings();
-        // this.traceAdjacentTiles();
 
         // const {
         //     position: {
@@ -64,23 +63,6 @@ export default class extends Phaser.Sprite {
         this.clearTrace();
     }
 
-    traceAdjacentTiles = () => {
-        this.tracing = true;
-
-        const positions = [
-            { x : this.position.x - 50, y: this.position.y + 50 }, // bottom left
-            { x : this.position.x - 50, y: this.position.y      }, // left
-            { x : this.position.x - 50, y: this.position.y - 50 }, // top left
-            { x : this.position.x,      y: this.position.y - 50 }, // top
-            { x : this.position.x + 50, y: this.position.y - 50 }, // top right
-            { x : this.position.x + 50, y: this.position.y      }, // right
-            { x : this.position.x + 50, y: this.position.y + 50 }, // bottom right
-            { x : this.position.x,      y: this.position.y + 50 }  // bottom
-        ];
-
-        positions.forEach(this.traceAtPosition);
-    }
-
     clearTrace = () => {
         this.tracing = false;
 
@@ -88,22 +70,7 @@ export default class extends Phaser.Sprite {
         this.tiles.collisions.removeChildren();
     }
 
-    traceAtPosition = ({ x, y } = {}) => {
-        const sprite = this.tiles.collisions.create(x, y);
-        sprite.valid = true;
-        sprite.height = 50;
-        sprite.width = 50;
-        sprite.inputEnabled = true;
-        this.tiles.collisions.add(sprite);
-
-        const overlay = this.game.add.graphics();
-        overlay.beginFill(0x00ff00, 0.5);
-        overlay.lineStyle(1, 0x00ff00, 1);
-        overlay.drawRect(x + 1, y + 1, 48, 48);
-        this.tiles.traces.addChild(overlay);
-    }
-
-    spawnAdjacentThings = () => {
+    traceAdjacentTiles = () => {
         const positions = [
             { x : this.position.x - 50, y: this.position.y + 50 }, // bottom left
             { x : this.position.x - 50, y: this.position.y      }, // left
@@ -115,10 +82,10 @@ export default class extends Phaser.Sprite {
             { x : this.position.x,      y: this.position.y + 50 }  // bottom
         ];
 
-        positions.forEach(this.spawnAdjacentThing);
+        positions.forEach(this.traceTileAtPosition);
     }
 
-    spawnAdjacentThing = ({ x, y, enabled = false } = {}) => {
+    traceTileAtPosition = ({ x, y, enabled = false } = {}) => {
         const sprite = this.tiles.collisions.create(x, y);
         sprite.valid = true;
         sprite.height = 50;
