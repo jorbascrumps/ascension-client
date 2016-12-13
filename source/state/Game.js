@@ -36,17 +36,25 @@ export default class {
             'background'
         );
 
-        this._grid = this.game.add.tileSprite(
+        this.grid = this.game.add.tileSprite(
             0,
             0,
             this.tilemap.widthInPixels + 1,
             this.tilemap.heightInPixels + 1,
             'grid'
         );
-        this._grid.tint = 0x7a7a7a;
+        this.grid.tint = 0x7a7a7a;
 
         this.tilemap.addTilesetImage('level01', 'map_image', 50, 50);
-        this.map_layer = this.tilemap.createLayer('map');
+        this.tilemap.setCollision([ 1 ]);
+
+        // Game layers
+        this.layers = {
+            map: this.tilemap.createLayer('map'),
+            blocked: this.tilemap.createLayer('blocked')
+        };
+
+        this.layers.blocked.enableBody = true;
 
         this.pawns = this.game.add.group(undefined, 'pawns');
         new Pawn({
