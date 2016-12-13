@@ -11,7 +11,8 @@ export default class {
             verticalScroll: true,
             horizontalScroll: true,
             verticalWheel: false,
-            horizontalWheel: false
+            horizontalWheel: false,
+            modifierKey: Phaser.Keyboard.SPACEBAR
         });
     }
 
