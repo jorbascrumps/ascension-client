@@ -1,6 +1,8 @@
 import path from 'path';
 import babel from 'rollup-plugin-babel';
-import resolve from 'rollup-plugin-resolve-aliases';
+import alias from 'rollup-plugin-resolve-aliases';
+import commonjs from 'rollup-plugin-commonjs';
+import resolve from 'rollup-plugin-node-resolve';
 
 const phaserPath = path.join(__dirname, 'node_modules/phaser');
 const phaser = path.join(phaserPath, 'build/custom/phaser-split.js');
@@ -12,7 +14,13 @@ export default {
     format: 'umd',
     plugins: [
         babel(),
+        commonjs(),
         resolve({
+            jsnext: true,
+            main: true,
+            browser: true
+        }),
+        alias({
             aliases: {
                 phaser,
                 'pixi.js': pixi,
