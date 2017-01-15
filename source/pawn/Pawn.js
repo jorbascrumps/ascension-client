@@ -13,6 +13,7 @@ export default class extends Phaser.Sprite {
         this.body.setSize(50, 50, 0, 0);
         this.body.moves = false;
 
+        this.attachToCursor = false;
         this.tracing = false;
         this.tiles = {
             traces: this.game.add.group(),
@@ -39,10 +40,24 @@ export default class extends Phaser.Sprite {
 
     onInputDown = (tile, pointer) => {
         this.toggleAdjacentThings();
+
+        this.attachToCursor = true;
     }
 
     onInputUp = () => {
         this.toggleAdjacentThings();
+
+        this.attachToCursor = false;
+
+        const snapPosition = snapCoordToGrid({
+            x: this.position.x,
+            y: this.position.y
+        });
+
+        this.position = {
+            ...this.position,
+            ...snapPosition
+        };
     }
 
     onInputOver = () => {}
@@ -104,7 +119,28 @@ export default class extends Phaser.Sprite {
         this.tiles.traces.removeChildren();
     }
 
-    update = () => {}
+    update = () => {
+        if (this.attachToCursor) {
+            const offsetX = this.width / 2;
+            const offsetY = this.height / 2;
+
+            const {
+                game: {
+                    input: {
+                        activePointer: {
+                            position: {
+                                x,
+                                y
+                            }
+                        }
+                    }
+                }
+            } = this;
+
+            this.position.x = x - offsetX;
+            this.position.y = y - offsetY;
+        }
+    }
 
     moveTo = ({ x, y }) => {
         const newPos = {
@@ -127,3 +163,20 @@ export default class extends Phaser.Sprite {
             });
     }
 }
+
+const snapCoordToGrid = ({
+    x = 0,
+    y = 0
+} = {}) => {
+    const xAdjust = x % 50;
+    const yAdjust = y % 50;
+
+    return {
+        x: xAdjust <= 25
+            ?   x - xAdjust
+            :   x + (50 % xAdjust),
+        y: yAdjust <= 25
+            ?   y - yAdjust
+            :   y + (50 % yAdjust)
+    };
+};
