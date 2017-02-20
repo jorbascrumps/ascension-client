@@ -17,15 +17,17 @@ export default class Pathfinder {
             }
         } = state.getCurrentState();
 
-        const mapData = layers.find(layer => layer.name === 'map');
-        const blockedData = layers.find(layer => layer.name === 'blocked');
+        const mapLayer = layers
+            .find(layer => layer.name === 'map');
+        const blockedLayer = layers
+            .find(layer => layer.name === 'blocked');
 
-        const mapGrid = mapData.data
-            .map((_, c) => mapData.data
+        const mapGrid = mapLayer.data
+            .map((_, c) => mapLayer.data
                 .map(r => Number(r[c].index > -1))
             );
-        const blockedGrid = blockedData.data
-            .map((_, c) => blockedData.data
+        const blockedGrid = blockedLayer.data
+            .map((_, c) => blockedLayer.data
                 .map((r, i) => Number(r[c].index <= 0) && Number(mapGrid[c][i] === 1))
             );
 
