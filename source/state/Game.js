@@ -1,5 +1,6 @@
 import HeroPlayer from '../player/Hero';
 import Pawn from '../pawn/Pawn';
+import Pathfinder from '../components/Pathfinder';
 
 export default class {
     preload () {
@@ -56,6 +57,10 @@ export default class {
         };
 
         this.layers.blocked.enableBody = true;
+
+        this.Pathfinder = new Pathfinder({
+            game: this.game
+        });
 
         this.pawns = this.game.add.group(undefined, 'pawns');
         new Pawn({
