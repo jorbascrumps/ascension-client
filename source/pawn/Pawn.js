@@ -17,7 +17,9 @@ export default class extends Phaser.Sprite {
         this.tracing = false;
         this.tiles = {
             traces: this.game.add.group(),
-            collisions: this.game.add.group()
+            collisions: this.game.add.group(),
+            path: [],
+            drawPath: this.game.add.group()
         };
 
         this.setupEvents();
@@ -34,6 +36,9 @@ export default class extends Phaser.Sprite {
         this.events.onInputOver.add(this.onInputOver);
         this.events.onInputOut.add(this.onInputOut);
         this.events.onKilled.add(this.onDeath);
+
+        this.game.input.onDown.add(this.calculatePath);
+        this.game.input.onUp.add(this.clearPath);
 
         Event.on(UPDATE_PAWN_POSITION, this.moveTo);
     }
@@ -92,7 +97,12 @@ export default class extends Phaser.Sprite {
         positions.forEach(this.traceTileAtPosition);
     }
 
-    traceTileAtPosition = ({ x, y, enabled = false } = {}) => {
+    traceTileAtPosition = ({
+        x,
+        y,
+        enabled = false,
+        group = null
+    } = {}) => {
         const sprite = this.tiles.collisions.create(x, y);
         sprite.valid = true;
         sprite.height = 50;
@@ -105,9 +115,9 @@ export default class extends Phaser.Sprite {
         overlay.beginFill(0x00ff00, 0.5);
         overlay.lineStyle(1, 0x00ff00, 1);
         overlay.drawRect(x + 1, y + 1, 48, 48);
-        overlay.exists = false;
+        overlay.exists = enabled;
         overlay.autoCull = true;
-        this.tiles.traces.addChild(overlay);
+        (group || this.tiles.traces).addChild(overlay);
     }
 
     toggleAdjacentThings = () =>  {
@@ -161,6 +171,38 @@ export default class extends Phaser.Sprite {
             .onComplete.add((pawn, tween) => {
                 this.traceAdjacentTiles();
             });
+    }
+
+    tracePath = () => this.tiles.path
+        .forEach(({ x, y}) => this.traceTileAtPosition({
+            x: x * 50 - 1,
+            y: y * 50 - 1,
+            enabled: true,
+            group: this.tiles.drawPath
+        }))
+
+    clearPath = () => this.tiles.drawPath.removeChildren()
+
+    calculatePath = () => {
+        const {
+            game: {
+                input: {
+                    activePointer: mouse
+                },
+                state
+            },
+            position
+        } = this;
+        const {
+            Pathfinder
+        } = state.getCurrentState();
+
+        this.tiles.path = Pathfinder.calculatePath({
+            start: position,
+            end: mouse
+        });
+
+        this.tracePath();
     }
 }
 
