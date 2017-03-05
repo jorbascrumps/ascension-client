@@ -63,6 +63,7 @@ export default class extends Phaser.Sprite {
             ...this.position,
             ...snapPosition
         };
+        this.traceAdjacentTiles();
     }
 
     onInputOver = () => {}
