@@ -195,8 +195,8 @@ export default class extends Phaser.Sprite {
 
     tracePath = () => this.tiles.path
         .forEach(({ x, y}) => this.traceTileAtPosition({
-            x: x * 50 - 1,
-            y: y * 50 - 1,
+            x: x * 50,
+            y: y * 50,
             enabled: true,
             group: this.tiles.drawPath
         }))
