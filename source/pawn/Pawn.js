@@ -81,6 +81,15 @@ export default class extends Phaser.Sprite {
     }
 
     traceAdjacentTiles = () => {
+        const {
+            game: {
+                state
+            }
+        } = this;
+        const {
+            Pathfinder
+        } = state.getCurrentState();
+
         this.clearAdjacentTiles();
 
         const positions = [
@@ -94,15 +103,26 @@ export default class extends Phaser.Sprite {
             { x : this.position.x,      y: this.position.y + 50 }  // bottom
         ];
 
-        positions.forEach(this.traceTileAtPosition);
+        positions
+            .map(tile => ({
+                ...tile,
+                blocked: !Pathfinder.checkBlockedTile({
+                    x: tile.x,
+                    y: tile.y
+                })
+            }))
+            .forEach(this.traceTileAtPosition);
     }
 
     traceTileAtPosition = ({
         x,
         y,
         enabled = false,
+        blocked = false,
         group = null
     } = {}) => {
+        const fillColour = blocked ? 0xff0000 : 0x00ff00;
+
         const sprite = this.tiles.collisions.create(x, y);
         sprite.valid = true;
         sprite.height = 50;
@@ -112,17 +132,16 @@ export default class extends Phaser.Sprite {
         this.tiles.collisions.add(sprite);
 
         const overlay = this.game.add.graphics();
-        overlay.beginFill(0x00ff00, 0.5);
-        overlay.lineStyle(1, 0x00ff00, 1);
+        overlay.beginFill(fillColour, 0.5);
+        overlay.lineStyle(1, fillColour, 1);
         overlay.drawRect(x + 1, y + 1, 48, 48);
         overlay.exists = enabled;
         overlay.autoCull = true;
         (group || this.tiles.traces).addChild(overlay);
     }
 
-    toggleAdjacentThings = () =>  {
-        this.tiles.traces.forEach(thing => thing.exists = !thing.exists);
-    }
+    toggleAdjacentThings = () => this.tiles.traces
+        .forEach(thing => thing.exists = !thing.exists);
 
     clearAdjacentTiles = () => {
         this.tiles.collisions.removeChildren();
