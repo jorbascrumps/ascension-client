@@ -20,7 +20,7 @@ export default class {
     create () {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        this.tilemap = this.game.add.tilemap('level01');
+        this.tilemap = this.game.add.tilemap('level02');
 
         this.game.world.setBounds(
             0,
@@ -28,7 +28,7 @@ export default class {
             this.tilemap.widthInPixels + 1,
             this.tilemap.heightInPixels + 1
         );
-        this.game.kineticScrolling.start();
+        // this.game.kineticScrolling.start();
 
         this._background = this.game.add.tileSprite(
             0,
@@ -47,7 +47,7 @@ export default class {
         );
         this.grid.tint = 0x7a7a7a;
 
-        this.tilemap.addTilesetImage('level01', 'map_image', 50, 50);
+        this.tilemap.addTilesetImage('level02', 'map_image', 50, 50);
         this.tilemap.setCollision([ 1 ]);
 
         // Game layers
@@ -67,8 +67,8 @@ export default class {
             group: this.pawns,
             asset: 'player_pawn',
             position: {
-                x: 150,
-                y: 150
+                x: 100,
+                y: 100
             }
         });
     }

@@ -15,7 +15,7 @@ export default class {
 
         this.load.image('background', 'source/assets/scene/star_field.png');
         this.load.image('player_pawn', 'source/assets/pawn/nathan.png');
-        this.game.load.tilemap('level01', 'source/data/map/level01.json', null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.tilemap('level02', 'source/data/map/level02.json', null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image('map_image', 'source/assets/tile/level01.png');
 
         this.load.onLoadComplete.add(() => this.ready = true);
