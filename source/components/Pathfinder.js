@@ -45,4 +45,11 @@ export default class Pathfinder {
 
         return astar.search(this.graph, startNode, endNode);
     }
+
+    checkBlockedTile = ({ x, y}) => {
+        const row = Math.floor(x / 50);
+        const col = Math.floor(y / 50);
+
+        return Boolean(this.blocked[row][col]);
+    }
 }
