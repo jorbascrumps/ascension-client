@@ -133,9 +133,9 @@ export default class extends Phaser.Sprite {
         this.tiles.collisions.add(sprite);
 
         const overlay = this.game.add.graphics();
-        overlay.beginFill(fillColour, 0.5);
-        overlay.lineStyle(1, fillColour, 1);
-        overlay.drawRect(x + 1, y + 1, 48, 48);
+        overlay.beginFill(fillColour, 0.25);
+        overlay.lineStyle(2, fillColour, 1);
+        overlay.drawRect(x + 2, y + 2, 46, 46);
         overlay.exists = enabled;
         overlay.autoCull = true;
         (group || this.tiles.traces).addChild(overlay);
