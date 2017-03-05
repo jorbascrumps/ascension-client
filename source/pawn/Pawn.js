@@ -88,7 +88,9 @@ export default class extends Phaser.Sprite {
             }
         } = this;
         const {
-            Pathfinder
+            Pathfinder: {
+                isBlockedTile
+            }
         } = state.getCurrentState();
 
         this.clearAdjacentTiles();
@@ -107,7 +109,7 @@ export default class extends Phaser.Sprite {
         positions
             .map(tile => ({
                 ...tile,
-                blocked: !Pathfinder.checkBlockedTile({
+                blocked: isBlockedTile({
                     x: tile.x,
                     y: tile.y
                 })
