@@ -7,7 +7,7 @@ export default class {
     preload () {
         this.loader = this.add.sprite(0, 0, 'loader');
 
-        const gridData = 'data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAAGUExURf///////1V89WwAAAACdFJOU/8A5bcwSgAAACZJREFUeNrsy6EBAAAIA6D5/9PeMIsFOsnBtBRFURRFUZTfsgIMAM7aCWItTDiIAAAAAElFTkSuQmCC';
+        const gridData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAYklEQVRoQ+3RIQ6AQBAEQY7w/y8vFkOwfaRKrRjT2TUzc/zA+TXYxfW41+tqA7/5iJAaITVCaoTUCKkRUiOkRkiNkBohNUJqhNQIqRFSI6RGSI2QGiE1QmqE1AipEVIjpOYGrcgEY9lLRGgAAAAASUVORK5CYII=';
         const background = new Image();
 
         background.src = gridData;

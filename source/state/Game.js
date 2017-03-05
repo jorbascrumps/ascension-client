@@ -38,15 +38,6 @@ export default class {
             'background'
         );
 
-        this.grid = this.game.add.tileSprite(
-            0,
-            0,
-            this.tilemap.widthInPixels + 1,
-            this.tilemap.heightInPixels + 1,
-            'grid'
-        );
-        this.grid.tint = 0x7a7a7a;
-
         this.tilemap.addTilesetImage('level02', 'map_image', 50, 50);
         this.tilemap.setCollision([ 1 ]);
 
@@ -55,6 +46,15 @@ export default class {
             map: this.tilemap.createLayer('map'),
             blocked: this.tilemap.createLayer('blocked')
         };
+
+        this.grid = this.game.add.tileSprite(
+            -1,
+            -1,
+            this.tilemap.widthInPixels + 1,
+            this.tilemap.heightInPixels + 1,
+            'grid'
+        );
+        this.grid.tint = 0x7a7a7a;
 
         this.layers.blocked.enableBody = true;
 
