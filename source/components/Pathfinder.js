@@ -1,6 +1,8 @@
 export default class Pathfinder {
     constructor ({ game } = {}) {
         this.game = game;
+        this.graph;
+        this.blocked;
 
         this.setupGrid();
     }
@@ -31,8 +33,9 @@ export default class Pathfinder {
                 .map((r, i) => Number(r[c].index <= 0) && Number(mapGrid[c][i] === 1))
             );
 
+        this.blocked = blockedGrid;
         this.graph = new Graph(blockedGrid, {
-            diagonal: true
+            diagonal: astar.DIAGONAL_MODE.ONE_OBSTACLE
         });
     }
 
@@ -40,8 +43,6 @@ export default class Pathfinder {
         const startNode = this.graph.grid[Math.floor(start.x / 50)][Math.floor(start.y / 50)];
         const endNode = this.graph.grid[Math.floor(end.x / 50)][Math.floor(end.y / 50)];
 
-        return astar.search(this.graph, startNode, endNode, {
-            closest: true
-        });
+        return astar.search(this.graph, startNode, endNode);
     }
 }
