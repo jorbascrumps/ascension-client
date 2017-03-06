@@ -46,10 +46,25 @@ export default class Pathfinder {
         return astar.search(this.graph, startNode, endNode);
     }
 
-    isBlockedTile = ({ x, y}) => {
+    isBlockedTile = ({ x, y }) => {
         const row = Math.floor(x / 50);
         const col = Math.floor(y / 50);
 
         return !Boolean(this.blocked[row][col]);
+    }
+
+    canPathToTile = ({ start, end }) => {
+        const isBlocked = this.isBlockedTile(end);
+
+        if (isBlocked) {
+            return false;
+        }
+
+        const pathToTile = this.calculatePath({
+            start,
+            end
+        });
+
+        return pathToTile.length === 1;
     }
 }
