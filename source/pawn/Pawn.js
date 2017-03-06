@@ -63,7 +63,7 @@ export default class extends Phaser.Sprite {
         } = this;
         const {
             Pathfinder: {
-                isBlockedTile
+                canPathToTile
             }
         } = state.getCurrentState();
         const snapPosition = snapCoordToGrid({
@@ -71,11 +71,14 @@ export default class extends Phaser.Sprite {
             y: this.position.y
         });
         const targetPosition = new Phaser.Point(snapPosition.x, snapPosition.y);
-        const isBlocked = isBlockedTile(snapPosition);
+        const canPath = canPathToTile({
+            start: this.cache.position,
+            end: snapPosition
+        });
         const isAdajcentTile = this.tiles.collisions.children
             .find(({ position: { x, y } }) => x === targetPosition.x && y === targetPosition.y);
 
-        if (isAdajcentTile && !isBlocked) {
+        if (isAdajcentTile && canPath) {
             this.position = isAdajcentTile.position;
         } else {
             this.position = this.cache.position;
@@ -109,7 +112,7 @@ export default class extends Phaser.Sprite {
         } = this;
         const {
             Pathfinder: {
-                isBlockedTile
+                canPathToTile
             }
         } = state.getCurrentState();
 
@@ -129,9 +132,9 @@ export default class extends Phaser.Sprite {
         positions
             .map(tile => ({
                 ...tile,
-                blocked: isBlockedTile({
-                    x: tile.x,
-                    y: tile.y
+                blocked: !canPathToTile({
+                    start: this.position,
+                    end: tile
                 })
             }))
             .forEach(this.traceTileAtPosition);
