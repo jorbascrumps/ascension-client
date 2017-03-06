@@ -24,6 +24,7 @@ export default class extends Phaser.Sprite {
             path: [],
             drawPath: this.game.add.group()
         };
+        this.game.world.moveDown(this.tiles.traces);
 
         this.setupEvents();
         this.traceAdjacentTiles();
