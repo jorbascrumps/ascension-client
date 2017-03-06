@@ -15,6 +15,9 @@ export default class extends Phaser.Sprite {
 
         this.attachToCursor = false;
         this.tracing = false;
+        this.cache = {
+            position: null
+        };
         this.tiles = {
             traces: this.game.add.group(),
             collisions: this.game.add.group(),
@@ -47,22 +50,39 @@ export default class extends Phaser.Sprite {
         this.toggleAdjacentThings();
 
         this.attachToCursor = true;
+        this.cache.position = {
+            ...this.position
+        };
     }
 
     onInputUp = () => {
-        this.toggleAdjacentThings();
-
-        this.attachToCursor = false;
-
+        const {
+            game: {
+                state
+            }
+        } = this;
+        const {
+            Pathfinder: {
+                isBlockedTile
+            }
+        } = state.getCurrentState();
         const snapPosition = snapCoordToGrid({
             x: this.position.x,
             y: this.position.y
         });
+        const targetPosition = new Phaser.Point(snapPosition.x, snapPosition.y);
+        const isBlocked = isBlockedTile(snapPosition);
+        const isAdajcentTile = this.tiles.collisions.children
+            .find(({ position: { x, y } }) => x === targetPosition.x && y === targetPosition.y);
 
-        this.position = {
-            ...this.position,
-            ...snapPosition
-        };
+        if (isAdajcentTile && !isBlocked) {
+            this.position = isAdajcentTile.position;
+        } else {
+            this.position = this.cache.position;
+        }
+
+        this.attachToCursor = false;
+        this.toggleAdjacentThings();
         this.traceAdjacentTiles();
     }
 
