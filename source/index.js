@@ -4,7 +4,7 @@ import GameState from './state/Game';
 
 class Game extends Phaser.Game {
     constructor ({ width, height }) {
-        super(width, height, Phaser.AUTO, '');
+        super(width, height, Phaser.AUTO, 'client');
     }
 
     start () {
