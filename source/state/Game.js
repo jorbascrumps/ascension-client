@@ -54,7 +54,7 @@ export default class {
             this.tilemap.heightInPixels + 1,
             'grid'
         );
-        this.grid.tint = 0x7a7a7a;
+        this.grid.tint = 0x1e1e1e;
 
         this.layers.blocked.enableBody = true;
 
