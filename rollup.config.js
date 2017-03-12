@@ -3,6 +3,7 @@ import babel from 'rollup-plugin-babel';
 import alias from 'rollup-plugin-resolve-aliases';
 import commonjs from 'rollup-plugin-commonjs';
 import resolve from 'rollup-plugin-node-resolve';
+import replace from 'rollup-plugin-replace';
 
 const phaserPath = path.join(__dirname, 'node_modules/phaser');
 const phaser = path.join(phaserPath, 'build/custom/phaser-split.js');
@@ -26,6 +27,9 @@ export default {
                 'pixi.js': pixi,
                 p2
             }
+        }),
+        replace({
+            'process.env.NODE_ENV': JSON.stringify('development')
         })
     ],
     dest: 'bundle.js'
