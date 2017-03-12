@@ -8,6 +8,17 @@ export default class extends Phaser.Sprite {
         super(group.game, position.x, position.y, asset);
         group.add(this);
 
+        const {
+            game: {
+                state
+            }
+        } = this;
+        const {
+            store
+        } = state.getCurrentState();
+
+        this.id = Date.now();
+
         // Physics settings
         this.game.physics.arcade.enable(this);
         this.body.setSize(50, 50, 0, 0);
@@ -28,6 +39,23 @@ export default class extends Phaser.Sprite {
 
         this.setupEvents();
         this.traceAdjacentTiles();
+
+        store.subscribe(() => {
+            const {
+                pawns: {
+                    [this.id]: pawn
+                } = {}
+            } = store.getState();
+        });
+
+        store.dispatch({
+            type: 'PAWN_REGISTER',
+            id: this.id,
+            position: {
+                x: this.position.x + 50,
+                y: this.position.y + 50
+            }
+        });
     }
 
     setupEvents = () => {
