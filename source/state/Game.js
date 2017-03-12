@@ -1,6 +1,7 @@
 import HeroPlayer from '../player/Hero';
 import Pawn from '../pawn/Pawn';
 import Pathfinder from '../components/Pathfinder';
+import configureStore from '../store';
 
 export default class {
     preload () {
@@ -57,6 +58,8 @@ export default class {
         this.grid.tint = 0x1e1e1e;
 
         this.layers.blocked.enableBody = true;
+
+        this.store = configureStore();
 
         this.Pathfinder = new Pathfinder({
             game: this.game
