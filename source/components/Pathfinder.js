@@ -50,6 +50,10 @@ export default class Pathfinder {
         const row = Math.floor(x / 50);
         const col = Math.floor(y / 50);
 
+        if (typeof this.blocked[row] === 'undefined') {
+            return true;
+        }
+
         return !Boolean(this.blocked[row][col]);
     }
 
