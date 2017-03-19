@@ -21,7 +21,7 @@ export default class {
     create () {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        this.tilemap = this.game.add.tilemap('level02');
+        this.tilemap = this.game.add.tilemap('level');
 
         this.game.world.setBounds(
             0,
@@ -39,7 +39,7 @@ export default class {
             'background'
         );
 
-        this.tilemap.addTilesetImage('level02', 'map_image', 50, 50);
+        this.tilemap.addTilesetImage('level01', 'map_image', 50, 50);
         this.tilemap.setCollision([ 1 ]);
 
         // Game layers
