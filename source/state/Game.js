@@ -85,7 +85,8 @@ export default class {
 
         this.illuminator = new Illuminator({
             game: this.game,
-            blocked: this.blockedTiles
+            blocked: this.blockedTiles,
+            pawns: this.pawns
         });
     }
 

@@ -1,10 +1,12 @@
 export default class Illuminator {
     constructor ({
         game,
-        blocked
+        blocked,
+        pawns
     } = {}) {
         this.game = game;
         this.blocked = blocked;
+        this.pawns = pawns;
 
         this.shadowColour = 'rgb(100, 100, 100)';
         this.lightColour = 'rgb(255, 255, 255)';
@@ -32,6 +34,16 @@ export default class Illuminator {
             x: target.x,
             y: target.y
         };
+
+        this.pawns.forEach(pawn => {
+            const x = pawn.x + (pawn.width / 2);
+            const y = pawn.y + (pawn.height / 2);
+            const ray = new Phaser.Line(x, y, _target.x, _target.y);
+            const isHidden = !Boolean(this.getTileIntersection(ray));
+
+            this.game.add.tween(pawn)
+                .to({ alpha: Number(isHidden) }, 75, Phaser.Easing.Linear.None, true, 0, 1000, true);
+        });
 
         this.fogOfWar.context.fillStyle = this.shadowColour;
         this.fogOfWar.context.fillRect(0, 0, this.game.width, this.game.height);
