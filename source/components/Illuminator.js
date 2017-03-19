@@ -11,16 +11,16 @@ export default class Illuminator {
 
         this.setupEvents();
 
-        this.bitmap = this.game.add.bitmapData(this.game.width, this.game.height);
-        this.bitmap.context.fillStyle = this.lightColour;
-        this.bitmap.context.strokeStyle = this.lightColour;
+        this.fogOfWar = this.game.add.bitmapData(this.game.width, this.game.height);
+        this.fogOfWar.context.fillStyle = this.lightColour;
+        this.fogOfWar.context.strokeStyle = this.lightColour;
 
-        const lightBitmap = this.game.add.image(0, 0, this.bitmap);
+        const lightBitmap = this.game.add.image(0, 0, this.fogOfWar);
         lightBitmap.blendMode = Phaser.blendModes.MULTIPLY;
 
-        this.rayBitmap = this.game.add.bitmapData(this.game.width, this.game.height);
-        this.rayBitmapImage = this.game.add.image(0, 0, this.rayBitmap);
-        this.rayBitmapImage.visible = false;
+        this.rayCast = this.game.add.bitmapData(this.game.width, this.game.height);
+        this.rayCastImage = this.game.add.image(0, 0, this.rayCast);
+        this.rayCastImage.visible = false;
     }
 
     setupEvents = () => {
@@ -33,8 +33,8 @@ export default class Illuminator {
             y: target.y
         };
 
-        this.bitmap.context.fillStyle = this.shadowColour;
-        this.bitmap.context.fillRect(0, 0, this.game.width, this.game.height);
+        this.fogOfWar.context.fillStyle = this.shadowColour;
+        this.fogOfWar.context.fillRect(0, 0, this.game.width, this.game.height);
 
         const stageCorners = [
             new Phaser.Point(0, 0),
@@ -142,27 +142,27 @@ export default class Illuminator {
                 y: _target.y
             }));
 
-        this.bitmap.context.beginPath();
-        this.bitmap.context.fillStyle = this.lightColour;
-        this.bitmap.context.moveTo(points[0].x, points[0].y);
-        points.forEach(point => this.bitmap.context.lineTo(point.x, point.y));
-        this.bitmap.context.closePath();
-        this.bitmap.context.fill();
+        this.fogOfWar.context.beginPath();
+        this.fogOfWar.context.fillStyle = this.lightColour;
+        this.fogOfWar.context.moveTo(points[0].x, points[0].y);
+        points.forEach(point => this.fogOfWar.context.lineTo(point.x, point.y));
+        this.fogOfWar.context.closePath();
+        this.fogOfWar.context.fill();
 
-        this.rayBitmap.context.clearRect(0, 0, this.game.width, this.game.height);
-        this.rayBitmap.context.beginPath();
-        this.rayBitmap.context.strokeStyle = this.lightColour;
-        this.rayBitmap.context.fillStyle = this.lightColour;
-        this.rayBitmap.context.moveTo(points[0].x, points[0].y);
+        this.rayCast.context.clearRect(0, 0, this.game.width, this.game.height);
+        this.rayCast.context.beginPath();
+        this.rayCast.context.strokeStyle = this.lightColour;
+        this.rayCast.context.fillStyle = this.lightColour;
+        this.rayCast.context.moveTo(points[0].x, points[0].y);
         points.forEach(point => {
-            this.rayBitmap.context.moveTo(_target.x, _target.y);
-            this.rayBitmap.context.lineTo(point.x, point.y);
-            this.rayBitmap.context.fillRect(point.x - 2, point.y - 2, 4, 4);
+            this.rayCast.context.moveTo(_target.x, _target.y);
+            this.rayCast.context.lineTo(point.x, point.y);
+            this.rayCast.context.fillRect(point.x - 2, point.y - 2, 4, 4);
         });
-        this.rayBitmap.context.stroke();
+        this.rayCast.context.stroke();
 
-        this.rayBitmap.dirty = true;
-        this.bitmap.dirty = true;
+        this.rayCast.dirty = true;
+        this.fogOfWar.dirty = true;
     }
 
     getTileIntersection = ray => {
@@ -197,7 +197,7 @@ export default class Illuminator {
     }
 
     toggleRays = () => {
-        this.rayBitmapImage.visible = !this.rayBitmapImage.visible;
+        this.rayCastImage.visible = !this.rayCastImage.visible;
     }
 }
 
