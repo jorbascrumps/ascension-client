@@ -1,6 +1,7 @@
 import HeroPlayer from '../player/Hero';
 import Pawn from '../pawn/Pawn';
 import Pathfinder from '../components/Pathfinder';
+import Illuminator from '../components/Illuminator';
 import configureStore from '../store';
 
 export default class {
@@ -21,7 +22,7 @@ export default class {
     create () {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        this.tilemap = this.game.add.tilemap('level02');
+        this.tilemap = this.game.add.tilemap('level');
 
         this.game.world.setBounds(
             0,
@@ -39,7 +40,7 @@ export default class {
             'background'
         );
 
-        this.tilemap.addTilesetImage('level02', 'map_image', 50, 50);
+        this.tilemap.addTilesetImage('level01', 'map_image', 50, 50);
         this.tilemap.setCollision([ 1 ]);
 
         // Game layers
@@ -74,9 +75,70 @@ export default class {
                 y: 100
             }
         });
+
+        this.blockedTiles = this.game.add.group();
+        getLayerObjects({
+            layer: 'blocked',
+            map: this.tilemap
+        })
+            .map(element => createFromObject(element, this.blockedTiles));
+
+        this.illuminator = new Illuminator({
+            game: this.game,
+            blocked: this.blockedTiles,
+            pawns: this.pawns
+        });
     }
 
     render () {
         this.game.debug.cameraInfo(this.game.camera, 32, 32);
     }
+
+    update = () => {
+        const target = this.pawns.children[0];
+        this.illuminator.update({
+            target: {
+                x: target.position.x + (target.width / 2),
+                y: target.position.y + (target.height / 2)
+            }
+        });
+    }
+}
+
+function getLayerObjects ({
+    type,
+    layer,
+    map
+} = {}) {
+    const {
+        objects: {
+            [layer]: searchLayer
+        }
+    } = map;
+
+    if (typeof type === 'undefined') {
+        return searchLayer;
+    }
+
+    return searchLayer
+        .reduce((cache, element) => {
+            if (element.type === type) {
+                return [
+                    ...cache,
+                    element
+                ];
+            }
+
+            return cache;
+        }, []);
+}
+
+function createFromObject (tile, group) {
+    const sprite = group.create(tile.x, tile.y, tile.properties.sprite);
+    sprite.alpha = 0;
+
+    Object.keys(tile)
+        .forEach(key => sprite[key] = tile[key]);
+
+    return sprite;
 }
