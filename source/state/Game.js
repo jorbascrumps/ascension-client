@@ -94,8 +94,12 @@ export default class {
     }
 
     update = () => {
+        const target = this.pawns.children[0];
         this.illuminator.update({
-            target: this.game.input.activePointer
+            target: {
+                x: target.position.x + (target.width / 2),
+                y: target.position.y + (target.height / 2)
+            }
         });
     }
 }
