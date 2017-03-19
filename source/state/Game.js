@@ -1,6 +1,7 @@
 import HeroPlayer from '../player/Hero';
 import Pawn from '../pawn/Pawn';
 import Pathfinder from '../components/Pathfinder';
+import Illuminator from '../components/Illuminator';
 import configureStore from '../store';
 
 export default class {
@@ -74,9 +75,26 @@ export default class {
                 y: 100
             }
         });
+
+        this.blockedTiles = this.game.add.group();
+        this.tilemap.objects.blocked = this.tilemap.objects.blocked.map(tile => ({
+            ...tile,
+            id: 1
+        }));
+        this.tilemap.createFromObjects('blocked', 1, 'blockedTile', 0, true, false, this.blockedTiles);
+        this.illuminator = new Illuminator({
+            game: this.game,
+            blocked: this.blockedTiles
+        });
     }
 
     render () {
         this.game.debug.cameraInfo(this.game.camera, 32, 32);
+    }
+
+    update = () => {
+        this.illuminator.update({
+            target: this.game.input.activePointer
+        });
     }
 }
