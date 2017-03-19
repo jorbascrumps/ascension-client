@@ -77,11 +77,12 @@ export default class {
         });
 
         this.blockedTiles = this.game.add.group();
-        this.tilemap.objects.blocked = this.tilemap.objects.blocked.map(tile => ({
-            ...tile,
-            id: 1
-        }));
-        this.tilemap.createFromObjects('blocked', 1, 'blockedTile', 0, true, false, this.blockedTiles);
+        getLayerObjects({
+            layer: 'blocked',
+            map: this.tilemap
+        })
+            .map(element => createFromObject(element, this.blockedTiles));
+
         this.illuminator = new Illuminator({
             game: this.game,
             blocked: this.blockedTiles
@@ -97,4 +98,42 @@ export default class {
             target: this.game.input.activePointer
         });
     }
+}
+
+function getLayerObjects ({
+    type,
+    layer,
+    map
+} = {}) {
+    const {
+        objects: {
+            [layer]: searchLayer
+        }
+    } = map;
+
+    if (typeof type === 'undefined') {
+        return searchLayer;
+    }
+
+    return searchLayer
+        .reduce((cache, element) => {
+            if (element.type === type) {
+                return [
+                    ...cache,
+                    element
+                ];
+            }
+
+            return cache;
+        }, []);
+}
+
+function createFromObject (tile, group) {
+    const sprite = group.create(tile.x, tile.y, tile.properties.sprite);
+    sprite.alpha = 0;
+
+    Object.keys(tile)
+        .forEach(key => sprite[key] = tile[key]);
+
+    return sprite;
 }
