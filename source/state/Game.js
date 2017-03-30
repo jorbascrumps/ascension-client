@@ -2,7 +2,6 @@ import HeroPlayer from '../player/Hero';
 import Pawn from '../pawn/Pawn';
 import Pathfinder from '../components/Pathfinder';
 import Illuminator from '../components/Illuminator';
-import configureStore from '../store';
 
 export default class {
     preload () {
@@ -60,7 +59,7 @@ export default class {
 
         this.layers.blocked.enableBody = true;
 
-        this.store = configureStore();
+        this.store = window.AscensionStore;
 
         this.Pathfinder = new Pathfinder({
             game: this.game
