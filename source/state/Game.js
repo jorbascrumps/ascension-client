@@ -1,3 +1,5 @@
+import querystring from 'querystring';
+
 import HeroPlayer from '../player/Hero';
 import Pawn from '../pawn/Pawn';
 import Pathfinder from '../components/Pathfinder';
@@ -65,13 +67,18 @@ export default class {
             game: this.game
         });
 
+        const {
+            x,
+            y
+        } = querystring.parse(window.location.search.substr(1));
+
         this.pawns = this.game.add.group(undefined, 'pawns');
         new Pawn({
             group: this.pawns,
             asset: 'player_pawn',
             position: {
-                x: 100,
-                y: 100
+                x: parseInt(x, 10),
+                y: parseInt(y, 10)
             }
         });
 
