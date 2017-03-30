@@ -94,10 +94,41 @@ export default class {
             blocked: this.blockedTiles,
             pawns: this.pawns
         });
+
+        this.syncPawns();
+        this.store.subscribe(this.syncPawns);
     }
 
     render () {
         this.game.debug.cameraInfo(this.game.camera, 32, 32);
+    }
+
+    syncPawns = () => {
+        const {
+            pawn
+        } = this.store.getState();
+
+        const newIds = Object.keys(pawn);
+        const oldIds = this.pawns.children
+            .map(p => p.id);
+
+        const t = this.pawns.children
+            .filter(({ id }) => newIds.indexOf(id) < 0)
+            .forEach(pawn => this.pawns.remove(pawn, true));
+
+        const newPawns = newIds
+            .filter(id => oldIds.indexOf(id) < 0)
+            .map(id => pawn[id])
+            .map(({
+                id,
+                position
+            }) => new Pawn({
+                id,
+                group: this.pawns,
+                asset: 'player_pawn',
+                position,
+                sync: false
+            }));
     }
 
     update = () => {
