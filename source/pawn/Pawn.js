@@ -4,7 +4,13 @@ import {
 } from '../components/EventTypes';
 
 export default class extends Phaser.Sprite {
-    constructor ({ group, asset, position } = {}) {
+    constructor ({
+        id,
+        group,
+        asset,
+        position,
+        sync = true
+    } = {}) {
         super(group.game, position.x, position.y, asset);
         group.add(this);
 
@@ -17,7 +23,7 @@ export default class extends Phaser.Sprite {
             store
         } = state.getCurrentState();
 
-        this.id = Date.now();
+        this.id = id || Date.now().toString();
 
         // Physics settings
         this.game.physics.arcade.enable(this);
@@ -48,14 +54,17 @@ export default class extends Phaser.Sprite {
             } = store.getState();
         });
 
-        store.dispatch({
-            type: 'PAWN_REGISTER',
-            id: this.id,
-            position: {
-                x: this.position.x + 50,
-                y: this.position.y + 50
-            }
-        });
+        if (sync) {
+            store.dispatch({
+                type: 'PAWN_REGISTER',
+                id: this.id,
+                position: {
+                    x: this.position.x,
+                    y: this.position.y
+                },
+                sync
+            });
+        }
     }
 
     setupEvents = () => {
