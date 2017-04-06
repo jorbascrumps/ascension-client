@@ -4,6 +4,7 @@ import HeroPlayer from '../player/Hero';
 import Pawn from '../pawn/Pawn';
 import Pathfinder from '../components/Pathfinder';
 import Illuminator from '../components/Illuminator';
+import PawnManager from '../components/PawnManager';
 
 export default class {
     preload () {
@@ -21,6 +22,8 @@ export default class {
     }
 
     create () {
+        this.store = window.AscensionStore;
+
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         this.tilemap = this.game.add.tilemap('level');
@@ -61,8 +64,6 @@ export default class {
 
         this.layers.blocked.enableBody = true;
 
-        this.store = window.AscensionStore;
-
         this.Pathfinder = new Pathfinder({
             game: this.game
         });
@@ -71,16 +72,6 @@ export default class {
             x,
             y
         } = querystring.parse(window.location.search.substr(1));
-
-        this.pawns = this.game.add.group(undefined, 'pawns');
-        new Pawn({
-            group: this.pawns,
-            asset: 'player_pawn',
-            position: {
-                x: parseInt(x, 10),
-                y: parseInt(y, 10)
-            }
-        });
 
         this.blockedTiles = this.game.add.group();
         getLayerObjects({
@@ -95,40 +86,20 @@ export default class {
             pawns: this.pawns
         });
 
-        this.syncPawns();
-        this.store.subscribe(this.syncPawns);
+        const pawnManager = new PawnManager({
+            game: this.game,
+            store: this.store
+        });
+        pawnManager.add({
+            position: {
+                x: parseInt(x, 10),
+                y: parseInt(y, 10)
+            }
+        });
     }
 
     render () {
         this.game.debug.cameraInfo(this.game.camera, 32, 32);
-    }
-
-    syncPawns = () => {
-        const {
-            pawn
-        } = this.store.getState();
-
-        const newIds = Object.keys(pawn);
-        const oldIds = this.pawns.children
-            .map(p => p.id);
-
-        const t = this.pawns.children
-            .filter(({ id }) => newIds.indexOf(id) < 0)
-            .forEach(pawn => this.pawns.remove(pawn, true));
-
-        const newPawns = newIds
-            .filter(id => oldIds.indexOf(id) < 0)
-            .map(id => pawn[id])
-            .map(({
-                id,
-                position
-            }) => new Pawn({
-                id,
-                group: this.pawns,
-                asset: 'player_pawn',
-                position,
-                sync: false
-            }));
     }
 
     update = () => {
