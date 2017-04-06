@@ -5,14 +5,13 @@ import {
 
 export default class extends Phaser.Sprite {
     constructor ({
+        game,
         id,
-        group,
-        asset,
+        asset = 'player_pawn',
         position,
         sync = true
     } = {}) {
-        super(group.game, position.x, position.y, asset);
-        group.add(this);
+        super(game, position.x, position.y, asset);
 
         const {
             game: {
