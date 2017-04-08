@@ -80,21 +80,21 @@ export default class {
         })
             .map(element => createFromObject(element, this.blockedTiles));
 
-        this.illuminator = new Illuminator({
-            game: this.game,
-            blocked: this.blockedTiles,
-            pawns: this.pawns
-        });
-
-        const pawnManager = new PawnManager({
+        this.pawnManager = new PawnManager({
             game: this.game,
             store: this.store
         });
-        pawnManager.add({
+        this.pawnManager.add({
             position: {
                 x: parseInt(x, 10),
                 y: parseInt(y, 10)
             }
+        });
+
+        this.illuminator = new Illuminator({
+            game: this.game,
+            blocked: this.blockedTiles,
+            pawns: this.pawnManager.get()
         });
     }
 
@@ -103,7 +103,12 @@ export default class {
     }
 
     update = () => {
-        const target = this.pawns.children[0];
+        const {
+            children: [
+                target
+            ]
+        } = this.pawnManager.get();
+
         this.illuminator.update({
             target: {
                 x: target.position.x + (target.width / 2),
