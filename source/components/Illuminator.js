@@ -30,15 +30,10 @@ export default class Illuminator {
     }
 
     update = ({ target }) => {
-        const _target = {
-            x: target.x,
-            y: target.y
-        };
-
         this.pawns.forEach(pawn => {
             const x = pawn.x + (pawn.width / 2);
             const y = pawn.y + (pawn.height / 2);
-            const ray = new Phaser.Line(x, y, _target.x, _target.y);
+            const ray = new Phaser.Line(x, y, target.x, target.y);
             const isHidden = !Boolean(this.getTileIntersection(ray));
 
             this.game.add.tween(pawn)
@@ -55,7 +50,7 @@ export default class Illuminator {
             new Phaser.Point(0, this.game.height)
         ];
         const stageIntersections = stageCorners.reduce((cache, corner) => {
-            const ray = new Phaser.Line(_target.x, _target.y, corner.x, corner.y);
+            const ray = new Phaser.Line(target.x, target.y, corner.x, corner.y);
             const intersect = this.getTileIntersection(ray);
 
             if (intersect) {
@@ -84,21 +79,21 @@ export default class Illuminator {
             ];
 
             const intersections = corners.map(corner => {
-                const slope = (corner.y - _target.y) / (corner.x - _target.x);
-                const b = _target.y - slope * _target.x;
+                const slope = (corner.y - target.y) / (corner.x - target.x);
+                const b = target.y - slope * target.x;
                 let end = null;
 
-                if (corner.x === _target.x) {
-                    if (corner.y <= _target.y) {
-                        end = new Phaser.Point(_target.x, 0);
+                if (corner.x === target.x) {
+                    if (corner.y <= target.y) {
+                        end = new Phaser.Point(target.x, 0);
                     } else {
-                        end = new Phaser.Point(_target.x, this.game.height);
+                        end = new Phaser.Point(target.x, this.game.height);
                     }
-                } else if (corner.y === _target.y) {
-                    if (corner.x <= _target.x) {
-                        end = new Phaser.Point(0, _target.y);
+                } else if (corner.y === target.y) {
+                    if (corner.x <= target.x) {
+                        end = new Phaser.Point(0, target.y);
                     } else {
-                        end = new Phaser.Point(this.game.width, _target.y);
+                        end = new Phaser.Point(this.game.width, target.y);
                     }
                 } else {
                     const left = new Phaser.Point(0, b);
@@ -106,25 +101,25 @@ export default class Illuminator {
                     const top = new Phaser.Point(-b / slope, 0);
                     const bottom = new Phaser.Point((this.game.height - b) / slope, this.game.height);
 
-                    if (corner.y <= _target.y && corner.x >= _target.x) {
+                    if (corner.y <= target.y && corner.x >= target.x) {
                         if (top.x >= 0 && top.x <= this.game.width) {
                             end = top;
                         } else {
                             end = right;
                         }
-                    } else if (corner.y <= _target.y && corner.x <= _target.x) {
+                    } else if (corner.y <= target.y && corner.x <= target.x) {
                         if (top.x >= 0 && top.x <= this.game.width) {
                             end = top;
                         } else {
                             end = left;
                         }
-                    } else if (corner.y >= _target.y && corner.x >= _target.x) {
+                    } else if (corner.y >= target.y && corner.x >= target.x) {
                         if (bottom.x >= 0 && bottom.x <= this.game.width) {
                             end = bottom;
                         } else {
                             end = right;
                         }
-                    } else if (corner.y >= _target.y && corner.x <= _target.x) {
+                    } else if (corner.y >= target.y && corner.x <= target.x) {
                         if (bottom.x >= 0 && bottom.x <= this.game.width) {
                             end = bottom;
                         } else {
@@ -133,7 +128,7 @@ export default class Illuminator {
                     }
                 }
 
-                const ray = new Phaser.Line(_target.x, _target.y, end.x, end.y);
+                const ray = new Phaser.Line(target.x, target.y, end.x, end.y);
                 const intersect = this.getTileIntersection(ray);
 
                 return intersect || ray.end;
@@ -149,10 +144,7 @@ export default class Illuminator {
             ...blockedIntersections,
             ...stageIntersections
         ]
-            .sort(orderPointsAroundCenter({
-                x: _target.x,
-                y: _target.y
-            }));
+            .sort(orderPointsAroundCenter(target));
 
         this.fogOfWar.context.beginPath();
         this.fogOfWar.context.fillStyle = this.lightColour;
@@ -167,7 +159,7 @@ export default class Illuminator {
         this.rayCast.context.fillStyle = this.lightColour;
         this.rayCast.context.moveTo(points[0].x, points[0].y);
         points.forEach(point => {
-            this.rayCast.context.moveTo(_target.x, _target.y);
+            this.rayCast.context.moveTo(target.x, target.y);
             this.rayCast.context.lineTo(point.x, point.y);
             this.rayCast.context.fillRect(point.x - 2, point.y - 2, 4, 4);
         });
@@ -241,8 +233,8 @@ function orderPointsAroundCenter (center) {
             return -1;
         }
 
-        const d1 = (a.x - center.x) * (a.x - center.x) + (a.y - center.x) * (a.y - center.y);
-        const d2 = (b.x - center.x) * (b.x - center.x) + (b.y - center.x) * (b.y - center.y);
+        // const d1 = (a.x - center.x) * (a.x - center.x) + (a.y - center.x) * (a.y - center.y);
+        // const d2 = (b.x - center.x) * (b.x - center.x) + (b.y - center.x) * (b.y - center.y);
 
         return 1;
     }
