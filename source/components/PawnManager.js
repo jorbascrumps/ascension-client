@@ -26,6 +26,8 @@ export default class PawnManager {
         }));
     }
 
+    get = () => this.pawns
+
     sync = () => {
         const {
             pawn
