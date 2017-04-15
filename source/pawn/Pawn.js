@@ -245,7 +245,11 @@ export default class extends Phaser.Sprite {
             newPos.x,
             newPos.y
         ).length);
-        const duration = (distance - (distance % 50)) * 10;
+
+        let duration = 1;
+        if (distance >= 75) {
+            duration = distance - (distance % 50);
+        }
 
         this.game.add.tween(this)
             .to(newPos, duration, Phaser.Easing.Linear.None)
