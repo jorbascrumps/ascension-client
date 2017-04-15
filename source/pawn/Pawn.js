@@ -116,9 +116,9 @@ export default class extends Phaser.Sprite {
             .find(({ position: { x, y } }) => x === targetPosition.x && y === targetPosition.y);
 
         if (isAdajcentTile && canPath) {
-            this.position = isAdajcentTile.position;
+            this.moveTo(isAdajcentTile.position);
         } else {
-            this.position = this.cache.position;
+            this.moveTo(this.cache.position);
         }
 
         this.attachToCursor = false;
