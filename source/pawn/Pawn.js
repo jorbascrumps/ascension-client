@@ -44,26 +44,6 @@ export default class extends Phaser.Sprite {
 
         this.setupEvents();
         this.traceAdjacentTiles();
-
-        store.subscribe(() => {
-            const {
-                pawns: {
-                    [this.id]: pawn
-                } = {}
-            } = store.getState();
-        });
-
-        if (sync) {
-            store.dispatch({
-                type: 'PAWN_REGISTER',
-                id: this.id,
-                position: {
-                    x: this.position.x,
-                    y: this.position.y
-                },
-                sync
-            });
-        }
     }
 
     setupEvents = () => {

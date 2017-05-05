@@ -89,7 +89,7 @@ export default class {
                 x: parseInt(x, 10),
                 y: parseInt(y, 10)
             },
-            sync: false
+            sync: true
         });
 
         this.illuminator = new Illuminator({

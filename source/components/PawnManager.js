@@ -11,7 +11,19 @@ export default class PawnManager {
         this.store.subscribe(this.sync);
     }
 
-    add = options => {
+    add = ({
+        sync = false,
+        ...options
+    }) => {
+        if (sync) {
+            return this.store.dispatch({
+                type: 'PAWN_REGISTER',
+                id: Date.now().toString(),
+                sync,
+                ...options
+            });
+        }
+
         const exists = this.pawns
             .filter(p => p.id === options.id)
             .first;
