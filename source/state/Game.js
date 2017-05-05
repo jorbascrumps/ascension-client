@@ -23,6 +23,9 @@ export default class {
 
     create () {
         this.store = window.AscensionStore;
+        const {
+            user
+        } = this.store.getState();
 
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -84,7 +87,9 @@ export default class {
             game: this.game,
             store: this.store
         });
+
         this.pawnManager.add({
+            owner: user.session,
             position: {
                 x: parseInt(x, 10),
                 y: parseInt(y, 10)
