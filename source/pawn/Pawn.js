@@ -9,6 +9,7 @@ export default class extends Phaser.Sprite {
         id,
         asset = 'player_pawn',
         position,
+        owner,
         sync = true
     } = {}) {
         super(game, position.x, position.y, asset);
@@ -21,8 +22,14 @@ export default class extends Phaser.Sprite {
         const {
             store
         } = state.getCurrentState();
+        const {
+            user: {
+                session
+            }
+        } = store.getState();
 
         this.id = id || Date.now().toString();
+        this.ownedByPlayer = owner === session;
 
         // Physics settings
         this.game.physics.arcade.enable(this);
@@ -47,6 +54,10 @@ export default class extends Phaser.Sprite {
     }
 
     setupEvents = () => {
+        if (!this.ownedByPlayer) {
+            return;
+        }
+
         this.inputEnabled = true;
         this.input.useHandCursor = true;
         this.input.priorityID = 1;
