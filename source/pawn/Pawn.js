@@ -96,7 +96,10 @@ export default class extends Phaser.Sprite {
             .find(({ position: { x, y } }) => x === targetPosition.x && y === targetPosition.y);
 
         if (isAdajcentTile && canPath) {
-            this.moveTo(isAdajcentTile.position);
+            this.moveTo({
+                ...isAdajcentTile.position,
+                sync: true
+            });
         } else {
             this.moveTo(this.cache.position);
         }
@@ -214,7 +217,21 @@ export default class extends Phaser.Sprite {
         }
     }
 
-    moveTo = ({ x, y }) => {
+    moveTo = ({
+        x,
+        y,
+        sync = false
+    }) => {
+        const {
+            game: {
+                state
+            }
+        } = this;
+        const {
+            store: {
+                dispatch
+            }
+        } = state.getCurrentState();
         const newPos = {
             x: x - (x % 50),
             y: y - (y % 50)
@@ -236,6 +253,15 @@ export default class extends Phaser.Sprite {
             .start()
             .onComplete.add((pawn, tween) => {
                 this.traceAdjacentTiles();
+
+                if (sync) {
+                    dispatch({
+                        type: 'PAWN_MOVE',
+                        id: pawn.id,
+                        position: newPos,
+                        sync: true
+                    });
+                }
             });
     }
 
