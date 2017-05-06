@@ -4,7 +4,7 @@ export default class {
     }
 
     create () {
-        this.game.disableVisibilityChange = true;
+        this.game.stage.disableVisibilityChange = true;
         this.input.maxPointers = 1;
         this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
         this.scale.pageAlignHorizontally = true;

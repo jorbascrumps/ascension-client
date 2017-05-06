@@ -11,7 +11,10 @@ export default class PawnManager {
         this.store.subscribe(this.sync);
     }
 
-    add = options => {
+    add = ({
+        sync = false,
+        ...options
+    }) => {
         const exists = this.pawns
             .filter(p => p.id === options.id)
             .first;
@@ -20,10 +23,22 @@ export default class PawnManager {
             return exists;
         }
 
+        const id = options.id || Date.now().toString();
+
         this.pawns.add(new Pawn({
             ...options,
+            id,
             game: this.pawns.game
         }));
+
+        if (sync) {
+            return this.store.dispatch({
+                type: 'PAWN_REGISTER',
+                id,
+                sync,
+                ...options
+            });
+        }
     }
 
     get = () => this.pawns
@@ -48,5 +63,8 @@ export default class PawnManager {
                 id,
                 sync: false
             }));
+
+        this.pawns.children
+            .forEach(p => p.moveTo(pawn[p.id].position));
     }
 }

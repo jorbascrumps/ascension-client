@@ -9,6 +9,7 @@ export default class extends Phaser.Sprite {
         id,
         asset = 'player_pawn',
         position,
+        owner,
         sync = true
     } = {}) {
         super(game, position.x, position.y, asset);
@@ -21,8 +22,14 @@ export default class extends Phaser.Sprite {
         const {
             store
         } = state.getCurrentState();
+        const {
+            user: {
+                session
+            }
+        } = store.getState();
 
         this.id = id || Date.now().toString();
+        this.ownedByPlayer = owner === session;
 
         // Physics settings
         this.game.physics.arcade.enable(this);
@@ -44,29 +51,13 @@ export default class extends Phaser.Sprite {
 
         this.setupEvents();
         this.traceAdjacentTiles();
-
-        store.subscribe(() => {
-            const {
-                pawns: {
-                    [this.id]: pawn
-                } = {}
-            } = store.getState();
-        });
-
-        if (sync) {
-            store.dispatch({
-                type: 'PAWN_REGISTER',
-                id: this.id,
-                position: {
-                    x: this.position.x,
-                    y: this.position.y
-                },
-                sync
-            });
-        }
     }
 
     setupEvents = () => {
+        if (!this.ownedByPlayer) {
+            return;
+        }
+
         this.inputEnabled = true;
         this.input.useHandCursor = true;
         this.input.priorityID = 1;
@@ -116,9 +107,12 @@ export default class extends Phaser.Sprite {
             .find(({ position: { x, y } }) => x === targetPosition.x && y === targetPosition.y);
 
         if (isAdajcentTile && canPath) {
-            this.position = isAdajcentTile.position;
+            this.moveTo({
+                ...isAdajcentTile.position,
+                sync: true
+            });
         } else {
-            this.position = this.cache.position;
+            this.moveTo(this.cache.position);
         }
 
         this.attachToCursor = false;
@@ -234,7 +228,21 @@ export default class extends Phaser.Sprite {
         }
     }
 
-    moveTo = ({ x, y }) => {
+    moveTo = ({
+        x,
+        y,
+        sync = false
+    }) => {
+        const {
+            game: {
+                state
+            }
+        } = this;
+        const {
+            store: {
+                dispatch
+            }
+        } = state.getCurrentState();
         const newPos = {
             x: x - (x % 50),
             y: y - (y % 50)
@@ -245,13 +253,26 @@ export default class extends Phaser.Sprite {
             newPos.x,
             newPos.y
         ).length);
-        const duration = (distance - (distance % 50)) * 10;
+
+        let duration = 1;
+        if (distance >= 75) {
+            duration = distance - (distance % 50);
+        }
 
         this.game.add.tween(this)
             .to(newPos, duration, Phaser.Easing.Linear.None)
             .start()
             .onComplete.add((pawn, tween) => {
                 this.traceAdjacentTiles();
+
+                if (sync) {
+                    dispatch({
+                        type: 'PAWN_MOVE',
+                        id: pawn.id,
+                        position: newPos,
+                        sync: true
+                    });
+                }
             });
     }
 
