@@ -64,6 +64,12 @@ export default class PawnManager {
             }));
 
         this.pawns.children
-            .forEach(p => p.moveTo(pawn[p.id].position));
+            .forEach(p => {
+                if (p.owner === user.session) {
+                    return;
+                }
+
+                p.moveTo(pawn[p.id].position);
+            });
     }
 }
