@@ -281,9 +281,54 @@ export default class extends Phaser.Sprite {
             });
     }
 
-    preMove = () => {}
+    preMove = ({
+        x,
+        y
+    }) => {
+        const {
+            game: {
+                state
+            }
+        } = this;
+        const {
+            layers: {
+                tagged
+            }
+        } = state.getCurrentState();
+        const [
+            tile
+        ] = tagged.getTiles(this.cache.position.x, this.cache.position.y, 50, 50);
 
-    postMove = () => {}
+        if (tile.index > 0) {
+            console.warn('Exiting [TAGGED] tile');
+        }
+    }
+
+    postMove = ({
+        x,
+        y
+    }) => {
+        const {
+            game: {
+                state
+            }
+        } = this;
+        const {
+            layers: {
+                tagged
+            },
+            store: {
+                dispatch
+            }
+        } = state.getCurrentState();
+        const [
+            tile
+        ] = tagged.getTiles(x, y, 50, 50);
+
+        if (tile.index > 0) {
+            console.warn('Entering [TAGGED] tile');
+        }
+    }
 
     tracePath = () => this.tiles.path
         .forEach(({ x, y}) => this.traceTileAtPosition({
