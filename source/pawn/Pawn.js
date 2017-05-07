@@ -40,7 +40,7 @@ export default class extends Phaser.Sprite {
         this.attachToCursor = false;
         this.tracing = false;
         this.cache = {
-            position: null
+            position: this.position
         };
         this.tiles = {
             traces: this.game.add.group(),
