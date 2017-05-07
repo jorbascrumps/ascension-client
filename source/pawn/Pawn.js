@@ -229,11 +229,14 @@ export default class extends Phaser.Sprite {
         }
     }
 
-    moveTo = ({
-        x,
-        y,
-        sync = false
-    }) => {
+    moveTo = (args) => {
+        this.preMove(args);
+
+        const {
+            x,
+            y,
+            sync = false
+        } = args;
         const {
             game: {
                 state
@@ -265,6 +268,7 @@ export default class extends Phaser.Sprite {
             .start()
             .onComplete.add((pawn, tween) => {
                 this.traceAdjacentTiles();
+                this.postMove(args);
 
                 if (sync) {
                     dispatch({
@@ -276,6 +280,10 @@ export default class extends Phaser.Sprite {
                 }
             });
     }
+
+    preMove = () => {}
+
+    postMove = () => {}
 
     tracePath = () => this.tiles.path
         .forEach(({ x, y}) => this.traceTileAtPosition({
