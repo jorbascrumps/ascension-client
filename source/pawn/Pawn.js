@@ -29,6 +29,7 @@ export default class extends Phaser.Sprite {
         } = store.getState();
 
         this.id = id || Date.now().toString();
+        this.owner = owner;
         this.ownedByPlayer = owner === session;
 
         // Physics settings
