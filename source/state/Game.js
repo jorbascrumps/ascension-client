@@ -53,7 +53,8 @@ export default class {
         // Game layers
         this.layers = {
             map: this.tilemap.createLayer('map'),
-            blocked: this.tilemap.createLayer('blocked')
+            blocked: this.tilemap.createLayer('blocked'),
+            tagged: this.tilemap.createLayer('tagged')
         };
 
         this.grid = this.game.add.tileSprite(
