@@ -8,7 +8,7 @@ export default class PawnManager {
         this.store = store;
         this.pawns = game.add.group(undefined, 'pawns');
 
-        this.store.subscribe(this.sync);
+        this.store.subscribe(() => this.sync(this.store.getState()));
     }
 
     add = ({
@@ -43,11 +43,10 @@ export default class PawnManager {
 
     get = () => this.pawns
 
-    sync = () => {
-        const {
-            pawn
-        } = this.store.getState();
-
+    sync = ({
+        pawn,
+        user
+    }) => {
         const newIds = Object.keys(pawn);
         const oldIds = this.pawns.children
             .map(p => p.id);
