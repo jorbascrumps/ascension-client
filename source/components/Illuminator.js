@@ -146,6 +146,10 @@ export default class Illuminator {
         ]
             .sort(orderPointsAroundCenter(target));
 
+        this.fogOfWar.context.shadowOffsetX = 0;
+        this.fogOfWar.context.shadowOffsetY = 0;
+        this.fogOfWar.context.shadowBlur = 100;
+        this.fogOfWar.context.shadowColor = 'black';
         this.fogOfWar.context.beginPath();
         this.fogOfWar.context.fillStyle = this.lightColour;
         this.fogOfWar.context.moveTo(points[0].x, points[0].y);
