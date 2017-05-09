@@ -78,7 +78,7 @@
     <property name="sprite" value="test"/>
    </properties>
   </object>
-  <object id="19" x="150" y="650" width="550" height="150">
+  <object id="19" x="150" y="650" width="550" height="50">
    <properties>
     <property name="sprite" value="test"/>
    </properties>
