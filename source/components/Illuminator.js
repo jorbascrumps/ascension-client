@@ -146,12 +146,10 @@ export default class Illuminator {
         ]
             .sort(orderPointsAroundCenter(target));
 
-        this.fogOfWar.context.beginPath();
-        this.fogOfWar.context.fillStyle = this.lightColour;
-        this.fogOfWar.context.moveTo(points[0].x, points[0].y);
-        points.forEach(point => this.fogOfWar.context.lineTo(point.x, point.y));
-        this.fogOfWar.context.closePath();
-        this.fogOfWar.context.fill();
+        this.fogOfWar.context.save();
+        this.fogOfWar.context.globalComposition = 'destination-out';
+        this.fogOfWar.context.drawImage(this.renderFog(points), 0, 0);
+        this.fogOfWar.context.restore();
 
         this.rayCast.context.clearRect(0, 0, this.game.width, this.game.height);
         this.rayCast.context.beginPath();
@@ -202,6 +200,29 @@ export default class Illuminator {
 
     toggleRays = () => {
         this.rayCastImage.visible = !this.rayCastImage.visible;
+    }
+
+    renderFog = points => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        context.translate(-canvas.width, 0);
+        context.shadowOffsetX = canvas.width;
+        context.shadowOffsetY = 0;
+        context.shadowColor = this.lightColour;
+        context.shadowBlur = 10;
+
+        context.beginPath();
+        context.fillStyle = this.lightColour;
+        context.moveTo(points[0].x, points[0].y);
+        points.forEach(point => context.lineTo(point.x, point.y));
+        context.closePath();
+        context.fill();
+
+        return canvas;
     }
 }
 

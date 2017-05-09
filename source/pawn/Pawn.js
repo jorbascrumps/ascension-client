@@ -29,6 +29,7 @@ export default class extends Phaser.Sprite {
         } = store.getState();
 
         this.id = id || Date.now().toString();
+        this.owner = owner;
         this.ownedByPlayer = owner === session;
 
         // Physics settings
@@ -39,7 +40,7 @@ export default class extends Phaser.Sprite {
         this.attachToCursor = false;
         this.tracing = false;
         this.cache = {
-            position: null
+            position: this.position
         };
         this.tiles = {
             traces: this.game.add.group(),
@@ -228,11 +229,14 @@ export default class extends Phaser.Sprite {
         }
     }
 
-    moveTo = ({
-        x,
-        y,
-        sync = false
-    }) => {
+    moveTo = (args) => {
+        this.preMove(args);
+
+        const {
+            x,
+            y,
+            sync = false
+        } = args;
         const {
             game: {
                 state
@@ -264,6 +268,7 @@ export default class extends Phaser.Sprite {
             .start()
             .onComplete.add((pawn, tween) => {
                 this.traceAdjacentTiles();
+                this.postMove(args);
 
                 if (sync) {
                     dispatch({
@@ -274,6 +279,55 @@ export default class extends Phaser.Sprite {
                     });
                 }
             });
+    }
+
+    preMove = ({
+        x,
+        y
+    }) => {
+        const {
+            game: {
+                state
+            }
+        } = this;
+        const {
+            layers: {
+                tagged
+            }
+        } = state.getCurrentState();
+        const [
+            tile
+        ] = tagged.getTiles(this.cache.position.x, this.cache.position.y, 50, 50);
+
+        if (tile.index > 0) {
+            console.warn('Exiting [TAGGED] tile');
+        }
+    }
+
+    postMove = ({
+        x,
+        y
+    }) => {
+        const {
+            game: {
+                state
+            }
+        } = this;
+        const {
+            layers: {
+                tagged
+            },
+            store: {
+                dispatch
+            }
+        } = state.getCurrentState();
+        const [
+            tile
+        ] = tagged.getTiles(x, y, 50, 50);
+
+        if (tile.index > 0) {
+            console.warn('Entering [TAGGED] tile');
+        }
     }
 
     tracePath = () => this.tiles.path
