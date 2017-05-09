@@ -57,6 +57,7 @@ export default class {
             tagged: this.tilemap.createLayer('tagged')
         };
 
+        /*
         this.grid = this.game.add.tileSprite(
             -1,
             -1,
@@ -65,6 +66,7 @@ export default class {
             'grid'
         );
         this.grid.tint = 0x1e1e1e;
+        */
 
         this.layers.blocked.enableBody = true;
 
