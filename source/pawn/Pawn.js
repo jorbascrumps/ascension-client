@@ -185,19 +185,25 @@ export default class extends Phaser.Sprite {
         this.game.physics.arcade.enable(sprite);
         this.tiles.collisions.add(sprite);
 
-        if(!blocked) {
-            sprite.events.onInputDown.add(({ position }) => this.moveTo({
+        if (!blocked) {
+            sprite.input.useHandCursor = true;
+            sprite.events.onInputDown.add(({
+                position
+            }) => this.moveTo({
                 ...position,
                 sync: true
             }));
+            sprite.events.onInputOver.add(() => overlay.alpha = 1.5);
+            sprite.events.onInputOut.add(() => overlay.alpha = 0.55);
         }
 
         const overlay = this.game.add.graphics();
-        overlay.beginFill(fillColour, 0.25);
+        overlay.beginFill(fillColour, 0.5);
         overlay.lineStyle(2, fillColour, 1);
         overlay.drawRect(x + 2, y + 2, 46, 46);
         overlay.exists = enabled;
         overlay.autoCull = true;
+        overlay.alpha = 0.55;
         (group || this.tiles.traces).addChild(overlay);
     }
 
