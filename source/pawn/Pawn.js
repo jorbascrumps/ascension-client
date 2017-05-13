@@ -293,7 +293,9 @@ export default class extends Phaser.Sprite {
         x,
         y
     }) => {
-        this.clearAdjacentTiles();
+        if (this.ownedByPlayer) {
+            this.clearAdjacentTiles();
+        }
 
         const {
             game: {
@@ -318,8 +320,10 @@ export default class extends Phaser.Sprite {
         x,
         y
     }) => {
-        this.traceAdjacentTiles();
-        this.toggleAdjacentThings();
+        if (this.ownedByPlayer) {
+            this.traceAdjacentTiles();
+            this.toggleAdjacentThings();
+        }
 
         const {
             game: {
