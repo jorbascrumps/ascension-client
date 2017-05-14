@@ -35,7 +35,7 @@ export default class Pathfinder {
 
         this.blocked = blockedGrid;
         this.graph = new Graph(blockedGrid, {
-            diagonal: astar.DIAGONAL_MODE.ONE_OBSTACLE
+            diagonal: astar.DIAGONAL_MODE.NO_OBSTACLES
         });
     }
 

@@ -51,7 +51,6 @@ export default class extends Phaser.Sprite {
         this.game.world.moveDown(this.tiles.traces);
 
         this.setupEvents();
-        this.traceAdjacentTiles();
     }
 
     setupEvents = () => {
@@ -72,12 +71,11 @@ export default class extends Phaser.Sprite {
         this.game.input.onDown.add(this.calculatePath);
         this.game.input.onUp.add(this.clearPath);
 
-        Event.on(UPDATE_PAWN_POSITION, this.moveTo);
+        this.traceAdjacentTiles();
+        this.toggleAdjacentThings();
     }
 
     onInputDown = (tile, pointer) => {
-        this.toggleAdjacentThings();
-
         this.attachToCursor = true;
         this.cache.position = {
             ...this.position
@@ -117,8 +115,6 @@ export default class extends Phaser.Sprite {
         }
 
         this.attachToCursor = false;
-        this.toggleAdjacentThings();
-        this.traceAdjacentTiles();
     }
 
     onInputOver = () => {}
@@ -189,12 +185,24 @@ export default class extends Phaser.Sprite {
         this.game.physics.arcade.enable(sprite);
         this.tiles.collisions.add(sprite);
 
+        if (!blocked) {
+            sprite.input.useHandCursor = true;
+            sprite.events.onInputDown.add(({
+                position
+            }) => this.moveTo({
+                ...position,
+                sync: true
+            }));
+            sprite.events.onInputOver.add(() => overlay.alpha = 1.5);
+            sprite.events.onInputOut.add(() => overlay.alpha = 0.55);
+        }
+
         const overlay = this.game.add.graphics();
-        overlay.beginFill(fillColour, 0.25);
+        overlay.beginFill(fillColour, 0.5);
         overlay.lineStyle(2, fillColour, 1);
         overlay.drawRect(x + 2, y + 2, 46, 46);
         overlay.exists = enabled;
-        overlay.autoCull = true;
+        overlay.alpha = 0.55;
         (group || this.tiles.traces).addChild(overlay);
     }
 
@@ -258,7 +266,7 @@ export default class extends Phaser.Sprite {
             newPos.y
         ).length);
 
-        let duration = 1;
+        let duration = 250;
         if (distance >= 75) {
             duration = distance - (distance % 50);
         }
@@ -267,7 +275,6 @@ export default class extends Phaser.Sprite {
             .to(newPos, duration, Phaser.Easing.Linear.None)
             .start()
             .onComplete.add((pawn, tween) => {
-                this.traceAdjacentTiles();
                 this.postMove(args);
 
                 if (sync) {
@@ -285,6 +292,10 @@ export default class extends Phaser.Sprite {
         x,
         y
     }) => {
+        if (this.ownedByPlayer) {
+            this.clearAdjacentTiles();
+        }
+
         const {
             game: {
                 state
@@ -308,6 +319,11 @@ export default class extends Phaser.Sprite {
         x,
         y
     }) => {
+        if (this.ownedByPlayer) {
+            this.traceAdjacentTiles();
+            this.toggleAdjacentThings();
+        }
+
         const {
             game: {
                 state
