@@ -202,7 +202,6 @@ export default class extends Phaser.Sprite {
         overlay.lineStyle(2, fillColour, 1);
         overlay.drawRect(x + 2, y + 2, 46, 46);
         overlay.exists = enabled;
-        overlay.autoCull = true;
         overlay.alpha = 0.55;
         (group || this.tiles.traces).addChild(overlay);
     }
