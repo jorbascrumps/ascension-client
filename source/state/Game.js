@@ -28,6 +28,8 @@ export default class {
         } = this.store.getState();
 
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
+        this.game.time.advancedTimin = true;
+        this.game.time.desiredFps = 30;
 
         this.tilemap = this.game.add.tilemap('level');
 

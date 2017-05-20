@@ -266,7 +266,7 @@ export default class extends Phaser.Sprite {
             newPos.y
         ).length);
 
-        let duration = 250;
+        let duration = 100;
         if (distance >= 75) {
             duration = distance - (distance % 50);
         }
