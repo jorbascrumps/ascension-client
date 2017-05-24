@@ -103,6 +103,8 @@ export default class {
                 x: parseInt(x, 10),
                 y: parseInt(y, 10)
             },
+            maxHealth: 100,
+            currentHealth: 100,
             sync: true
         });
 
