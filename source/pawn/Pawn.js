@@ -10,6 +10,8 @@ export default class extends Phaser.Sprite {
         asset = 'player_pawn',
         position,
         owner,
+        currentHealth = 0,
+        maxHealth = 0,
         sync = true
     } = {}) {
         super(game, position.x, position.y, asset);
@@ -31,6 +33,8 @@ export default class extends Phaser.Sprite {
         this.id = id || Date.now().toString();
         this.owner = owner;
         this.ownedByPlayer = owner === session;
+        this.currentHealth = currentHealth;
+        this.maxHealth = maxHealth;
 
         // Physics settings
         this.game.physics.arcade.enable(this);

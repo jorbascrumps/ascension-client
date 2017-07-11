@@ -7,6 +7,11 @@ import Illuminator from '../components/Illuminator';
 import PawnManager from '../components/PawnManager';
 
 export default class {
+    constructor () {
+        this.store = window.AscensionStore;
+        this.store.subscribe(() => this.sync(this.store.getState()));
+    }
+
     preload () {
         this.game.stage.backgroundColor = 0x0e1718;
 
@@ -22,7 +27,6 @@ export default class {
     }
 
     create () {
-        this.store = window.AscensionStore;
         const {
             user
         } = this.store.getState();
@@ -99,6 +103,8 @@ export default class {
                 x: parseInt(x, 10),
                 y: parseInt(y, 10)
             },
+            maxHealth: 100,
+            currentHealth: 100,
             sync: true
         });
 
@@ -107,6 +113,14 @@ export default class {
             blocked: this.blockedTiles,
             pawns: this.pawnManager.get()
         });
+    }
+
+    sync = ({
+        playerActions: {
+            isAttacking
+        }
+    }) => {
+        this.isAttacking = isAttacking;
     }
 
     render () {
