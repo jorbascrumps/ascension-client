@@ -1,29 +1,16 @@
-import Event from '../components/Event';
-import {
-    UPDATE_PAWN_POSITION
-} from '../components/EventTypes';
-
-export default class extends Phaser.Sprite {
+export default class extends Phaser.GameObjects.Sprite {
     constructor ({
         game,
+        store,
         id,
-        asset = 'player_pawn',
+        asset = 'player',
         position,
         owner,
-        currentHealth = 0,
-        maxHealth = 0,
-        sync = true
+        currentHealth = 10,
+        maxHealth = 10
     } = {}) {
         super(game, position.x, position.y, asset);
 
-        const {
-            game: {
-                state
-            }
-        } = this;
-        const {
-            store
-        } = state.getCurrentState();
         const {
             user: {
                 session
@@ -31,32 +18,54 @@ export default class extends Phaser.Sprite {
         } = store.getState();
 
         this.id = id || Date.now().toString();
+
+        this.store = store;
         this.owner = owner;
         this.ownedByPlayer = owner === session;
         this.currentHealth = currentHealth;
         this.maxHealth = maxHealth;
 
-        // Physics settings
-        this.game.physics.arcade.enable(this);
-        this.body.setSize(50, 50, 0, 0);
-        this.body.moves = false;
-
-        this.attachToCursor = false;
-        this.tracing = false;
-        this.cache = {
-            position: this.position
-        };
-        this.tiles = {
-            traces: this.game.add.group(),
-            collisions: this.game.add.group(),
-            path: [],
-            drawPath: this.game.add.group()
-        };
-        this.game.world.moveDown(this.tiles.traces);
-
-        this.setupEvents();
+        this.setOrigin(0, 0);
     }
 
+    moveToPath = ({
+        path = [],
+        sync = false
+    } = {}) => this.scene.tweens.timeline({
+        targets: this,
+        ease: 'Power4',
+        tweens: path.map(p => ({
+            ...p,
+            duration: 500,
+            delay: 500,
+            onComplete: sync && this.onMoveEnd
+        }))
+    })
+
+    moveTo = ({
+        x,
+        y,
+        sync = false
+    } = {}) => this.scene.tweens.add({
+        targets: this,
+        ease: 'Power4',
+        duration: 500,
+        x,
+        y,
+        onComplete: sync && this.onMoveEnd
+    })
+
+    onMoveEnd = (tween, [ target ]) => this.store.dispatch({
+        type: 'PAWN_MOVE',
+        id: this.id,
+        position: {
+            x: this.x,
+            y: this.y
+        },
+        sync: true
+    })
+
+/*
     setupEvents = () => {
         if (!this.ownedByPlayer) {
             return;
@@ -78,14 +87,16 @@ export default class extends Phaser.Sprite {
         this.traceAdjacentTiles();
         this.toggleAdjacentThings();
     }
-
+*/
+/*
     onInputDown = (tile, pointer) => {
         this.attachToCursor = true;
         this.cache.position = {
             ...this.position
         };
     }
-
+*/
+/*
     onInputUp = () => {
         const {
             game: {
@@ -120,22 +131,27 @@ export default class extends Phaser.Sprite {
 
         this.attachToCursor = false;
     }
-
+*/
+/*
     onInputOver = () => {}
-
+*/
+/*
     onInputOut = () => {}
-
+*/
+/*
     onDeath = () => {
         this.clearTrace();
     }
-
+*/
+/*
     clearTrace = () => {
         this.tracing = false;
 
         this.tiles.traces.removeChildren();
         this.tiles.collisions.removeChildren();
     }
-
+*/
+/*
     traceAdjacentTiles = () => {
         const {
             game: {
@@ -171,7 +187,8 @@ export default class extends Phaser.Sprite {
             }))
             .forEach(this.traceTileAtPosition);
     }
-
+*/
+/*
     traceTileAtPosition = ({
         x,
         y,
@@ -209,15 +226,18 @@ export default class extends Phaser.Sprite {
         overlay.alpha = 0.55;
         (group || this.tiles.traces).addChild(overlay);
     }
-
+*/
+/*
     toggleAdjacentThings = () => this.tiles.traces
         .forEach(thing => thing.exists = !thing.exists);
-
+*/
+/*
     clearAdjacentTiles = () => {
         this.tiles.collisions.removeChildren();
         this.tiles.traces.removeChildren();
     }
-
+*/
+/*
     update = () => {
         if (this.attachToCursor) {
             const offsetX = this.width / 2;
@@ -240,58 +260,8 @@ export default class extends Phaser.Sprite {
             this.position.y = y - offsetY;
         }
     }
-
-    moveTo = (args) => {
-        this.preMove(args);
-
-        const {
-            x,
-            y,
-            sync = false
-        } = args;
-        const {
-            game: {
-                state
-            }
-        } = this;
-        const {
-            store: {
-                dispatch
-            }
-        } = state.getCurrentState();
-        const newPos = {
-            x: x - (x % 50),
-            y: y - (y % 50)
-        };
-        const distance = Math.floor(new Phaser.Line(
-            this.position.x,
-            this.position.y,
-            newPos.x,
-            newPos.y
-        ).length);
-
-        let duration = 100;
-        if (distance >= 75) {
-            duration = distance - (distance % 50);
-        }
-
-        this.game.add.tween(this)
-            .to(newPos, duration, Phaser.Easing.Linear.None)
-            .start()
-            .onComplete.add((pawn, tween) => {
-                this.postMove(args);
-
-                if (sync) {
-                    dispatch({
-                        type: 'PAWN_MOVE',
-                        id: pawn.id,
-                        position: newPos,
-                        sync: true
-                    });
-                }
-            });
-    }
-
+*/
+/*
     preMove = ({
         x,
         y
@@ -318,7 +288,8 @@ export default class extends Phaser.Sprite {
             console.warn('Exiting [TAGGED] tile');
         }
     }
-
+*/
+/*
     postMove = ({
         x,
         y
@@ -349,38 +320,7 @@ export default class extends Phaser.Sprite {
             console.warn('Entering [TAGGED] tile');
         }
     }
-
-    tracePath = () => this.tiles.path
-        .forEach(({ x, y}) => this.traceTileAtPosition({
-            x: x * 50,
-            y: y * 50,
-            enabled: true,
-            group: this.tiles.drawPath
-        }))
-
-    clearPath = () => this.tiles.drawPath.removeChildren()
-
-    calculatePath = () => {
-        const {
-            game: {
-                input: {
-                    activePointer: mouse
-                },
-                state
-            },
-            position
-        } = this;
-        const {
-            Pathfinder
-        } = state.getCurrentState();
-
-        this.tiles.path = Pathfinder.calculatePath({
-            start: position,
-            end: mouse
-        });
-
-        this.tracePath();
-    }
+*/
 }
 
 const snapCoordToGrid = ({
