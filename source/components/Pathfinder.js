@@ -1,51 +1,34 @@
 export default class Pathfinder {
-    constructor ({ game } = {}) {
-        this.game = game;
-        this.graph;
-        this.blocked;
-
-        this.setupGrid();
-    }
-
-    setupGrid () {
-        const {
-            game: {
-                state
-            }
-        } = this;
-        const {
-            tilemap: {
-                layers
-            }
-        } = state.getCurrentState();
-
-        const mapLayer = layers
-            .find(layer => layer.name === 'map');
-        const blockedLayer = layers
-            .find(layer => layer.name === 'blocked');
-
-        const mapGrid = mapLayer.data
-            .map((_, c) => mapLayer.data
-                .map(r => Number(r[c].index > -1))
-            );
-        const blockedGrid = blockedLayer.data
-            .map((_, c) => blockedLayer.data
-                .map((r, i) => Number(r[c].index <= 0) && Number(mapGrid[c][i] === 1))
-            );
-
-        this.blocked = blockedGrid;
-        this.graph = new Graph(blockedGrid, {
-            diagonal: astar.DIAGONAL_MODE.NO_OBSTACLES
+    constructor ({
+        tilesPerRow = 10,
+        map,
+        blocked
+    } = {}) {
+        this.graph = setupGrid({
+            tilesPerRow,
+            map,
+            blocked
         });
     }
 
-    calculatePath = ({ start, end }) => {
-        const startNode = this.graph.grid[Math.floor(start.x / 50)][Math.floor(start.y / 50)];
-        const endNode = this.graph.grid[Math.floor(end.x / 50)][Math.floor(end.y / 50)];
+    calculatePath = ({
+        start = {},
+        end = {}
+    } = {}) => {
+        const startNode = this.getGridElementAt(start);
+        const endNode = this.getGridElementAt(end);
 
-        return astar.search(this.graph, startNode, endNode);
+        return astar.search(this.graph, startNode, endNode, {
+            closest: true
+        });
     }
 
+    getGridElementAt = ({
+        x = 0,
+        y = 0
+    } = {}) => this.graph.grid[Math.floor(x / 50)][Math.floor(y / 50)]
+
+/*
     isBlockedTile = ({ x, y }) => {
         const row = Math.floor(x / 50);
         const col = Math.floor(y / 50);
@@ -56,7 +39,8 @@ export default class Pathfinder {
 
         return !Boolean(this.blocked[row][col]);
     }
-
+ */
+/*
     canPathToTile = ({ start, end }) => {
         const isBlocked = this.isBlockedTile(end);
 
@@ -71,4 +55,35 @@ export default class Pathfinder {
 
         return pathToTile.length === 1;
     }
+ */
 }
+
+function setupGrid ({
+    tilesPerRow,
+    map,
+    blocked
+} = {}) {
+    const translate = translateLayerData(tilesPerRow);
+    const translatedMap = translate(map);
+    const transBlocked = translate(blocked);
+    const graphData = transBlocked
+        .map((_, c) => transBlocked
+            .map((r, i) => Number(r[c] === 0 && translatedMap[c][i] === 1))
+        );
+
+    return new Graph(translatedMap, {
+        diagonal: astar.DIAGONAL_MODE.NO_OBSTACLES
+    });
+}
+
+const translateLayerData = tilesPerRow => data =>
+    data.reduce((cache, current, i) => {
+        const rowNum = i % tilesPerRow;
+        const row = cache[rowNum] || [];
+
+        cache[rowNum] = [
+            ...row,
+            Number(current > 0)
+        ];
+        return cache;
+    }, []);
