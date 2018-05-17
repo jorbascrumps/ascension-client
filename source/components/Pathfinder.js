@@ -63,27 +63,24 @@ function setupGrid ({
     map,
     blocked
 } = {}) {
-    const translate = translateLayerData(tilesPerRow);
-    const translatedMap = translate(map);
-    const transBlocked = translate(blocked);
-    const graphData = transBlocked
-        .map((_, c) => transBlocked
-            .map((r, i) => Number(r[c] === 0 && translatedMap[c][i] === 1))
-        );
+    const mapData = translateMapData(
+        blocked.map((_, r) =>
+            _.map((_, c) =>
+                Number(blocked[r][c].index < 0 && map[r][c].index > 0)
+            )
+        )
+    );
 
-    return new Graph(translatedMap, {
+    return new Graph(mapData, {
         diagonal: astar.DIAGONAL_MODE.NO_OBSTACLES
     });
 }
 
-const translateLayerData = tilesPerRow => data =>
-    data.reduce((cache, current, i) => {
-        const rowNum = i % tilesPerRow;
-        const row = cache[rowNum] || [];
-
-        cache[rowNum] = [
-            ...row,
-            Number(current > 0)
-        ];
-        return cache;
-    }, []);
+const translateMapData = data => data
+    .map((_, i, rows) =>
+        rows
+            .reduce((cache, row) => ([
+                ...cache,
+                row[i]
+            ]), [])
+    );
