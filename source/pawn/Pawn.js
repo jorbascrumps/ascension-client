@@ -1,4 +1,4 @@
-export default class extends Phaser.GameObjects.Sprite {
+export default class extends Phaser.GameObjects.Container {
     constructor ({
         game,
         store,
@@ -9,7 +9,10 @@ export default class extends Phaser.GameObjects.Sprite {
         currentHealth = 10,
         maxHealth = 10
     } = {}) {
-        super(game, position.x, position.y, asset);
+        super(game, position.x, position.y);
+
+        game.sys.displayList.add(this);
+        game.sys.updateList.add(this);
 
         const {
             user: {
@@ -19,14 +22,23 @@ export default class extends Phaser.GameObjects.Sprite {
 
         this.id = id || Date.now().toString();
 
+        // Setup sprite
+        this.sprite = game.add.sprite(0, 0, asset);
+        this.sprite.setOrigin(0, 0);
+        this.add(this.sprite);
+
         this.store = store;
         this.owner = owner;
         this.ownedByPlayer = owner === session;
         this.currentHealth = currentHealth;
         this.maxHealth = maxHealth;
-
-        this.setOrigin(0, 0);
     }
+
+    preUpdate (...args) {
+        this.update(...args);
+    }
+
+    update () {}
 
     moveToPath = ({
         path = [],
