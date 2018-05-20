@@ -10,7 +10,8 @@ export default class extends Phaser.GameObjects.Container {
         position,
         owner,
         currentHealth = 10,
-        maxHealth = 10
+        maxHealth = 10,
+        speed = 6
     } = {}) {
         super(game, position.x, position.y);
 
@@ -36,6 +37,7 @@ export default class extends Phaser.GameObjects.Container {
         this.ownedByPlayer = owner === session;
         this.currentHealth = currentHealth;
         this.maxHealth = maxHealth;
+        this.speed = speed;
         this.busy = false;
 
         this.navPath = [];
