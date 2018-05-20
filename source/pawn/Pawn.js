@@ -1,7 +1,10 @@
+import * as Util from '../components/Util';
+
 export default class extends Phaser.GameObjects.Container {
     constructor ({
         game,
         store,
+        pathfinder,
         id,
         asset = 'player',
         position,
@@ -28,17 +31,53 @@ export default class extends Phaser.GameObjects.Container {
         this.add(this.sprite);
 
         this.store = store;
+        this.pathfinder = pathfinder;
         this.owner = owner;
         this.ownedByPlayer = owner === session;
         this.currentHealth = currentHealth;
         this.maxHealth = maxHealth;
+
+        this.navPath = [];
+        this.navGraphic = game.add.graphics(0, 0);
+        this.scene.input.on('pointermove', this.updateNavPath);
+        this.scene.input.on('pointerdown', () => {
+            const path = this.navPath.map(({ x, y }) => ({
+                x: Util.navPathToWorldCoord(x),
+                y: Util.navPathToWorldCoord(y)
+            }));
+
+            this.moveToPath({
+                path,
+                sync: true
+            });
+        });
     }
 
     preUpdate (...args) {
         this.update(...args);
     }
 
-    update () {}
+    update () {
+        this.pathfinder.renderPath(
+            this.navGraphic,
+            this.navPath,
+            { x: this.x, y: this.y }
+        );
+    }
+
+    updateNavPath = ({
+        x = 0,
+        y = 0
+    } = {}) => this.navPath = this.pathfinder.calculatePath({
+        start: {
+            x: Util.navPathToWorldCoord(Math.floor(this.x / 50)),
+            y: Util.navPathToWorldCoord(Math.floor(this.y / 50))
+        },
+        end: {
+            x,
+            y
+        }
+    })
 
     moveToPath = ({
         path = [],

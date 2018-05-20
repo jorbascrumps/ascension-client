@@ -3,11 +3,15 @@ import Pawn from '../pawn/Pawn';
 export default class PawnManager {
     constructor ({
         scene,
-        store
+        store,
+        pathfinder
     } = {}) {
         this.scene = scene;
         this.store = store;
         this.pawns = scene.add.group();
+
+        this.pathfinder = pathfinder;
+        this.scene.sys.updateList.add(this.pathfinder);
 
         this.store.subscribe(() => this.sync(this.store.getState()));
     }
@@ -28,7 +32,8 @@ export default class PawnManager {
             ...options,
             id,
             game: this.scene,
-            store: this.store
+            store: this.store,
+            pathfinder: this.pathfinder.create()
         });
 
         this.scene.sys.displayList.add(pawn);
