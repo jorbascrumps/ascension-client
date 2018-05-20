@@ -36,21 +36,25 @@ export default class extends Phaser.GameObjects.Container {
         this.ownedByPlayer = owner === session;
         this.currentHealth = currentHealth;
         this.maxHealth = maxHealth;
+        this.busy = false;
 
         this.navPath = [];
         this.navGraphic = game.add.graphics(0, 0);
-        this.scene.input.on('pointermove', this.updateNavPath);
-        this.scene.input.on('pointerdown', () => {
-            const path = this.navPath.map(({ x, y }) => ({
-                x: Util.navPathToWorldCoord(x),
-                y: Util.navPathToWorldCoord(y)
-            }));
 
-            this.moveToPath({
-                path,
-                sync: true
+        if (this.ownedByPlayer) {
+            this.scene.input.on('pointermove', this.updateNavPath);
+            this.scene.input.on('pointerdown', () => {
+                const path = this.navPath.map(({x, y}) => ({
+                    x: Util.navPathToWorldCoord(x),
+                    y: Util.navPathToWorldCoord(y)
+                }));
+
+                this.moveToPath({
+                    path,
+                    sync: true
+                });
             });
-        });
+        }
     }
 
     preUpdate (...args) {
@@ -68,16 +72,22 @@ export default class extends Phaser.GameObjects.Container {
     updateNavPath = ({
         x = 0,
         y = 0
-    } = {}) => this.navPath = this.pathfinder.calculatePath({
-        start: {
-            x: Util.navPathToWorldCoord(Math.floor(this.x / 50)),
-            y: Util.navPathToWorldCoord(Math.floor(this.y / 50))
-        },
-        end: {
-            x,
-            y
+    } = {}) => {
+        if (this.busy) {
+            return;
         }
-    })
+
+        this.navPath = this.pathfinder.calculatePath({
+            start: {
+                x: Util.navPathToWorldCoord(Math.floor(this.x / 50)),
+                y: Util.navPathToWorldCoord(Math.floor(this.y / 50))
+            },
+            end: {
+                x,
+                y
+            }
+        });
+    }
 
     moveToPath = ({
         path = [],
@@ -85,6 +95,11 @@ export default class extends Phaser.GameObjects.Container {
     } = {}) => this.scene.tweens.timeline({
         targets: this,
         ease: 'Power4',
+        onStart: () => {
+            this.busy = true;
+            this.navPath = [];
+        },
+        onComplete: () => this.busy = false,
         tweens: path.map(p => ({
             ...p,
             duration: 500,
