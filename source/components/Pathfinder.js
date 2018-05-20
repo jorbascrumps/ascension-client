@@ -34,7 +34,7 @@ export default {
         });
     },
 
-    renderPath (graphic, path, { x = 0, y = 0 } = {}) {
+    renderPath (graphic, path, { x = 0, y = 0 } = {}, speed = 6) {
         graphic.clear();
 
         const navPoints = [
@@ -46,7 +46,7 @@ export default {
                 ))
         ];
 
-        const lineColor = path.length > 4 ? 0xff0000 : 0x00ff00;
+        const lineColor = path.length > speed ? 0xff0000 : 0x00ff00;
         graphic.lineStyle(4, lineColor, .5);
 
         const curve = new Phaser.Curves.Spline(navPoints);

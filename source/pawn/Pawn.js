@@ -46,6 +46,10 @@ export default class extends Phaser.GameObjects.Container {
         if (this.ownedByPlayer) {
             this.scene.input.on('pointermove', this.updateNavPath);
             this.scene.input.on('pointerdown', () => {
+                if (this.navPath.length > this.speed) {
+                    return;
+                }
+
                 const path = this.navPath.map(({x, y}) => ({
                     x: Util.navPathToWorldCoord(x),
                     y: Util.navPathToWorldCoord(y)
@@ -67,7 +71,8 @@ export default class extends Phaser.GameObjects.Container {
         this.pathfinder.renderPath(
             this.navGraphic,
             this.navPath,
-            { x: this.x, y: this.y }
+            { x: this.x, y: this.y },
+            this.speed
         );
     }
 
