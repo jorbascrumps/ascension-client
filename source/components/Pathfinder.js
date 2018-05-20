@@ -1,5 +1,10 @@
-export default class Pathfinder {
-    constructor ({
+import * as Util from './Util';
+
+export default {
+    graph: undefined,
+    scene: undefined,
+
+    init ({
         tilesPerRow = 10,
         map,
         blocked
@@ -9,53 +14,51 @@ export default class Pathfinder {
             map,
             blocked
         });
-    }
 
-    calculatePath = ({
+        return this;
+    },
+
+    create () {
+        return Object.create(this);
+    },
+
+    calculatePath ({
         start = {},
         end = {}
-    } = {}) => {
+    }) {
         const startNode = this.getGridElementAt(start);
         const endNode = this.getGridElementAt(end);
 
         return astar.search(this.graph, startNode, endNode, {
             closest: true
         });
-    }
+    },
 
-    getGridElementAt = ({
+    renderPath (graphic, path, { x = 0, y = 0 } = {}) {
+        graphic.clear();
+
+        const navPoints = [
+            new Phaser.Math.Vector2(x + 25, y + 25),
+            ...path
+                .map(({ x, y }) => new Phaser.Math.Vector2(
+                    Util.navPathToWorldCoord(x) + 25,
+                    Util.navPathToWorldCoord(y) + 25
+                ))
+        ];
+
+        const lineColor = path.length > 4 ? 0xff0000 : 0x00ff00;
+        graphic.lineStyle(4, lineColor, .5);
+
+        const curve = new Phaser.Curves.Spline(navPoints);
+        curve.draw(graphic, 64);
+    },
+
+    getGridElementAt ({
         x = 0,
         y = 0
-    } = {}) => this.graph.grid[Math.floor(x / 50)][Math.floor(y / 50)]
-
-/*
-    isBlockedTile = ({ x, y }) => {
-        const row = Math.floor(x / 50);
-        const col = Math.floor(y / 50);
-
-        if (typeof this.blocked[row] === 'undefined') {
-            return true;
-        }
-
-        return !Boolean(this.blocked[row][col]);
+    } = {}) {
+        return this.graph.grid[Math.floor(x / 50)][Math.floor(y / 50)];
     }
- */
-/*
-    canPathToTile = ({ start, end }) => {
-        const isBlocked = this.isBlockedTile(end);
-
-        if (isBlocked) {
-            return false;
-        }
-
-        const pathToTile = this.calculatePath({
-            start,
-            end
-        });
-
-        return pathToTile.length === 1;
-    }
- */
 }
 
 function setupGrid ({
