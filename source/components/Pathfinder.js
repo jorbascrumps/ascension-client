@@ -37,20 +37,55 @@ export default {
     renderPath (graphic, path, { x = 0, y = 0 } = {}, speed = 6) {
         graphic.clear();
 
-        const navPoints = [
-            new Phaser.Math.Vector2(x + 25, y + 25),
-            ...path
-                .map(({ x, y }) => new Phaser.Math.Vector2(
-                    Util.navPathToWorldCoord(x) + 25,
-                    Util.navPathToWorldCoord(y) + 25
-                ))
-        ];
+        const fillColour = path.length > speed ? 0xff0000 : 0x00ff00;
+        graphic.fillStyle(fillColour, 1);
+        graphic.lineStyle(5, fillColour, 1);
 
-        const lineColor = path.length > speed ? 0xff0000 : 0x00ff00;
-        graphic.lineStyle(4, lineColor, .5);
+        const navPoints = path
+            .map(({ x, y }) => new Phaser.Math.Vector2(
+                Util.navPathToWorldCoord(x) + 25,
+                Util.navPathToWorldCoord(y) + 25
+            ));
 
-        const curve = new Phaser.Curves.Spline(navPoints);
-        curve.draw(graphic, 64);
+        if (!navPoints.length) {
+            return
+        }
+
+        navPoints.forEach(({ x, y }, i) => i < navPoints.length - 1 && graphic.fillCircle(x, y, 3.5));
+
+        const targetPoint = navPoints[path.length - 1];
+
+        const topLeftCornerSpline = new Phaser.Curves.Spline([
+            new Phaser.Math.Vector2(targetPoint.x - 25, targetPoint.y - 10),
+            new Phaser.Math.Vector2(targetPoint.x - 25, targetPoint.y - 20),
+            new Phaser.Math.Vector2(targetPoint.x - 20, targetPoint.y - 25),
+            new Phaser.Math.Vector2(targetPoint.x - 10, targetPoint.y - 25)
+        ]);
+        topLeftCornerSpline.draw(graphic, 5);
+
+        const bottomLeftCornerSpline = new Phaser.Curves.Spline([
+            new Phaser.Math.Vector2(targetPoint.x - 25, targetPoint.y + 10),
+            new Phaser.Math.Vector2(targetPoint.x - 25, targetPoint.y + 20),
+            new Phaser.Math.Vector2(targetPoint.x - 20, targetPoint.y + 25),
+            new Phaser.Math.Vector2(targetPoint.x - 10, targetPoint.y + 25)
+        ]);
+        bottomLeftCornerSpline.draw(graphic, 5);
+
+        const topRightCornerSpline = new Phaser.Curves.Spline([
+            new Phaser.Math.Vector2(targetPoint.x + 25, targetPoint.y - 10),
+            new Phaser.Math.Vector2(targetPoint.x + 25, targetPoint.y - 20),
+            new Phaser.Math.Vector2(targetPoint.x + 20, targetPoint.y - 25),
+            new Phaser.Math.Vector2(targetPoint.x + 10, targetPoint.y - 25)
+        ]);
+        topRightCornerSpline.draw(graphic, 5);
+
+        const bottomRightCornerSpline = new Phaser.Curves.Spline([
+            new Phaser.Math.Vector2(targetPoint.x + 25, targetPoint.y + 10),
+            new Phaser.Math.Vector2(targetPoint.x + 25, targetPoint.y + 20),
+            new Phaser.Math.Vector2(targetPoint.x + 20, targetPoint.y + 25),
+            new Phaser.Math.Vector2(targetPoint.x + 10, targetPoint.y + 25)
+        ]);
+        bottomRightCornerSpline.draw(graphic, 5);
     },
 
     getGridElementAt ({
