@@ -11,7 +11,9 @@ export default {
         format: 'umd'
     },
     plugins: [
-        babel(),
+        babel({
+            exclude: 'node_modules/**'
+        }),
         builtins(),
         commonjs(),
         resolve({
