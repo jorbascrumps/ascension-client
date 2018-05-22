@@ -13,7 +13,7 @@ let busy = false;
 export function preload () {
     this.load.tilemapTiledJSON('map', '/source/data/map/level_01.json');
     this.load.image('tiles', '/source/assets/tile/level01.png');
-    this.load.image('player', '/source/assets/pawn/nathan.png');
+    this.load.image('player', '/source/assets/pawn/skeleton.png');
 }
 
 export function update (time, delta) {}

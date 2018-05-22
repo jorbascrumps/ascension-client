@@ -11,7 +11,7 @@ export default class extends Phaser.GameObjects.Container {
         owner,
         currentHealth = 10,
         maxHealth = 10,
-        speed = 6
+        speed = 8
     } = {}) {
         super(game, position.x, position.y);
 
@@ -28,7 +28,8 @@ export default class extends Phaser.GameObjects.Container {
 
         // Setup sprite
         this.sprite = game.add.sprite(0, 0, asset);
-        this.sprite.setOrigin(0, 0);
+        this.sprite.setOrigin(-0.25, 0.5);
+        this.sprite.setScale(2);
         this.add(this.sprite);
 
         this.store = store;
@@ -110,7 +111,6 @@ export default class extends Phaser.GameObjects.Container {
         tweens: path.map(p => ({
             ...p,
             duration: 500,
-            delay: 500,
             onComplete: sync && this.onMoveEnd
         }))
     })
