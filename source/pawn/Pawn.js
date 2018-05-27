@@ -106,8 +106,12 @@ export default class extends Phaser.GameObjects.Container {
         onStart: () => {
             this.busy = true;
             this.navPath = [];
+            this.onPreMove();
         },
-        onComplete: () => this.busy = false,
+        onComplete: () => {
+            this.busy = false
+            this.onPostMove();
+        },
         tweens: path.map(p => ({
             ...p,
             duration: 500,
@@ -122,24 +126,9 @@ export default class extends Phaser.GameObjects.Container {
         }))
     })
 
-    moveTo = ({
-        x,
-        y,
-        sync = false
-    } = {}) => this.scene.tweens.add({
-        targets: this,
-        ease: 'Power4',
-        duration: 500,
-        x,
-        y,
-        onCompleteParams: [{
-            sync
-        }],
-        onComplete: this.onMoveEnd,
-        onStartParams: [{
-            sync
-        }],
-        onStart: this.onMoveStart
+    onPreMove = () => this.pathfinder.openNodeAtCoord({
+        x: Math.ceil(this.x),
+        y: Math.ceil(this.y)
     })
 
     onMoveStart = ({ data }, [ target ], { sync = false } = {}) => {
@@ -153,6 +142,11 @@ export default class extends Phaser.GameObjects.Container {
 
         return this;
     }
+
+    onPostMove = () => this.pathfinder.closeNodeAtCoord({
+        x: Math.ceil(this.x),
+        y: Math.ceil(this.y)
+    })
 
     onMoveEnd = (tween, [ target ], { sync = false } = {}) => {
         if (sync) {

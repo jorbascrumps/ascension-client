@@ -34,6 +34,16 @@ export default {
         });
     },
 
+    openNodeAtCoord ({ x = 0, y = 0 } = {}) {
+        const node = this.getGridElementAt({ x, y });
+        this.graph.openNode(node);
+    },
+
+    closeNodeAtCoord ({ x = 0, y = 0 } = {}) {
+        const node = this.getGridElementAt({ x, y });
+        this.graph.closeNode(node);
+    },
+
     renderPath (graphic, path, { x = 0, y = 0 } = {}, speed = 6) {
         graphic.clear();
 

@@ -81,6 +81,8 @@ export default class PawnManager {
         // Move Pawns that don't belong to user
         this.pawns.getChildren()
             .filter(p => p.owner !== user.session)
-            .forEach(p => p.moveTo(pawn[p.id].position));
+            .forEach(p => p.moveToPath({
+                path: [ pawn[p.id].position ]
+            }));
     }
 }
