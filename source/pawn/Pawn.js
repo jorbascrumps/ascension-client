@@ -111,7 +111,16 @@ export default class extends Phaser.GameObjects.Container {
         tweens: path.map(p => ({
             ...p,
             duration: 500,
-            onComplete: sync && this.onMoveEnd
+            onComplete: sync && this.onMoveEnd,
+            onStart: ({ data } = {}) => {
+                const movement = data.find(({ key }) => key === 'x');
+
+                if (movement.getEndValue() === Math.ceil(this.x)) {
+                    return;
+                }
+
+                this.sprite.flipX = movement.getEndValue() <= Math.ceil(this.x);
+            }
         }))
     })
 
