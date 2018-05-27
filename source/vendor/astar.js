@@ -154,6 +154,12 @@ var astar = {
     node.visited = false;
     node.closed = false;
     node.parent = null;
+  },
+  closeNode: function (node) {
+    node.closed = true;
+  },
+  openNode: function (node) {
+    node.closed = false;
   }
 };
 
@@ -204,6 +210,14 @@ Graph.prototype.cleanDirty = function() {
     astar.cleanNode(this.dirtyNodes[i]);
   }
   this.dirtyNodes = [];
+};
+
+Graph.prototype.closeNode = function(node) {
+  astar.closeNode(node);
+};
+
+Graph.prototype.openNode = function(node) {
+  astar.openNode(node);
 };
 
 Graph.prototype.markDirty = function(node) {
