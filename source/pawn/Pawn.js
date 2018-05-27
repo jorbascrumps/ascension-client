@@ -111,16 +111,14 @@ export default class extends Phaser.GameObjects.Container {
         tweens: path.map(p => ({
             ...p,
             duration: 500,
-            onComplete: sync && this.onMoveEnd,
-            onStart: ({ data } = {}) => {
-                const movement = data.find(({ key }) => key === 'x');
-
-                if (movement.getEndValue() === Math.ceil(this.x)) {
-                    return;
-                }
-
-                this.sprite.flipX = movement.getEndValue() <= Math.ceil(this.x);
-            }
+            onCompleteParams: [{
+                sync
+            }],
+            onComplete: this.onMoveEnd,
+            onStartParams: [{
+                sync
+            }],
+            onStart: this.onMoveStart
         }))
     })
 
@@ -134,18 +132,43 @@ export default class extends Phaser.GameObjects.Container {
         duration: 500,
         x,
         y,
-        onComplete: sync && this.onMoveEnd
+        onCompleteParams: [{
+            sync
+        }],
+        onComplete: this.onMoveEnd,
+        onStartParams: [{
+            sync
+        }],
+        onStart: this.onMoveStart
     })
 
-    onMoveEnd = (tween, [ target ]) => this.store.dispatch({
-        type: 'PAWN_MOVE',
-        id: this.id,
-        position: {
-            x: this.x,
-            y: this.y
-        },
-        sync: true
-    })
+    onMoveStart = ({ data }, [ target ], { sync = false } = {}) => {
+        const movement = data.find(({ key }) => key === 'x');
+
+        if (movement.getEndValue() === Math.ceil(this.x)) {
+            return;
+        }
+
+        this.sprite.flipX = movement.getEndValue() <= Math.ceil(this.x);
+
+        return this;
+    }
+
+    onMoveEnd = (tween, [ target ], { sync = false } = {}) => {
+        if (sync) {
+            this.store.dispatch({
+                type: 'PAWN_MOVE',
+                id: this.id,
+                position: {
+                    x: this.x,
+                    y: this.y
+                },
+                sync: true
+            });
+        }
+
+        return this;
+    }
 
 /*
     setupEvents = () => {
