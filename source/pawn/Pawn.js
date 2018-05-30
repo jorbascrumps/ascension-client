@@ -27,6 +27,8 @@ export default class extends Phaser.GameObjects.Container {
 
         this.id = id || Date.now().toString();
 
+        this.setSize(50);
+
         // Setup sprite
         this.sprite = game.add.sprite(0, 0, asset);
         this.sprite.setOrigin(-0.25, 0.5);
