@@ -28,7 +28,7 @@
     "phaser": "3.0.0-beta.8",
     "phaser-kinetic-scrolling-plugin": "1.0.4",
     "redux": "3.7.2",
-    "rollup": "^0.59.3",
+    "rollup": "^0.59.4",
     "rollup-plugin-babel": "^3.0.4",
     "rollup-plugin-commonjs": "^9.1.3",
     "rollup-plugin-node-builtins": "2.1.2",
