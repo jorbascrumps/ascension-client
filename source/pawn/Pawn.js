@@ -42,6 +42,7 @@ export default class extends Phaser.GameObjects.Container {
         this.maxHealth = maxHealth;
         this.speed = speed;
         this.busy = false;
+        this.currentTurn = false;
 
         this.navPath = [];
         this.navGraphic = game.add.graphics(0, 0);
@@ -64,6 +65,17 @@ export default class extends Phaser.GameObjects.Container {
                 });
             });
         }
+
+        this.client.store.subscribe(() => this.sync(this.client.store.getState()));
+    }
+
+    sync = ({
+        ctx: {
+            currentPlayer,
+            ...rest
+        }
+    } = {}) => {
+        this.currentTurn = currentPlayer == this.id;
     }
 
     preUpdate (...args) {
@@ -83,7 +95,7 @@ export default class extends Phaser.GameObjects.Container {
         x = 0,
         y = 0
     } = {}) => {
-        if (this.busy) {
+        if (this.busy || !this.currentTurn) {
             return;
         }
 
