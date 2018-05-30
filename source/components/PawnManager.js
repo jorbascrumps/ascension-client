@@ -4,10 +4,12 @@ export default class PawnManager {
     constructor ({
         scene,
         store,
-        pathfinder
+        pathfinder,
+        client
     } = {}) {
         this.scene = scene;
         this.store = store;
+        this.client = client;
         this.pawns = scene.add.group();
 
         this.pathfinder = pathfinder;
@@ -33,6 +35,7 @@ export default class PawnManager {
             id,
             game: this.scene,
             store: this.store,
+            client: this.client,
             pathfinder: this.pathfinder.create()
         });
 

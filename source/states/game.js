@@ -69,7 +69,8 @@ export function create () {
     const pawnManager = new PawnManager({
         scene: this,
         store,
-        pathfinder
+        pathfinder,
+        client: this.client
     });
     sprite = pawnManager.add({
         id,
