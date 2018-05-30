@@ -11,7 +11,7 @@ export default {
         ]
     }),
     moves: {
-        doThing (G, ctx, id, pos) {
+        movePawn (G, ctx, id, pos) {
             const {
                 actions,
                 ...currentPlayer
