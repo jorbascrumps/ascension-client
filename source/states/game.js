@@ -5,6 +5,14 @@ import qs from 'querystring';
 import Pathfinder from '../components/Pathfinder';
 import PawnManager from '../components/PawnManager';
 
+import {
+    default as c
+} from 'boardgame.io/client';
+import {
+    default as b
+} from 'boardgame.io/core';
+import game from '../game';
+
 let controls;
 let pathfinder;
 let sprite;
@@ -20,10 +28,22 @@ export function update (time, delta) {}
 
 export function create () {
     const {
+        id,
         room,
         x = 50,
         y = 50
     } = qs.parse(window.location.search.substr(1));
+
+    this.client = c.Client({
+        game: b.Game(game),
+        multiplayer: {
+            server: 'localhost:8080'
+        },
+        gameID: room,
+        playerID: id
+    });
+    this.client.connect();
+
     const store = window.AscensionStore || {
         getState: () => ({ user: {} }),
         subscribe: () => {},
@@ -52,18 +72,11 @@ export function create () {
         pathfinder
     });
     sprite = pawnManager.add({
+        id,
         owner: user.session,
         position: {
             x: parseInt(x, 10),
             y: parseInt(y, 10)
-        },
-        sync: true
-    });
-    pawnManager.add({
-        owner: user.session,
-        position: {
-            x: parseInt(300, 10),
-            y: parseInt(300, 10)
         },
         sync: true
     });
