@@ -15,12 +15,12 @@ export default {
             exclude: 'node_modules/**'
         }),
         builtins(),
-        commonjs(),
         resolve({
             jsnext: true,
             main: true,
             browser: true
         }),
+        commonjs(),
         replace({
             'process.env.NODE_ENV': JSON.stringify('development')
         })
