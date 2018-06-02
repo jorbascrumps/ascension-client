@@ -144,6 +144,8 @@ export default class extends Phaser.GameObjects.Container {
             x: this.x,
             y: this.y
         });
+
+        this.scene.events.emit('PAWN_DESTROY', this);
     }
 
     renderHealthBar = () => {
