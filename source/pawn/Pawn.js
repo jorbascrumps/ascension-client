@@ -139,7 +139,12 @@ export default class extends Phaser.GameObjects.Container {
         }
     }
 
-    onDestroy = () => {}
+    onDestroy = () => {
+        this.pathfinder.openNodeAtCoord({
+            x: this.x,
+            y: this.y
+        });
+    }
 
     renderHealthBar = () => {
         this.healthBar.clear();
