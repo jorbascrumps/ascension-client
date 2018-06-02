@@ -98,6 +98,10 @@ export default {
         bottomRightCornerSpline.draw(graphic, 5);
     },
 
+    isAdjacent (start, end) {
+        return this.calculatePath({ start, end }).length <= 1;
+    },
+
     getGridElementAt ({
         x = 0,
         y = 0
