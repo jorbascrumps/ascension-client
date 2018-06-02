@@ -11,7 +11,7 @@ import {
 import {
     default as b
 } from 'boardgame.io/core';
-import game from '../game';
+import gameConfig from '../game';
 
 let controls;
 let pathfinder;
@@ -35,7 +35,7 @@ export function create () {
     } = qs.parse(window.location.search.substr(1));
 
     this.client = c.Client({
-        game: b.Game(game),
+        game: b.Game(gameConfig(this)),
         multiplayer: {
             server: 'localhost:8080'
         },

@@ -1,4 +1,4 @@
-export default {
+export default scene => ({
     name: 'ascension',
     setup: () => ({
         players: [
@@ -44,4 +44,4 @@ export default {
             return currentPlayer.actions <= 0;
         }
     }
-};
+});
