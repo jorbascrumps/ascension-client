@@ -77,13 +77,11 @@ export default class extends Phaser.GameObjects.Container {
 
         this.client.store.subscribe(() => this.sync(this.client.store.getState()));
 
-        game.events.on('ATTACK_REGISTER', id => {
-            if (!this.currentTurn) {
-                return;
-            }
-
-            game.events.emit('ATTACK_PAWN', id);
-        });
+        game.events.on('ATTACK_REGISTER', targetId =>
+            this.currentTurn && this.client.moves.attack({
+                targetId
+            })
+        );
 
         game.events.on('ATTACK_PAWN', id => {
             if (id !== this.id) {

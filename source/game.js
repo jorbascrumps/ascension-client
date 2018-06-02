@@ -25,6 +25,22 @@ export default scene => ({
                         :   player
                 )
             };
+        },
+        attack (G, ctx, {
+            targetId,
+            damage = 0
+        } = {}) {
+            scene.events.emit('ATTACK_PAWN', targetId);
+
+            return {
+                ...G,
+                players: G.players.map((player, i) => ({
+                    ...player,
+                    actions: i == ctx.currentPlayer
+                        ?   player.actions - 1
+                        :   player.actions
+                }))
+            };
         }
     },
     flow: {
