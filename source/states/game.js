@@ -19,9 +19,10 @@ let sprite;
 let busy = false;
 
 export function preload () {
-    this.load.tilemapTiledJSON('map', '/source/data/map/level_01.json');
-    this.load.image('tiles', '/source/assets/tile/level01.png');
-    this.load.image('player', '/source/assets/pawn/skeleton.png');
+    this.load.tilemapTiledJSON('map', '/client/source/data/map/level_01.json');
+    this.load.image('tiles', '/client/source/assets/tile/level01.png');
+    this.load.image('player', '/client/source/assets/pawn/skeleton.png');
+    this.load.image('blood', '/client/source/assets/blood.png');
 }
 
 export function update (time, delta) {}
@@ -57,9 +58,13 @@ export function create () {
     const tilemap = this.make.tilemap({
         key: 'map'
     });
+
     const tileset = tilemap.addTilesetImage('level01', 'tiles');
     const levelData = tilemap.createStaticLayer('map', tileset);
     const blockedLayer = tilemap.createStaticLayer('blocked', tileset);
+
+    this.renderTex = this.add.renderTexture(0, 0, 800, 600);
+    this.blood = this.textures.getFrame('blood');
 
     pathfinder = Pathfinder.init({
         tilesPerRow: tilemap.width,
@@ -123,4 +128,14 @@ export function create () {
     this.input.on('gameobjectout', (pointer, target) => {
         target.sprite.clearTint();
     });
+    this.events.on('PAWN_DESTROY', onPawnDeath, this);
+}
+
+function onPawnDeath (pawn) {
+    this.renderTex.draw(
+        this.blood.texture,
+        this.blood,
+        pawn.x + 25 - this.blood.halfWidth,
+        pawn.y + 25 - this.blood.halfHeight
+    );
 }
