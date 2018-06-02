@@ -61,6 +61,8 @@ export default class PawnManager {
 
     get = () => this.pawns.getChildren()
 
+    getByID = id => this.get().find(c => c.id === id)
+
     sync = ({
         pawn,
         user
