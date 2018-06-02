@@ -108,6 +108,8 @@ export default class extends Phaser.GameObjects.Container {
             const currentHealth = this.data.get('currentHealth');
             this.data.set('currentHealth', currentHealth - 5);
         });
+
+        this.on('destroy', this.onDestroy);
     }
 
     sync = ({
@@ -130,11 +132,14 @@ export default class extends Phaser.GameObjects.Container {
             case 'currentHealth':
                 if (currentVal <= 0) {
                     reset(0);
+                    this.destroy();
                 }
 
                 return;
         }
     }
+
+    onDestroy = () => {}
 
     renderHealthBar = () => {
         this.healthBar.clear();
