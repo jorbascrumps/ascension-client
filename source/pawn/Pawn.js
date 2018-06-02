@@ -6,6 +6,7 @@ export default class extends Phaser.GameObjects.Container {
         store,
         client,
         pathfinder,
+        manager,
         id,
         asset = 'player',
         position,
@@ -44,6 +45,7 @@ export default class extends Phaser.GameObjects.Container {
         this.store = store;
         this.client = client;
         this.pathfinder = pathfinder;
+        this.manager = manager;
         this.owner = owner;
         this.ownedByPlayer = owner === session;
         this.speed = speed;

@@ -36,7 +36,8 @@ export default class PawnManager {
             game: this.scene,
             store: this.store,
             client: this.client,
-            pathfinder: this.pathfinder.create()
+            pathfinder: this.pathfinder.create(),
+            manager: this
         });
 
         this.scene.sys.displayList.add(pawn);
