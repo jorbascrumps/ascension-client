@@ -10,8 +10,8 @@ export default class extends Phaser.GameObjects.Container {
         asset = 'player',
         position,
         owner,
-        currentHealth = 10,
-        maxHealth = 10,
+        maxHealth = 50,
+        currentHealth = maxHealth,
         speed = 8
     } = {}) {
         super(game, position.x, position.y);
@@ -27,7 +27,8 @@ export default class extends Phaser.GameObjects.Container {
 
         this.id = id || Date.now().toString();
 
-        this.setSize(50);
+        this.setDataEnabled();
+        this.on('changedata', this.onChangeData);
 
         // Setup sprite
         this.sprite = game.add.sprite(0, 0, asset);
@@ -35,19 +36,25 @@ export default class extends Phaser.GameObjects.Container {
         this.sprite.setScale(2);
         this.add(this.sprite);
 
+        // Setup health
+        this.healthBar = game.add.graphics(0, 0);
+        this.data.set('currentHealth', currentHealth);
+        this.data.set('maxHealth', maxHealth);
+
         this.store = store;
         this.client = client;
         this.pathfinder = pathfinder;
         this.owner = owner;
         this.ownedByPlayer = owner === session;
-        this.currentHealth = currentHealth;
-        this.maxHealth = maxHealth;
         this.speed = speed;
         this.busy = false;
         this.currentTurn = false;
+        this.setInteractive(new Phaser.Geom.Rectangle(0, 0, 50, 50), Phaser.Geom.Rectangle.Contains);
 
+        // Setup navigation
         this.navPath = [];
         this.navGraphic = game.add.graphics(0, 0);
+        this.pathfinder.closeNodeAtCoord(position);
 
         if (this.ownedByPlayer) {
             this.scene.input.on('pointermove', this.updateNavPath);
@@ -69,6 +76,23 @@ export default class extends Phaser.GameObjects.Container {
         }
 
         this.client.store.subscribe(() => this.sync(this.client.store.getState()));
+
+        game.events.on('ATTACK_REGISTER', id => {
+            if (!this.currentTurn) {
+                return;
+            }
+
+            game.events.emit('ATTACK_PAWN', id);
+        });
+
+        game.events.on('ATTACK_PAWN', id => {
+            if (id !== this.id) {
+                return;
+            }
+
+            const currentHealth = this.data.get('currentHealth');
+            this.data.set('currentHealth', currentHealth - 5);
+        });
     }
 
     sync = ({
@@ -84,7 +108,42 @@ export default class extends Phaser.GameObjects.Container {
         this.update(...args);
     }
 
+    onChangeData = (_, key, val, reset) => {
+        const currentVal = this.data.get(key);
+
+        switch (key) {
+            case 'currentHealth':
+                if (currentVal <= 0) {
+                    reset(0);
+                }
+
+                return;
+        }
+    }
+
+    renderHealthBar = () => {
+        this.healthBar.clear();
+
+        const {
+            currentHealth,
+            maxHealth
+        } = this.data.query("Health$");
+
+        const anchorX = this.x + 5;
+        const anchorY = this.y - 45;
+        const height = 4;
+        const width = 40;
+        const per = (currentHealth / maxHealth) * width;
+
+        this.healthBar.fillStyle(0x000000, 1);
+        this.healthBar.fillRect(anchorX - 1, anchorY - 1, width + 2, height + 2);
+        this.healthBar.fillStyle(0xff0000, 1);
+        this.healthBar.fillRect(anchorX, anchorY, per, height);
+    }
+
     update () {
+        this.renderHealthBar();
+
         this.pathfinder.renderPath(
             this.navGraphic,
             this.navPath,

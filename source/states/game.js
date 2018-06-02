@@ -81,4 +81,46 @@ export function create () {
         },
         sync: true
     });
+    pawnManager.add({
+        id: '123',
+        owner: '1',
+        position: {
+            x: 100,
+            y: 200
+        }
+    });
+    pawnManager.add({
+        id: '456',
+        owner: '1',
+        position: {
+            x: 150,
+            y: 200
+        }
+    });
+    pawnManager.add({
+        id: '789',
+        owner: '1',
+        position: {
+            x: 200,
+            y: 200
+        }
+    });
+
+    this.input.on('gameobjectdown', (pointer, target) => {
+        if (target.ownedByPlayer) {
+            return;
+        }
+
+        target.sprite.setTint(0xff0000);
+        this.events.emit('ATTACK_REGISTER', target.id);
+    });
+    this.input.on('gameobjectup', (pointer, target) => {
+        target.sprite.setTint(0xe3e3e3);
+    });
+    this.input.on('gameobjectover', (pointer, target) => {
+        target.sprite.setTint(0xe3e3e3);
+    });
+    this.input.on('gameobjectout', (pointer, target) => {
+        target.sprite.clearTint();
+    });
 }
