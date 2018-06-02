@@ -79,11 +79,25 @@ export default class extends Phaser.GameObjects.Container {
 
         this.client.store.subscribe(() => this.sync(this.client.store.getState()));
 
-        game.events.on('ATTACK_REGISTER', targetId =>
-            this.currentTurn && this.client.moves.attack({
+        game.events.on('ATTACK_REGISTER', targetId => {
+            if (!this.currentTurn) {
+                return;
+            }
+
+            const target = manager.getByID(targetId);
+            const isAdjacent = this.pathfinder.isAdjacent(
+                { x: this.x, y: this.y },
+                { x: target.x, y: target.y }
+            );
+
+            if (!isAdjacent) {
+                return;
+            }
+
+            this.client.moves.attack({
                 targetId
-            })
-        );
+            });
+        });
 
         game.events.on('ATTACK_PAWN', id => {
             if (id !== this.id) {
