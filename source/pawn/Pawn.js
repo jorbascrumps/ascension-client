@@ -123,16 +123,17 @@ export default class extends Phaser.GameObjects.Container {
 
     renderHealthBar = () => {
         this.healthBar.clear();
+        this.healthBar.depth = 2;
 
         const {
             currentHealth,
             maxHealth
         } = this.data.query("Health$");
 
-        const anchorX = this.x + 5;
-        const anchorY = this.y - 45;
-        const height = 4;
-        const width = 40;
+        const anchorX = this.x + 14;
+        const anchorY = this.y - 26;
+        const height = 1;
+        const width = 26;
         const per = (currentHealth / maxHealth) * width;
 
         this.healthBar.fillStyle(0x000000, 1);
