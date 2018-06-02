@@ -39,6 +39,7 @@ export default class extends Phaser.GameObjects.Container {
 
         // Setup health
         this.healthBar = game.add.graphics(0, 0);
+        this.add(this.healthBar);
         this.data.set('currentHealth', currentHealth);
         this.data.set('maxHealth', maxHealth);
 
@@ -144,8 +145,8 @@ export default class extends Phaser.GameObjects.Container {
             maxHealth
         } = this.data.query("Health$");
 
-        const anchorX = this.x + 14;
-        const anchorY = this.y - 26;
+        const anchorX = 14;
+        const anchorY = -26;
         const height = 1;
         const width = 26;
         const per = (currentHealth / maxHealth) * width;
