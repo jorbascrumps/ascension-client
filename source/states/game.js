@@ -64,7 +64,7 @@ export function create () {
     const blockedLayer = tilemap.createStaticLayer('blocked', tileset);
 
     this.renderTex = this.add.renderTexture(0, 0, 800, 600);
-    this.blood = this.textures.getFrame('blood');
+    this.blood = this.add.sprite(0, 0, 'blood').setVisible(false);
 
     pathfinder = Pathfinder.init({
         tilesPerRow: tilemap.width,
@@ -132,10 +132,19 @@ export function create () {
 }
 
 function onPawnDeath (pawn) {
+    const halfHeight = this.blood.frame.halfHeight;
+    const halfWidth = this.blood.frame.halfWidth;
+
+    this.renderTex.save();
+    this.renderTex.translate(pawn.x, pawn.y);
+    this.renderTex.translate(halfWidth, halfHeight);
+
+    this.renderTex.rotate(Phaser.Math.Between(0, 360) * Phaser.Math.DEG_TO_RAD);
     this.renderTex.draw(
         this.blood.texture,
-        this.blood,
-        pawn.x + 25 - this.blood.halfWidth,
-        pawn.y + 25 - this.blood.halfHeight
+        this.blood.frame,
+        -halfWidth,
+        -halfHeight
     );
+    this.renderTex.restore();
 }
