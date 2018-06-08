@@ -24,7 +24,7 @@
     "babel-plugin-transform-class-properties": "6.24.1",
     "babel-plugin-transform-object-rest-spread": "6.26.0",
     "babel-preset-env": "1.7.0",
-    "boardgame.io": "0.22.1",
+    "boardgame.io": "0.23.1",
     "eventemitter3": "2.0.3",
     "phaser": "3.0.0-beta.8",
     "phaser-kinetic-scrolling-plugin": "1.0.4",
