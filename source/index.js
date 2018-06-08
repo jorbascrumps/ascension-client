@@ -1,3 +1,5 @@
+import "@babel/polyfill";
+
 import * as scene from './states/game';
 
 window.onload = () => {
