@@ -23,11 +23,17 @@ export function preload () {
     this.load.image('tiles', '/client/source/assets/tile/level01.png');
     this.load.image('player', '/client/source/assets/pawn/skeleton.png');
     this.load.image('blood', '/client/source/assets/blood.png');
+
+    this.load.on('progress', value =>
+        FBInstant.setLoadingProgress(value * 100)
+    );
 }
 
 export function update (time, delta) {}
 
-export function create () {
+export async function create () {
+    await FBInstant.startGameAsync();
+
     const {
         id,
         room,
