@@ -9,13 +9,16 @@ export default class extends Phaser.GameObjects.Container {
         manager,
         id,
         asset = 'player',
-        position,
+        position: {
+            x: initialX = 10,
+            y: initialY = 0
+        } = {},
         owner,
         maxHealth = 50,
         currentHealth = maxHealth,
         speed = 8
     } = {}) {
-        super(game, position.x, position.y);
+        super(game, initialX, initialY);
 
         game.sys.displayList.add(this);
         game.sys.updateList.add(this);
@@ -57,7 +60,7 @@ export default class extends Phaser.GameObjects.Container {
         // Setup navigation
         this.navPath = [];
         this.navGraphic = game.add.graphics(0, 0);
-        this.pathfinder.closeNodeAtCoord(position);
+        this.pathfinder.closeNodeAtCoord({ x: this.x, y: this.y });
 
         if (this.ownedByPlayer) {
             this.scene.input.on('pointermove', this.updateNavPath);

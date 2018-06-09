@@ -3,10 +3,18 @@ export default scene => ({
     setup: () => ({
         players: [
             {
-                name: 'One'
+                name: 'One',
+                position: {
+                    x: 50,
+                    y: 50
+                }
             },
             {
-                name: 'Two'
+                name: 'Two',
+                position: {
+                    x: 0,
+                    y: 0
+                }
             }
         ]
     }),
