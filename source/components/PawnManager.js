@@ -63,30 +63,16 @@ export default class PawnManager {
     getByID = id => this.get().find(c => c.id === id)
 
     sync = ({
-        pawn,
-        user
+        G: {
+            players
+        }
     } = {}) => {
-        const newIds = Object.keys(pawn);
-        const oldIds = this.pawns.getChildren()
-            .map(p => p.id);
-
-        const removedPawns = this.pawns.getChildren()
-            .filter(({ id }) => newIds.indexOf(id) < 0)
-            .forEach(pawn => this.remove(pawn));
-
-        const addedPawns = newIds
-            .filter(id => oldIds.indexOf(id) < 0)
-            .map(id => this.add({
-                ...pawn[id],
-                id,
-                sync: false
-            }));
-
-        // Move Pawns that don't belong to user
         this.pawns.getChildren()
-            .filter(p => p.owner !== user.session)
-            .forEach(p => p.moveToPath({
-                path: [ pawn[p.id].position ]
-            }));
+            .forEach((pawn, i) =>
+                pawn.moveToPath({
+                    path: [ players[i].position ],
+                    sync: false
+                })
+            );
     }
 }
