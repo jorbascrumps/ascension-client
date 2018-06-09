@@ -3,7 +3,6 @@ import * as Util from '../components/Util';
 export default class extends Phaser.GameObjects.Container {
     constructor ({
         game,
-        store,
         client,
         pathfinder,
         manager,
@@ -23,12 +22,6 @@ export default class extends Phaser.GameObjects.Container {
         game.sys.displayList.add(this);
         game.sys.updateList.add(this);
 
-        const {
-            user: {
-                session
-            }
-        } = store.getState();
-
         this.id = id || Date.now().toString();
 
         this.setDataEnabled();
@@ -46,12 +39,11 @@ export default class extends Phaser.GameObjects.Container {
         this.data.set('currentHealth', currentHealth);
         this.data.set('maxHealth', maxHealth);
 
-        this.store = store;
         this.client = client;
         this.pathfinder = pathfinder;
         this.manager = manager;
         this.owner = owner;
-        this.ownedByPlayer = owner === session;
+        this.ownedByPlayer = true; // TODO: Pawn ownership
         this.speed = speed;
         this.busy = false;
         this.currentTurn = false;
@@ -257,15 +249,16 @@ export default class extends Phaser.GameObjects.Container {
 
     onMoveEnd = (tween, [ target ], { sync = false } = {}) => {
         if (sync) {
-            this.store.dispatch({
-                type: 'PAWN_MOVE',
-                id: this.id,
-                position: {
-                    x: this.x,
-                    y: this.y
-                },
-                sync: true
-            });
+            // TODO: Pawn onMoveEnd
+            // this.store.dispatch({
+            //     type: 'PAWN_MOVE',
+            //     id: this.id,
+            //     position: {
+            //         x: this.x,
+            //         y: this.y
+            //     },
+            //     sync: true
+            // });
         }
 
         return this;

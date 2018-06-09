@@ -51,16 +51,6 @@ export async function create () {
     });
     this.client.connect();
 
-    const store = window.AscensionStore || {
-        getState: () => ({ user: {} }),
-        subscribe: () => {},
-        dispatch: () => {}
-    };
-
-    const {
-        user
-    } = store.getState();
-
     const tilemap = this.make.tilemap({
         key: 'map'
     });
@@ -79,43 +69,12 @@ export async function create () {
     });
     const pawnManager = new PawnManager({
         scene: this,
-        store,
         pathfinder,
         client: this.client
     });
     sprite = pawnManager.add({
-        id,
-        owner: user.session,
-        // position: {
-        //     x: parseInt(x, 10),
-        //     y: parseInt(y, 10)
-        // },
-        // sync: true
+        id
     });
-    // pawnManager.add({
-    //     id: '123',
-    //     owner: '1',
-    //     position: {
-    //         x: 100,
-    //         y: 200
-    //     }
-    // });
-    // pawnManager.add({
-    //     id: '456',
-    //     owner: '1',
-    //     position: {
-    //         x: 150,
-    //         y: 200
-    //     }
-    // });
-    // pawnManager.add({
-    //     id: '789',
-    //     owner: '1',
-    //     position: {
-    //         x: 200,
-    //         y: 200
-    //     }
-    // });
 
     this.input.on('gameobjectdown', (pointer, target) => {
         if (target.ownedByPlayer) {
