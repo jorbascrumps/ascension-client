@@ -66,10 +66,7 @@ export default class extends Phaser.GameObjects.Container {
                     y: Util.navPathToWorldCoord(y)
                 }));
 
-                this.moveToPath({
-                    path,
-                    sync: true
-                });
+                this.client.moves.movePawn(this.id, path[path.length - 1]);
             });
         }
 
@@ -202,7 +199,6 @@ export default class extends Phaser.GameObjects.Container {
         targets: this,
         ease: 'Power4',
         onStart: () => {
-            this.client.moves.movePawn(this.id);
             this.busy = true;
             this.navPath = [];
             this.onPreMove();

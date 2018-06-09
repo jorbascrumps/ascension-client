@@ -19,21 +19,18 @@ export default scene => ({
         ]
     }),
     moves: {
-        movePawn (G, ctx, id, pos) {
-            const {
-                actions,
-                ...currentPlayer
-            } = G.players[id];
-
-            return {
-                ...G,
-                players: G.players.map((player, i) =>
-                    i == id
-                        ?   { ...player, actions: actions - 1 }
-                        :   player
-                )
-            };
-        },
+        movePawn: (G, ctx, id, position) => ({
+            ...G,
+            players: G.players.map((player, i) => ({
+                ...player,
+                actions: i === parseInt(id, 10)
+                    ?   player.actions - 1
+                    :   player.actions,
+                position: i === parseInt(id, 10)
+                    ?   position
+                    :   player.position
+            }))
+        }),
         attack (G, ctx, {
             targetId,
             damage = 0
