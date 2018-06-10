@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "rollup -c -w",
+    "start": "BABEL_ENV=client rollup -c -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -39,18 +39,6 @@
     "rollup-watch": "4.3.1"
   },
   "babel": {
-    "presets": [
-      [
-        "env",
-        {
-          "modules": false
-        }
-      ]
-    ],
-    "plugins": [
-      "external-helpers",
-      "transform-object-rest-spread",
-      "transform-class-properties"
-    ]
+    "extends": "../.babelrc"
   }
 }
