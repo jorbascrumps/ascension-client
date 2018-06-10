@@ -67,12 +67,23 @@ export default class PawnManager {
             players
         }
     } = {}) => {
-        this.pawns.getChildren()
-            .forEach((pawn, i) =>
+        Object.keys(players)
+            .forEach(id => {
+                const pawn = this.pawns.children.get('id', id);
+                const player = players[id];
+
+                if (typeof pawn === 'undefined') {
+                    return this.add({
+                        ...player,
+                        id,
+                        owner: id
+                    });
+                }
+
                 pawn.moveToPath({
-                    path: [ players[i].position ],
+                    path: [ player.position ],
                     sync: false
                 })
-            );
+            });
     }
 }

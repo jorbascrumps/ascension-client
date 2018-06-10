@@ -72,9 +72,6 @@ export async function create () {
         pathfinder,
         client: this.client
     });
-    sprite = pawnManager.add({
-        id
-    });
 
     this.input.on('gameobjectdown', (pointer, target) => {
         if (target.ownedByPlayer) {
