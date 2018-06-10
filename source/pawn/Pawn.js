@@ -43,7 +43,7 @@ export default class extends Phaser.GameObjects.Container {
         this.pathfinder = pathfinder;
         this.manager = manager;
         this.owner = owner;
-        this.ownedByPlayer = true; // TODO: Pawn ownership
+        this.ownedByPlayer = this.id === this.client.playerID;
         this.speed = speed;
         this.busy = false;
         this.currentTurn = false;
