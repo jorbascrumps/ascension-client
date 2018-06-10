@@ -34,8 +34,8 @@ export function update (time, delta) {}
 export async function create () {
     await FBInstant.startGameAsync();
 
+    const playerID = FBInstant.player.getID();
     const {
-        id = '0',
         room,
         x = 50,
         y = 50
@@ -47,7 +47,7 @@ export async function create () {
             server: 'localhost:8080'
         },
         gameID: room,
-        playerID: id
+        playerID
     });
     this.client.connect();
 

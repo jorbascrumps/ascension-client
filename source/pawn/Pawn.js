@@ -71,6 +71,7 @@ export default class extends Phaser.GameObjects.Container {
         }
 
         this.client.store.subscribe(() => this.sync(this.client.store.getState()));
+        this.sync(this.client.store.getState());
 
         game.events.on('ATTACK_REGISTER', targetId => {
             if (!this.currentTurn) {
@@ -110,7 +111,7 @@ export default class extends Phaser.GameObjects.Container {
             ...rest
         }
     } = {}) => {
-        this.currentTurn = currentPlayer == this.id;
+        this.currentTurn = currentPlayer === this.id;
     }
 
     preUpdate (...args) {
