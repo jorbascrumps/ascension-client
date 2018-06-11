@@ -68,7 +68,7 @@ export default class extends Phaser.GameObjects.Container {
             });
         }
 
-        this.client.store.subscribe(() => this.sync(this.client.store.getState()));
+        this.unsubscribe = this.client.store.subscribe(() => this.sync(this.client.store.getState()));
         this.sync(this.client.store.getState());
 
         game.events.on('ATTACK_REGISTER', targetId => {
@@ -132,6 +132,8 @@ export default class extends Phaser.GameObjects.Container {
     }
 
     onDestroy = () => {
+        this.unsubscribe();
+
         this.pathfinder.openNodeAtCoord({
             x: this.x,
             y: this.y
