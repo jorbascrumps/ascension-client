@@ -133,7 +133,7 @@ export default class extends Phaser.GameObjects.Container {
 
         switch (key) {
             case 'currentHealth':
-                if (currentVal <= 0) {
+                if (val <= 0) {
                     reset(0);
                     this.destroy();
                 }
