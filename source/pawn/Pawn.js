@@ -86,18 +86,7 @@ export default class extends Phaser.GameObjects.Container {
                 return;
             }
 
-            this.client.moves.attack({
-                targetId
-            });
-        });
-
-        game.events.on('ATTACK_PAWN', id => {
-            if (id !== this.id) {
-                return;
-            }
-
-            const currentHealth = this.data.get('currentHealth');
-            this.data.set('currentHealth', currentHealth - 5);
+            this.client.moves.attack(this.id, targetId);
         });
 
         this.on('destroy', this.onDestroy);
