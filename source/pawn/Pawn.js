@@ -36,8 +36,6 @@ export default class extends Phaser.GameObjects.Container {
         // Setup health
         this.healthBar = game.add.graphics(0, 0);
         this.add(this.healthBar);
-        this.data.set('currentHealth', currentHealth);
-        this.data.set('maxHealth', maxHealth);
 
         this.client = client;
         this.pathfinder = pathfinder;
@@ -106,12 +104,24 @@ export default class extends Phaser.GameObjects.Container {
     }
 
     sync = ({
+        G: {
+            players: {
+                [this.id]: {
+                    currentHealth,
+                    maxHealth
+                }
+            }
+        },
         ctx: {
-            currentPlayer,
-            ...rest
+            currentPlayer
         }
     } = {}) => {
         this.currentTurn = currentPlayer === this.id;
+
+        try {
+            this.data.set('currentHealth', currentHealth);
+            this.data.set('maxHealth', maxHealth);
+        } catch (e) {}
     }
 
     preUpdate (...args) {
