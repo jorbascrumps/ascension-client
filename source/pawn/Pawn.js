@@ -55,7 +55,7 @@ export default class extends Phaser.GameObjects.Container {
         if (this.ownedByPlayer) {
             this.scene.input.on('pointermove', this.updateNavPath);
             this.scene.input.on('pointerdown', () => {
-                if (this.navPath.length > this.speed) {
+                if (!this.navPath.length || this.navPath.length > this.speed) {
                     return;
                 }
 
