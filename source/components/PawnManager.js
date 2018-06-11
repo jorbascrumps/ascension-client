@@ -3,19 +3,17 @@ import Pawn from '../pawn/Pawn';
 export default class PawnManager {
     constructor ({
         scene,
-        store,
         pathfinder,
         client
     } = {}) {
         this.scene = scene;
-        this.store = store;
         this.client = client;
         this.pawns = scene.add.group();
 
         this.pathfinder = pathfinder;
         this.scene.sys.updateList.add(this.pathfinder);
 
-        this.store.subscribe(() => this.sync(this.store.getState()));
+        this.client.store.subscribe(() => this.sync(this.client.store.getState()));
     }
 
     add = ({
@@ -34,7 +32,6 @@ export default class PawnManager {
             ...options,
             id,
             game: this.scene,
-            store: this.store,
             client: this.client,
             pathfinder: this.pathfinder.create(),
             manager: this
@@ -44,12 +41,13 @@ export default class PawnManager {
         this.pawns.add(pawn);
 
         if (sync) {
-            this.store.dispatch({
-                type: 'PAWN_REGISTER',
-                id,
-                sync,
-                ...options
-            });
+            // TODO: Register new Pawns
+            // this.store.dispatch({
+            //     type: 'PAWN_REGISTER',
+            //     id,
+            //     sync,
+            //     ...options
+            // });
         }
 
         return pawn;
@@ -65,30 +63,27 @@ export default class PawnManager {
     getByID = id => this.get().find(c => c.id === id)
 
     sync = ({
-        pawn,
-        user
+        G: {
+            players
+        }
     } = {}) => {
-        const newIds = Object.keys(pawn);
-        const oldIds = this.pawns.getChildren()
-            .map(p => p.id);
+        Object.keys(players)
+            .forEach(id => {
+                const pawn = this.pawns.children.get('id', id);
+                const player = players[id];
 
-        const removedPawns = this.pawns.getChildren()
-            .filter(({ id }) => newIds.indexOf(id) < 0)
-            .forEach(pawn => this.remove(pawn));
+                if (typeof pawn === 'undefined') {
+                    return this.add({
+                        ...player,
+                        id,
+                        owner: id
+                    });
+                }
 
-        const addedPawns = newIds
-            .filter(id => oldIds.indexOf(id) < 0)
-            .map(id => this.add({
-                ...pawn[id],
-                id,
-                sync: false
-            }));
-
-        // Move Pawns that don't belong to user
-        this.pawns.getChildren()
-            .filter(p => p.owner !== user.session)
-            .forEach(p => p.moveToPath({
-                path: [ pawn[p.id].position ]
-            }));
+                pawn.moveToPath({
+                    path: [ player.position ],
+                    sync: false
+                })
+            });
     }
 }

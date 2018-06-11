@@ -3,28 +3,24 @@ import * as Util from '../components/Util';
 export default class extends Phaser.GameObjects.Container {
     constructor ({
         game,
-        store,
         client,
         pathfinder,
         manager,
         id,
         asset = 'player',
-        position,
+        position: {
+            x: initialX = 10,
+            y: initialY = 0
+        } = {},
         owner,
         maxHealth = 50,
         currentHealth = maxHealth,
         speed = 8
     } = {}) {
-        super(game, position.x, position.y);
+        super(game, initialX, initialY);
 
         game.sys.displayList.add(this);
         game.sys.updateList.add(this);
-
-        const {
-            user: {
-                session
-            }
-        } = store.getState();
 
         this.id = id || Date.now().toString();
 
@@ -43,12 +39,11 @@ export default class extends Phaser.GameObjects.Container {
         this.data.set('currentHealth', currentHealth);
         this.data.set('maxHealth', maxHealth);
 
-        this.store = store;
         this.client = client;
         this.pathfinder = pathfinder;
         this.manager = manager;
         this.owner = owner;
-        this.ownedByPlayer = owner === session;
+        this.ownedByPlayer = this.id === this.client.playerID;
         this.speed = speed;
         this.busy = false;
         this.currentTurn = false;
@@ -57,7 +52,7 @@ export default class extends Phaser.GameObjects.Container {
         // Setup navigation
         this.navPath = [];
         this.navGraphic = game.add.graphics(0, 0);
-        this.pathfinder.closeNodeAtCoord(position);
+        this.pathfinder.closeNodeAtCoord({ x: this.x, y: this.y });
 
         if (this.ownedByPlayer) {
             this.scene.input.on('pointermove', this.updateNavPath);
@@ -71,14 +66,12 @@ export default class extends Phaser.GameObjects.Container {
                     y: Util.navPathToWorldCoord(y)
                 }));
 
-                this.moveToPath({
-                    path,
-                    sync: true
-                });
+                this.client.moves.movePawn(this.id, path[path.length - 1]);
             });
         }
 
         this.client.store.subscribe(() => this.sync(this.client.store.getState()));
+        this.sync(this.client.store.getState());
 
         game.events.on('ATTACK_REGISTER', targetId => {
             if (!this.currentTurn) {
@@ -118,7 +111,7 @@ export default class extends Phaser.GameObjects.Container {
             ...rest
         }
     } = {}) => {
-        this.currentTurn = currentPlayer == this.id;
+        this.currentTurn = currentPlayer === this.id;
     }
 
     preUpdate (...args) {
@@ -207,7 +200,6 @@ export default class extends Phaser.GameObjects.Container {
         targets: this,
         ease: 'Power4',
         onStart: () => {
-            this.client.moves.movePawn(this.id);
             this.busy = true;
             this.navPath = [];
             this.onPreMove();
@@ -254,15 +246,16 @@ export default class extends Phaser.GameObjects.Container {
 
     onMoveEnd = (tween, [ target ], { sync = false } = {}) => {
         if (sync) {
-            this.store.dispatch({
-                type: 'PAWN_MOVE',
-                id: this.id,
-                position: {
-                    x: this.x,
-                    y: this.y
-                },
-                sync: true
-            });
+            // TODO: Pawn onMoveEnd
+            // this.store.dispatch({
+            //     type: 'PAWN_MOVE',
+            //     id: this.id,
+            //     position: {
+            //         x: this.x,
+            //         y: this.y
+            //     },
+            //     sync: true
+            // });
         }
 
         return this;
