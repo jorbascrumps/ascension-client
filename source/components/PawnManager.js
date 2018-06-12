@@ -72,18 +72,15 @@ export default class PawnManager {
                 const pawn = this.pawns.children.get('id', id);
                 const player = players[id];
 
-                if (typeof pawn === 'undefined') {
-                    return this.add({
-                        ...player,
-                        id,
-                        owner: id
-                    });
+                if (typeof pawn !== 'undefined') {
+                    return;
                 }
 
-                pawn.moveToPath({
-                    path: [ player.position ],
-                    sync: false
-                })
+                return this.add({
+                    ...player,
+                    id,
+                    owner: id
+                });
             });
     }
 }

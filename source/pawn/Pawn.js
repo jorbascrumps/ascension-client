@@ -64,7 +64,11 @@ export default class extends Phaser.GameObjects.Container {
                     y: Util.navPathToWorldCoord(y)
                 }));
 
-                this.client.moves.movePawn(this.id, path[path.length - 1]);
+                const [
+                    destination
+                ] = path.reverse();
+
+                this.client.moves.movePawn(this.id, destination);
             });
         }
 
@@ -97,7 +101,8 @@ export default class extends Phaser.GameObjects.Container {
             players: {
                 [this.id]: {
                     currentHealth,
-                    maxHealth
+                    maxHealth,
+                    position
                 }
             }
         },
@@ -106,6 +111,9 @@ export default class extends Phaser.GameObjects.Container {
         }
     } = {}) => {
         this.currentTurn = currentPlayer === this.id;
+        this.moveToPath({
+            path: [ position ]
+        });
 
         try {
             this.data.set('currentHealth', currentHealth);
