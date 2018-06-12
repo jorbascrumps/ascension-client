@@ -36,8 +36,6 @@ export default class extends Phaser.GameObjects.Container {
         // Setup health
         this.healthBar = game.add.graphics(0, 0);
         this.add(this.healthBar);
-        this.data.set('currentHealth', currentHealth);
-        this.data.set('maxHealth', maxHealth);
 
         this.client = client;
         this.pathfinder = pathfinder;
@@ -57,7 +55,7 @@ export default class extends Phaser.GameObjects.Container {
         if (this.ownedByPlayer) {
             this.scene.input.on('pointermove', this.updateNavPath);
             this.scene.input.on('pointerdown', () => {
-                if (this.navPath.length > this.speed) {
+                if (!this.navPath.length || this.navPath.length > this.speed) {
                     return;
                 }
 
@@ -66,11 +64,15 @@ export default class extends Phaser.GameObjects.Container {
                     y: Util.navPathToWorldCoord(y)
                 }));
 
-                this.client.moves.movePawn(this.id, path[path.length - 1]);
+                const [
+                    destination
+                ] = path.reverse();
+
+                this.client.moves.movePawn(this.id, destination);
             });
         }
 
-        this.client.store.subscribe(() => this.sync(this.client.store.getState()));
+        this.unsubscribe = this.client.store.subscribe(() => this.sync(this.client.store.getState()));
         this.sync(this.client.store.getState());
 
         game.events.on('ATTACK_REGISTER', targetId => {
@@ -88,30 +90,38 @@ export default class extends Phaser.GameObjects.Container {
                 return;
             }
 
-            this.client.moves.attack({
-                targetId
-            });
-        });
-
-        game.events.on('ATTACK_PAWN', id => {
-            if (id !== this.id) {
-                return;
-            }
-
-            const currentHealth = this.data.get('currentHealth');
-            this.data.set('currentHealth', currentHealth - 5);
+            this.client.moves.attack(this.id, targetId);
         });
 
         this.on('destroy', this.onDestroy);
     }
 
     sync = ({
+        G: {
+            players: {
+                [this.id]: {
+                    currentHealth,
+                    maxHealth,
+                    position
+                }
+            }
+        },
         ctx: {
-            currentPlayer,
-            ...rest
+            currentPlayer
         }
     } = {}) => {
         this.currentTurn = currentPlayer === this.id;
+
+        if (position.x !== this.x || position.y !== this.y) {
+            this.moveToPath({
+                path: [ position ]
+            });
+        }
+
+        try {
+            this.data.set('currentHealth', currentHealth);
+            this.data.set('maxHealth', maxHealth);
+        } catch (e) {}
     }
 
     preUpdate (...args) {
@@ -123,7 +133,7 @@ export default class extends Phaser.GameObjects.Container {
 
         switch (key) {
             case 'currentHealth':
-                if (currentVal <= 0) {
+                if (val <= 0) {
                     reset(0);
                     this.destroy();
                 }
@@ -133,6 +143,8 @@ export default class extends Phaser.GameObjects.Container {
     }
 
     onDestroy = () => {
+        this.unsubscribe();
+
         this.pathfinder.openNodeAtCoord({
             x: this.x,
             y: this.y
