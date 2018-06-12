@@ -111,9 +111,12 @@ export default class extends Phaser.GameObjects.Container {
         }
     } = {}) => {
         this.currentTurn = currentPlayer === this.id;
-        this.moveToPath({
-            path: [ position ]
-        });
+
+        if (position.x !== this.x || position.y !== this.y) {
+            this.moveToPath({
+                path: [ position ]
+            });
+        }
 
         try {
             this.data.set('currentHealth', currentHealth);
