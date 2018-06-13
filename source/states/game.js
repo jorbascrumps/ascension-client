@@ -3,7 +3,6 @@
 
 import qs from 'querystring';
 import Pathfinder from '../components/Pathfinder';
-import PawnManager from '../components/PawnManager';
 
 import {
     default as c
@@ -67,11 +66,8 @@ export async function create () {
         map: levelData.layer.data,
         blocked: blockedLayer.layer.data
     });
-    const pawnManager = new PawnManager({
-        scene: this,
-        pathfinder,
-        client: this.client
-    });
+
+    this.pawnManager.start(this.client, pathfinder);
 
     this.input.on('gameobjectdown', (pointer, target) => {
         if (target.ownedByPlayer) {
