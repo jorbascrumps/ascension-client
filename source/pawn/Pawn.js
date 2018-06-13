@@ -80,7 +80,7 @@ export default class extends Phaser.GameObjects.Container {
                 return;
             }
 
-            const target = manager.getByID(targetId);
+            const target = manager.get('id', targetId);
             const isAdjacent = this.pathfinder.isAdjacent(
                 { x: this.x, y: this.y },
                 { x: target.x, y: target.y }
