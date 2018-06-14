@@ -45,7 +45,11 @@ export default class extends Phaser.GameObjects.Container {
         this.speed = speed;
         this.busy = false;
         this.currentTurn = false;
-        this.setInteractive(new Phaser.Geom.Rectangle(0, 0, 50, 50), Phaser.Geom.Rectangle.Contains);
+        this.setInteractive({
+            hitArea: new Phaser.Geom.Rectangle(0, 0, 50, 50),
+            hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+            useHandCursor: true
+        });
 
         // Setup navigation
         this.navPath = [];
