@@ -2,6 +2,7 @@ import "@babel/polyfill";
 
 import * as scene from './states/game';
 import PawnManager from './pawn/PawnManager';
+import Pathfinder from './components/Pathfinder';
 
 window.onload = () =>
     FBInstant.initializeAsync()
@@ -18,6 +19,11 @@ window.onload = () =>
                             key: 'pawnManager',
                             plugin: PawnManager,
                             mapping: 'pawnManager'
+                        },
+                        {
+                            key: 'pathfinder',
+                            plugin: Pathfinder,
+                            mapping: 'pathfinder'
                         }
                     ]
                 },

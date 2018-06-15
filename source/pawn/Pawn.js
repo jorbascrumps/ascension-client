@@ -54,7 +54,7 @@ export default class extends Phaser.GameObjects.Container {
         // Setup navigation
         this.navPath = [];
         this.navGraphic = game.add.graphics(0, 0);
-        this.pathfinder.closeNodeAtCoord({ x: this.x, y: this.y });
+        this.pathfinder.closeNode({ x: this.x, y: this.y });
 
         if (this.ownedByPlayer) {
             this.scene.input.on('pointermove', this.updateNavPath);
@@ -149,7 +149,7 @@ export default class extends Phaser.GameObjects.Container {
     onDestroy = () => {
         this.unsubscribe();
 
-        this.pathfinder.openNodeAtCoord({
+        this.pathfinder.openNode({
             x: this.x,
             y: this.y
         });
@@ -197,16 +197,16 @@ export default class extends Phaser.GameObjects.Container {
             return;
         }
 
-        this.navPath = this.pathfinder.calculatePath({
-            start: {
+        this.navPath = this.pathfinder.calculatePath(
+            {
                 x: Util.navPathToWorldCoord(Math.floor(this.x / 50)),
                 y: Util.navPathToWorldCoord(Math.floor(this.y / 50))
             },
-            end: {
+            {
                 x,
                 y
             }
-        });
+        );
     }
 
     moveToPath = ({
@@ -238,7 +238,7 @@ export default class extends Phaser.GameObjects.Container {
         }))
     })
 
-    onPreMove = () => this.pathfinder.openNodeAtCoord({
+    onPreMove = () => this.pathfinder.openNode({
         x: Math.ceil(this.x),
         y: Math.ceil(this.y)
     })
@@ -255,7 +255,7 @@ export default class extends Phaser.GameObjects.Container {
         return this;
     }
 
-    onPostMove = () => this.pathfinder.closeNodeAtCoord({
+    onPostMove = () => this.pathfinder.closeNode({
         x: Math.ceil(this.x),
         y: Math.ceil(this.y)
     })

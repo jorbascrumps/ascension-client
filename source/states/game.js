@@ -61,13 +61,8 @@ export async function create () {
     this.renderTex = this.add.renderTexture(0, 0, 800, 600);
     this.blood = this.add.sprite(0, 0, 'blood').setVisible(false);
 
-    pathfinder = Pathfinder.init({
-        tilesPerRow: tilemap.width,
-        map: levelData.layer.data,
-        blocked: blockedLayer.layer.data
-    });
-
-    this.pawnManager.start(this.client, pathfinder);
+    this.pathfinder.start(levelData.layer.data, blockedLayer.layer.data, tilemap.width);
+    this.pawnManager.start(this.client, this.pathfinder);
 
     this.input.on('gameobjectdown', (pointer, target) => {
         if (target.ownedByPlayer) {

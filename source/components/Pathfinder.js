@@ -1,48 +1,23 @@
-import * as Util from './Util';
+import * as Util from '../components/Util';
 
-export default {
-    graph: undefined,
-    scene: undefined,
+export default class extends Phaser.Plugins.BasePlugin {
 
-    init ({
-        tilesPerRow = 10,
-        map,
-        blocked
-    } = {}) {
+    start (map, blocked, tilesPerRow = 10) {
         this.graph = setupGrid({
             tilesPerRow,
             map,
             blocked
         });
+    }
 
-        return this;
-    },
-
-    create () {
-        return Object.create(this);
-    },
-
-    calculatePath ({
-        start = {},
-        end = {}
-    }) {
-        const startNode = this.getGridElementAt(start);
-        const endNode = this.getGridElementAt(end);
+    calculatePath (start, end) {
+        const startNode = this.getNode(start);
+        const endNode = this.getNode(end);
 
         return astar.search(this.graph, startNode, endNode, {
             closest: true
         });
-    },
-
-    openNodeAtCoord ({ x = 0, y = 0 } = {}) {
-        const node = this.getGridElementAt({ x, y });
-        this.graph.openNode(node);
-    },
-
-    closeNodeAtCoord ({ x = 0, y = 0 } = {}) {
-        const node = this.getGridElementAt({ x, y });
-        this.graph.closeNode(node);
-    },
+    }
 
     renderPath (graphic, path, { x = 0, y = 0 } = {}, speed = 6) {
         graphic.clear();
@@ -96,18 +71,30 @@ export default {
             new Phaser.Math.Vector2(targetPoint.x + 10, targetPoint.y + 25)
         ]);
         bottomRightCornerSpline.draw(graphic, 5);
-    },
+    }
+
+    openNode ({ x = 0, y = 0 } = {}) {
+        const node = this.getNode({ x, y });
+        this.graph.openNode(node);
+
+        return node;
+    }
+
+    closeNode ({ x = 0, y = 0 } = {}) {
+        const node = this.getNode({ x, y });
+        this.graph.closeNode(node);
+
+        return node;
+    }
 
     isAdjacent (start, end) {
         return this.calculatePath({ start, end }).length <= 1;
-    },
+    }
 
-    getGridElementAt ({
-        x = 0,
-        y = 0
-    } = {}) {
+    getNode ({ x = 0, y = 0 } = {}) {
         return this.graph.grid[Math.floor(x / 50)][Math.floor(y / 50)];
     }
+
 }
 
 function setupGrid ({
