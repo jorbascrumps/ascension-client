@@ -123,8 +123,10 @@ export default class extends Phaser.GameObjects.Container {
         }
 
         try {
-            this.data.set('currentHealth', currentHealth);
-            this.data.set('maxHealth', maxHealth);
+            this.data.set({
+                currentHealth,
+                maxHealth
+            });
         } catch (e) {}
     }
 
@@ -132,17 +134,12 @@ export default class extends Phaser.GameObjects.Container {
         this.update(...args);
     }
 
-    onChangeData = (_, key, val, reset) => {
+    onChangeData = (_, key, val) => {
         const currentVal = this.data.get(key);
 
         switch (key) {
             case 'currentHealth':
-                if (val <= 0) {
-                    reset(0);
-                    this.destroy();
-                }
-
-                return;
+                return val <= 0 && this.destroy();
         }
     }
 
