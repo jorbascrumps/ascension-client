@@ -94,7 +94,7 @@ export default class extends Phaser.GameObjects.Container {
                 return;
             }
 
-            this.client.moves.attack(this.id, targetId);
+            this.client.moves.attackPawn(this.id, targetId);
         });
 
         this.on('destroy', this.onDestroy);
