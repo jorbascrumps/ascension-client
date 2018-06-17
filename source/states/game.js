@@ -10,7 +10,7 @@ import {
 import {
     default as b
 } from 'boardgame.io/core';
-import gameConfig from '../../../game';
+import gameConfig from '../../../common/game';
 
 let controls;
 let pathfinder;
