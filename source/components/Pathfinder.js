@@ -8,6 +8,9 @@ export default class extends Phaser.Plugins.BasePlugin {
             map,
             blocked
         });
+        this.pathTrail = this.pluginManager.add.graphics(0, 0);
+        this.pathDestination = this.pluginManager.add.graphics(0, 0);
+        this.pathCache = [];
     }
 
     calculatePath (start, end) {
@@ -19,12 +22,19 @@ export default class extends Phaser.Plugins.BasePlugin {
         });
     }
 
-    renderPath (graphic, path, { x = 0, y = 0 } = {}, speed = 6) {
-        graphic.clear();
+    renderPath (path, { x = 0, y = 0 } = {}, speed = 6) {
+        if (JSON.stringify(path) == this.pathCache) {
+            return;
+        }
+
+        this.pathCache = JSON.stringify(path);
+
+        this.pathTrail.clear();
+        this.pathDestination.clear();
 
         const fillColour = path.length > speed ? 0xff0000 : 0x00ff00;
-        graphic.fillStyle(fillColour, 1);
-        graphic.lineStyle(5, fillColour, 1);
+        this.pathTrail.fillStyle(fillColour, 1);
+        this.pathDestination.lineStyle(5, fillColour, 1);
 
         const navPoints = path
             .map(({ x, y }) => new Phaser.Math.Vector2(
@@ -36,7 +46,7 @@ export default class extends Phaser.Plugins.BasePlugin {
             return
         }
 
-        navPoints.forEach(({ x, y }, i) => i < navPoints.length - 1 && graphic.fillCircle(x, y, 3.5));
+        navPoints.forEach(({ x, y }, i) => i < navPoints.length - 1 && this.pathTrail.fillCircle(x, y, 3.5));
 
         const targetPoint = navPoints[path.length - 1];
 
@@ -46,7 +56,7 @@ export default class extends Phaser.Plugins.BasePlugin {
             new Phaser.Math.Vector2(targetPoint.x - 20, targetPoint.y - 25),
             new Phaser.Math.Vector2(targetPoint.x - 10, targetPoint.y - 25)
         ]);
-        topLeftCornerSpline.draw(graphic, 5);
+        topLeftCornerSpline.draw(this.pathDestination, 5);
 
         const bottomLeftCornerSpline = new Phaser.Curves.Spline([
             new Phaser.Math.Vector2(targetPoint.x - 25, targetPoint.y + 10),
@@ -54,7 +64,7 @@ export default class extends Phaser.Plugins.BasePlugin {
             new Phaser.Math.Vector2(targetPoint.x - 20, targetPoint.y + 25),
             new Phaser.Math.Vector2(targetPoint.x - 10, targetPoint.y + 25)
         ]);
-        bottomLeftCornerSpline.draw(graphic, 5);
+        bottomLeftCornerSpline.draw(this.pathDestination, 5);
 
         const topRightCornerSpline = new Phaser.Curves.Spline([
             new Phaser.Math.Vector2(targetPoint.x + 25, targetPoint.y - 10),
@@ -62,7 +72,7 @@ export default class extends Phaser.Plugins.BasePlugin {
             new Phaser.Math.Vector2(targetPoint.x + 20, targetPoint.y - 25),
             new Phaser.Math.Vector2(targetPoint.x + 10, targetPoint.y - 25)
         ]);
-        topRightCornerSpline.draw(graphic, 5);
+        topRightCornerSpline.draw(this.pathDestination, 5);
 
         const bottomRightCornerSpline = new Phaser.Curves.Spline([
             new Phaser.Math.Vector2(targetPoint.x + 25, targetPoint.y + 10),
@@ -70,7 +80,7 @@ export default class extends Phaser.Plugins.BasePlugin {
             new Phaser.Math.Vector2(targetPoint.x + 20, targetPoint.y + 25),
             new Phaser.Math.Vector2(targetPoint.x + 10, targetPoint.y + 25)
         ]);
-        bottomRightCornerSpline.draw(graphic, 5);
+        bottomRightCornerSpline.draw(this.pathDestination, 5);
     }
 
     openNode ({ x = 0, y = 0 } = {}) {

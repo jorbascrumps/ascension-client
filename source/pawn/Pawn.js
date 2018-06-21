@@ -178,8 +178,7 @@ export default class extends Phaser.GameObjects.Container {
     update () {
         this.renderHealthBar();
 
-        this.pathfinder.renderPath(
-            this.navGraphic,
+        this.currentTurn && this.pathfinder.renderPath(
             this.navPath,
             { x: this.x, y: this.y },
             this.speed
