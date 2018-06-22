@@ -11,6 +11,16 @@ export default class extends Phaser.Plugins.BasePlugin {
         this.pathTrail = this.pluginManager.add.graphics(0, 0);
         this.pathDestination = this.pluginManager.add.graphics(0, 0);
         this.pathCache = [];
+
+        this.pluginManager.tweens.add({
+            targets: [ this.pathDestination, this.pathTrail ],
+            alpha: 0.5,
+            duration: 750,
+            ease: 'Power2',
+            yoyo: true,
+            loop: -1,
+            hold: 500
+        });
     }
 
     calculatePath (start, end) {
