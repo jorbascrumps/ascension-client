@@ -68,11 +68,7 @@ export default class extends Phaser.GameObjects.Container {
                     y: Util.navPathToWorldCoord(y)
                 }));
 
-                const [
-                    destination
-                ] = path.reverse();
-
-                this.client.moves.movePawn(this.id, destination);
+                this.moveToPath(path);
             });
         }
 
@@ -106,7 +102,10 @@ export default class extends Phaser.GameObjects.Container {
                 [this.id]: {
                     currentHealth,
                     maxHealth,
-                    position
+                    position = {
+                        x: this.x,
+                        y: this.y
+                    }
                 }
             }
         },
@@ -117,9 +116,7 @@ export default class extends Phaser.GameObjects.Container {
         this.currentTurn = currentPlayer === this.id;
 
         if (position.x !== this.x || position.y !== this.y) {
-            this.moveToPath({
-                path: [ position ]
-            });
+            this.moveToPosition(position);
         }
 
         try {
@@ -205,34 +202,36 @@ export default class extends Phaser.GameObjects.Container {
         );
     }
 
-    moveToPath = ({
-        path = [],
-        sync = false
-    } = {}) => this.scene.tweens.timeline({
+    moveToPosition = ({
+        x = 0,
+        y = 0
+    } = {}) => this.scene.tweens.add({
         targets: this,
         ease: 'Power4',
-        onStart: () => {
+        x,
+        y,
+        duration: 500,
+        onStartParams: [{}],
+        onStart: (...args) => {
             this.busy = true;
             this.navPath = [];
-            this.onPreMove();
+            this.onPreMove(...args);
+            this.onMoveStart(...args);
         },
-        onComplete: () => {
-            this.busy = false
-            this.onPostMove();
-        },
-        tweens: path.map(p => ({
-            ...p,
-            duration: 500,
-            onCompleteParams: [{
-                sync
-            }],
-            onComplete: this.onMoveEnd,
-            onStartParams: [{
-                sync
-            }],
-            onStart: this.onMoveStart
-        }))
+        onCompleteParams: [{}],
+        onComplete: (...args) => {
+            this.busy = false;
+            this.onPostMove(...args);
+            this.onMoveEnd(...args);
+        }
     })
+
+    moveToPath = async (path = []) => {
+        for (const pos of path) {
+            this.client.moves.movePawn(this.id, pos);
+            await Util.wait(750);
+        }
+    }
 
     onPreMove = () => this.pathfinder.openNode({
         x: Math.ceil(this.x),
