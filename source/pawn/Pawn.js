@@ -186,7 +186,20 @@ export default class extends Phaser.GameObjects.Container {
         x = 0,
         y = 0
     } = {}) => {
-        if (this.busy || !this.currentTurn) {
+        const {
+            client: {
+                store: {
+                    getState
+                }
+            }
+        } = this;
+        const {
+            ctx: {
+                phase
+            }
+        } = getState();
+
+        if (phase !== 'Movement' || this.busy || !this.currentTurn) {
             return;
         }
 
