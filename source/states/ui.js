@@ -12,12 +12,12 @@ export function create () {
 
     this.input.on('gameobjectover', (p, o) => o.setTint(0x00ff00));
     this.input.on("gameobjectout", (p, o) => o.clearTint());
-    this.input.on('gameobjectdown', (p, o) => {
+    this.input.on('gameobjectdown', (p, { text: action = '' }) => {
         const {
             client
         } = this.scene.get('LEVEL');
 
-        client.events.endPhase(o.text);
+        client.events.endPhase(action);
     });
 }
 
