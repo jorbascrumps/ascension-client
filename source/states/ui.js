@@ -7,6 +7,18 @@ export function create () {
         fontSize: 10,
         fontFamily: 'Arial'
     });
+
+    this.availableActions = this.add.group();
+
+    this.input.on('gameobjectover', (p, o) => o.setTint(0x00ff00));
+    this.input.on("gameobjectout", (p, o) => o.clearTint());
+    this.input.on('gameobjectdown', (p, o) => {
+        const {
+            client
+        } = this.scene.get('LEVEL');
+
+        client.events.endPhase(o.text);
+    });
 }
 
 export function update () {
@@ -22,10 +34,37 @@ export function update () {
         ctx
     } = getState();
 
+    if (ctx.currentPlayer !== FBInstant.player.getID().toString()) {
+        return this.availableActions.clear(true);
+    }
+
     if (ctx.phase === cachedPhase) {
         return;
     }
 
     cachedPhase = ctx.phase;
     this.currentPhase.setText(`Phase: ${ctx.phase}`);
+
+    this.availableActions.clear(true);
+    const availableActions = actions[ctx.phase];
+    availableActions
+        .reverse()
+        .forEach((action, i) =>
+            this.availableActions.add(
+                this.add.text(this.cameras.main.width - 10, this.cameras.main.width - (24 * i), action, {
+                    fontSize: 16,
+                    fontFamily: 'Arial'
+                })
+                    .setOrigin(1, 1)
+                    .setInteractive({
+                        useHandCursor: true
+                    }),
+                true
+            )
+        );
 }
+
+const actions = {
+    Activation: [ 'Movement' ],
+    Movement: []
+};
