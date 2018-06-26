@@ -17,6 +17,10 @@ export function create () {
             client
         } = this.scene.get('LEVEL');
 
+        if (action === 'Cancel') {
+            return client.events.endPhase('Activation');
+        }
+
         client.events.endPhase(action);
     });
 }
@@ -66,5 +70,5 @@ export function update () {
 
 const actions = {
     Activation: [ 'Movement' ],
-    Movement: []
+    Movement: [ 'Cancel' ]
 };
