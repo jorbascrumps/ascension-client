@@ -17,6 +17,8 @@ let pathfinder;
 let sprite;
 let busy = false;
 
+export const key = 'LEVEL';
+
 export function preload () {
     this.load.tilemapTiledJSON('map', '/client/source/data/map/level_01.json');
     this.load.image('tiles', '/client/source/assets/tile/level01.png');
@@ -32,6 +34,8 @@ export function update (time, delta) {}
 
 export async function create () {
     await FBInstant.startGameAsync();
+
+    this.scene.launch('UI');
 
     const playerID = FBInstant.player.getID();
     const {

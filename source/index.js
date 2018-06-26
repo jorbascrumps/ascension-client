@@ -1,6 +1,7 @@
 import "@babel/polyfill";
 
-import * as scene from './states/game';
+import * as level from './states/game';
+import * as ui from './states/ui';
 import PawnManager from './pawn/PawnManager';
 import Pathfinder from './components/Pathfinder';
 
@@ -12,7 +13,10 @@ window.onload = () =>
                 height: 500,
                 parent: 'game',
                 pixelArt: true,
-                scene,
+                scene: [
+                    level,
+                    ui
+                ],
                 plugins: {
                     scene: [
                         {
