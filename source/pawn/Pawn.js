@@ -98,21 +98,21 @@ export default class extends Phaser.GameObjects.Container {
 
     sync = ({
         G: {
-            players: {
-                [this.id]: {
-                    currentHealth,
-                    maxHealth,
-                    position = {
-                        x: this.x,
-                        y: this.y
-                    }
-                }
-            }
+            pawns
         },
         ctx: {
             currentPlayer
         }
     } = {}) => {
+        const {
+            currentHealth,
+            maxHealth,
+            position = {
+                x: this.x,
+                y: this.y
+            }
+        } = pawns[this.id];
+
         this.currentTurn = currentPlayer === this.id;
 
         if (position.x !== this.x || position.y !== this.y) {
