@@ -55,8 +55,7 @@ export default class extends Phaser.Plugins.BasePlugin {
 
                 return this.add({
                     ...pawns[id],
-                    id,
-                    owner: id
+                    id
                 });
             });
     }

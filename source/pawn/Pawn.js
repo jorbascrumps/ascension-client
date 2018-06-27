@@ -22,7 +22,7 @@ export default class extends Phaser.GameObjects.Container {
         game.sys.displayList.add(this);
         game.sys.updateList.add(this);
 
-        this.id = id || Date.now().toString();
+        this.id = (id || Date.now()).toString();
 
         this.setDataEnabled();
         this.on('changedata', this.onChangeData);
@@ -40,11 +40,11 @@ export default class extends Phaser.GameObjects.Container {
         this.client = client;
         this.pathfinder = pathfinder;
         this.manager = manager;
-        this.owner = owner;
-        this.ownedByPlayer = this.id === this.client.playerID;
+        this.owner = owner.toString();
+        this.ownedByPlayer = this.owner === this.client.playerID;
         this.speed = speed;
         this.busy = false;
-        this.currentTurn = false;
+        this.isActive = false;
         this.setInteractive({
             hitArea: new Phaser.Geom.Rectangle(0, 0, 50, 50),
             hitAreaCallback: Phaser.Geom.Rectangle.Contains,
@@ -76,7 +76,7 @@ export default class extends Phaser.GameObjects.Container {
         this.sync(this.client.store.getState());
 
         game.events.on('ATTACK_REGISTER', targetId => {
-            if (!this.currentTurn) {
+            if (!this.isActive) {
                 return;
             }
 
@@ -105,6 +105,7 @@ export default class extends Phaser.GameObjects.Container {
         }
     } = {}) => {
         const {
+            active,
             currentHealth,
             maxHealth,
             position = {
@@ -113,7 +114,7 @@ export default class extends Phaser.GameObjects.Container {
             }
         } = pawns[this.id];
 
-        this.currentTurn = currentPlayer === this.id;
+        this.isActive = active && currentPlayer === this.owner;
 
         if (position.x !== this.x || position.y !== this.y) {
             this.moveToPosition(position);
@@ -175,7 +176,7 @@ export default class extends Phaser.GameObjects.Container {
     update () {
         this.renderHealthBar();
 
-        this.currentTurn && this.pathfinder.renderPath(
+        this.isActive && this.pathfinder.renderPath(
             this.navPath,
             { x: this.x, y: this.y },
             this.speed
@@ -199,7 +200,7 @@ export default class extends Phaser.GameObjects.Container {
             }
         } = getState();
 
-        if (phase !== 'Movement' || this.busy || !this.currentTurn) {
+        if (phase !== 'Movement' || this.busy || !this.isActive) {
             return;
         }
 
