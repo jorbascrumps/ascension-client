@@ -58,7 +58,26 @@ export default class extends Phaser.GameObjects.Container {
 
         if (this.ownedByPlayer) {
             this.scene.input.on('pointermove', this.updateNavPath);
-            this.scene.input.on('pointerdown', () => {
+            this.scene.input.on('pointerdown', (p, [{ id: targetId } = {}]) => {
+                if (targetId && targetId !== this.id) {
+                    return;
+                }
+
+                const {
+                    client: {
+                        store: {
+                            getState
+                        }
+                    }
+                } = this;
+                const {
+                    ctx
+                } = getState();
+
+                if (ctx.phase === 'Restoration') {
+                    return this.client.moves.activatePawn(this.id);
+                }
+
                 if (!this.navPath.length || this.navPath.length > this.speed) {
                     return;
                 }
