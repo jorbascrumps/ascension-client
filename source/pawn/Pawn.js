@@ -22,7 +22,7 @@ export default class extends Phaser.GameObjects.Container {
         game.sys.displayList.add(this);
         game.sys.updateList.add(this);
 
-        this.id = id || Date.now().toString();
+        this.id = (id || Date.now()).toString();
 
         this.setDataEnabled();
         this.on('changedata', this.onChangeData);
@@ -40,11 +40,11 @@ export default class extends Phaser.GameObjects.Container {
         this.client = client;
         this.pathfinder = pathfinder;
         this.manager = manager;
-        this.owner = owner;
-        this.ownedByPlayer = this.id === this.client.playerID;
+        this.owner = owner.toString();
+        this.ownedByPlayer = this.owner === this.client.playerID;
         this.speed = speed;
         this.busy = false;
-        this.currentTurn = false;
+        this.isActive = false;
         this.setInteractive({
             hitArea: new Phaser.Geom.Rectangle(0, 0, 50, 50),
             hitAreaCallback: Phaser.Geom.Rectangle.Contains,
@@ -58,7 +58,26 @@ export default class extends Phaser.GameObjects.Container {
 
         if (this.ownedByPlayer) {
             this.scene.input.on('pointermove', this.updateNavPath);
-            this.scene.input.on('pointerdown', () => {
+            this.scene.input.on('pointerdown', (p, [{ id: targetId } = {}]) => {
+                if (targetId && targetId !== this.id) {
+                    return;
+                }
+
+                const {
+                    client: {
+                        store: {
+                            getState
+                        }
+                    }
+                } = this;
+                const {
+                    ctx
+                } = getState();
+
+                if (ctx.phase === 'Restoration') {
+                    return this.client.moves.activatePawn(this.id);
+                }
+
                 if (!this.navPath.length || this.navPath.length > this.speed) {
                     return;
                 }
@@ -76,7 +95,7 @@ export default class extends Phaser.GameObjects.Container {
         this.sync(this.client.store.getState());
 
         game.events.on('ATTACK_REGISTER', targetId => {
-            if (!this.currentTurn) {
+            if (!this.isActive) {
                 return;
             }
 
@@ -98,22 +117,23 @@ export default class extends Phaser.GameObjects.Container {
 
     sync = ({
         G: {
-            players: {
-                [this.id]: {
-                    currentHealth,
-                    maxHealth,
-                    position = {
-                        x: this.x,
-                        y: this.y
-                    }
-                }
-            }
+            pawns
         },
         ctx: {
             currentPlayer
         }
     } = {}) => {
-        this.currentTurn = currentPlayer === this.id;
+        const {
+            active,
+            currentHealth,
+            maxHealth,
+            position = {
+                x: this.x,
+                y: this.y
+            }
+        } = pawns[this.id];
+
+        this.isActive = active && currentPlayer === this.owner;
 
         if (position.x !== this.x || position.y !== this.y) {
             this.moveToPosition(position);
@@ -175,7 +195,7 @@ export default class extends Phaser.GameObjects.Container {
     update () {
         this.renderHealthBar();
 
-        this.currentTurn && this.pathfinder.renderPath(
+        this.isActive && this.pathfinder.renderPath(
             this.navPath,
             { x: this.x, y: this.y },
             this.speed
@@ -199,7 +219,7 @@ export default class extends Phaser.GameObjects.Container {
             }
         } = getState();
 
-        if (phase !== 'Movement' || this.busy || !this.currentTurn) {
+        if (phase !== 'Movement' || this.busy || !this.isActive) {
             return;
         }
 

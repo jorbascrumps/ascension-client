@@ -42,22 +42,20 @@ export default class extends Phaser.Plugins.BasePlugin {
 
     sync ({
         G: {
-            players
+            pawns
         }
     } = {}) {
-        Object.keys(players)
+        Object.keys(pawns)
             .forEach(id => {
                 const pawn = this.get('id', id);
-                const player = players[id];
 
                 if (typeof pawn !== 'undefined') {
                     return;
                 }
 
                 return this.add({
-                    ...player,
-                    id,
-                    owner: id
+                    ...pawns[id],
+                    id
                 });
             });
     }
