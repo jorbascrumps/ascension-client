@@ -2,7 +2,6 @@
 // https://phaser.io/phaser3/devlog/99
 
 import qs from 'querystring';
-import Pathfinder from '../components/Pathfinder';
 
 import {
     default as c
@@ -11,11 +10,6 @@ import {
     default as b
 } from 'boardgame.io/core';
 import gameConfig from '../../../common/game';
-
-let controls;
-let pathfinder;
-let sprite;
-let busy = false;
 
 export const key = 'LEVEL';
 

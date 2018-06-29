@@ -9,10 +9,14 @@ window.onload = () =>
     FBInstant.initializeAsync()
         .then(() =>
             new Phaser.Game({
-                transparent: true,
                 height: 500,
                 parent: 'game',
-                pixelArt: true,
+                disableContextMenu: true,
+                render: {
+                    pixelArt: true,
+                    transparent: true,
+                    roundPixels: true,
+                },
                 scene: [
                     level,
                     ui
