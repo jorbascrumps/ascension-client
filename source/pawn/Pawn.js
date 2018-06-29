@@ -281,7 +281,7 @@ export default class extends Phaser.GameObjects.Container {
     moveToPath = async (path = []) => {
         for (const pos of path) {
             this.client.moves.movePawn(this.id, pos);
-            await Util.wait(500);
+            await Util.wait(750);
         }
     }
 
