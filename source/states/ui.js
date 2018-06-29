@@ -39,6 +39,7 @@ export function update () {
     } = getState();
 
     if (ctx.currentPlayer !== FBInstant.player.getID().toString()) {
+        this.currentPhase.setText('');
         return this.availableActions.clear(true);
     }
 
