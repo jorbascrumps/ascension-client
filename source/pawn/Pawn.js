@@ -123,7 +123,13 @@ export default class extends Phaser.GameObjects.Container {
     }
 
     setupPhaseHandlers = phase => {
-        const exhausted = this.data.get('exhausted');
+        const {
+            data: {
+                values: {
+                    exhausted
+                }
+            }
+        } = this;
 
         this.scene.input.off('pointermove', this.updateNavPath, this);
         this.off('pointerdown', this.activate, this, true);
