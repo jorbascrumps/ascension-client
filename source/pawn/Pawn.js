@@ -45,6 +45,7 @@ export default class extends Phaser.GameObjects.Container {
         this.speed = speed;
         this.busy = false;
         this.isActive = false;
+        this.currentPhase = undefined;
         this.setInteractive({
             hitArea: new Phaser.Geom.Rectangle(0, 0, 50, 50),
             hitAreaCallback: Phaser.Geom.Rectangle.Contains,
@@ -55,41 +56,6 @@ export default class extends Phaser.GameObjects.Container {
         this.navPath = [];
         this.navGraphic = game.add.graphics(0, 0);
         this.pathfinder.closeNode({ x: this.x, y: this.y });
-
-        if (this.ownedByPlayer) {
-            this.scene.input.on('pointermove', this.updateNavPath);
-            this.scene.input.on('pointerdown', (p, [{ id: targetId } = {}]) => {
-                if (targetId && targetId !== this.id) {
-                    return;
-                }
-
-                const {
-                    client: {
-                        store: {
-                            getState
-                        }
-                    }
-                } = this;
-                const {
-                    ctx
-                } = getState();
-
-                if (ctx.phase === 'Restoration') {
-                    return this.client.moves.activatePawn(this.id);
-                }
-
-                if (!this.navPath.length || this.navPath.length > this.speed) {
-                    return;
-                }
-
-                const path = this.navPath.map(({x, y}) => ({
-                    x: Util.navPathToWorldCoord(x),
-                    y: Util.navPathToWorldCoord(y)
-                }));
-
-                this.moveToPath(path);
-            });
-        }
 
         this.unsubscribe = this.client.store.subscribe(() => this.sync(this.client.store.getState()));
         this.sync(this.client.store.getState());
@@ -117,22 +83,25 @@ export default class extends Phaser.GameObjects.Container {
 
     sync = ({
         G: {
-            pawns
+            pawns: {
+                [this.id]: {
+                    active,
+                    currentHealth,
+                    exhausted,
+                    maxHealth,
+                    position = {
+                        x: this.x,
+                        y: this.y
+                    }
+                }
+            }
         },
         ctx: {
-            currentPlayer
+            currentPlayer,
+            phase
         }
     } = {}) => {
-        const {
-            active,
-            currentHealth,
-            maxHealth,
-            position = {
-                x: this.x,
-                y: this.y
-            }
-        } = pawns[this.id];
-
+        const turnEnded = this.isActive && exhausted;
         this.isActive = active && currentPlayer === this.owner;
 
         if (position.x !== this.x || position.y !== this.y) {
@@ -141,10 +110,54 @@ export default class extends Phaser.GameObjects.Container {
 
         try {
             this.data.set({
+                exhausted,
                 currentHealth,
                 maxHealth
             });
         } catch (e) {}
+
+        if (this.ownedByPlayer && (phase !== this.currentPhase || turnEnded)) {
+            this.currentPhase = phase;
+            this.setupPhaseHandlers(phase);
+        }
+    }
+
+    setupPhaseHandlers = phase => {
+        const exhausted = this.data.get('exhausted');
+
+        this.scene.input.off('pointermove', this.updateNavPath, this);
+        this.off('pointerdown', this.activate, this, true);
+
+        switch (phase) {
+            case 'Restoration':
+                if (this.ownedByPlayer && !exhausted) {
+                    this.once('pointerdown', this.activate, this);
+                }
+
+                break;
+            case 'Movement':
+                if (this.isActive) {
+                    this.scene.input.on('pointermove', this.updateNavPath, this);
+                    this.scene.input.once('pointerdown', this.move, this);
+                }
+
+                break;
+        }
+    }
+
+    activate = () => this.client.moves.activatePawn(this.id)
+
+    move = () => {
+        if (!this.navPath.length || this.navPath.length > this.speed) {
+            return;
+        }
+
+        const path = this.navPath.map(({x, y}) => ({
+            x: Util.navPathToWorldCoord(x),
+            y: Util.navPathToWorldCoord(y)
+        }));
+
+        this.moveToPath(path);
     }
 
     preUpdate (...args) {
@@ -262,7 +275,7 @@ export default class extends Phaser.GameObjects.Container {
     moveToPath = async (path = []) => {
         for (const pos of path) {
             this.client.moves.movePawn(this.id, pos);
-            await Util.wait(750);
+            await Util.wait(500);
         }
     }
 
