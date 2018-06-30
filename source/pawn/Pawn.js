@@ -290,7 +290,7 @@ export default class extends Phaser.GameObjects.Container {
         y: Math.ceil(this.y)
     })
 
-    onMoveStart = ({ data }, [ target ], { sync = false } = {}) => {
+    onMoveStart = ({ data }, [ target ]) => {
         const movement = data.find(({ key }) => key === 'x');
 
         if (movement.getEndValue() === Math.ceil(this.x)) {
@@ -307,22 +307,7 @@ export default class extends Phaser.GameObjects.Container {
         y: Math.ceil(this.y)
     })
 
-    onMoveEnd = (tween, [ target ], { sync = false } = {}) => {
-        if (sync) {
-            // TODO: Pawn onMoveEnd
-            // this.store.dispatch({
-            //     type: 'PAWN_MOVE',
-            //     id: this.id,
-            //     position: {
-            //         x: this.x,
-            //         y: this.y
-            //     },
-            //     sync: true
-            // });
-        }
-
-        return this;
-    }
+    onMoveEnd = (tween, [ target ]) => {}
 }
 
 const snapCoordToGrid = ({
