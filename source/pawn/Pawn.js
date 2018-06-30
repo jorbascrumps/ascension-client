@@ -1,6 +1,7 @@
 import * as Util from '../components/Util';
 
 export default class extends Phaser.GameObjects.Container {
+
     constructor ({
         game,
         client,
@@ -122,6 +123,15 @@ export default class extends Phaser.GameObjects.Container {
         }
     }
 
+    onChangeData = (_, key, val) => {
+        const currentVal = this.data.get(key);
+
+        switch (key) {
+            case 'currentHealth':
+                return val <= 0 && this.destroy();
+        }
+    }
+
     setupPhaseHandlers = phase => {
         const {
             data: {
@@ -151,43 +161,18 @@ export default class extends Phaser.GameObjects.Container {
         }
     }
 
-    activate = () => this.client.moves.activatePawn(this.id)
-
-    move = () => {
-        if (!this.navPath.length || this.navPath.length > this.speed) {
-            return;
-        }
-
-        const path = this.navPath.map(({x, y}) => ({
-            x: Util.navPathToWorldCoord(x),
-            y: Util.navPathToWorldCoord(y)
-        }));
-
-        this.moveToPath(path);
-    }
-
     preUpdate (...args) {
         this.update(...args);
     }
 
-    onChangeData = (_, key, val) => {
-        const currentVal = this.data.get(key);
+    update () {
+        this.renderHealthBar();
 
-        switch (key) {
-            case 'currentHealth':
-                return val <= 0 && this.destroy();
-        }
-    }
-
-    onDestroy = () => {
-        this.unsubscribe();
-
-        this.pathfinder.openNode({
-            x: this.x,
-            y: this.y
-        });
-
-        this.scene.events.emit('PAWN_DESTROY', this);
+        this.isActive && this.pathfinder.renderPath(
+            this.navPath,
+            { x: this.x, y: this.y },
+            this.speed
+        );
     }
 
     renderHealthBar = () => {
@@ -209,16 +194,6 @@ export default class extends Phaser.GameObjects.Container {
         this.healthBar.fillRect(anchorX - 1, anchorY - 1, width + 2, height + 2);
         this.healthBar.fillStyle(0xff0000, 1);
         this.healthBar.fillRect(anchorX, anchorY, per, height);
-    }
-
-    update () {
-        this.renderHealthBar();
-
-        this.isActive && this.pathfinder.renderPath(
-            this.navPath,
-            { x: this.x, y: this.y },
-            this.speed
-        );
     }
 
     updateNavPath = ({
@@ -252,6 +227,21 @@ export default class extends Phaser.GameObjects.Container {
                 y
             }
         );
+    }
+
+    activate = () => this.client.moves.activatePawn(this.id)
+
+    move = () => {
+        if (!this.navPath.length || this.navPath.length > this.speed) {
+            return;
+        }
+
+        const path = this.navPath.map(({x, y}) => ({
+            x: Util.navPathToWorldCoord(x),
+            y: Util.navPathToWorldCoord(y)
+        }));
+
+        this.moveToPath(path);
     }
 
     moveToPosition = ({
@@ -308,21 +298,16 @@ export default class extends Phaser.GameObjects.Container {
     })
 
     onMoveEnd = (tween, [ target ]) => {}
+
+    onDestroy = () => {
+        this.unsubscribe();
+
+        this.pathfinder.openNode({
+            x: this.x,
+            y: this.y
+        });
+
+        this.scene.events.emit('PAWN_DESTROY', this);
+    }
+
 }
-
-const snapCoordToGrid = ({
-    x = 0,
-    y = 0
-} = {}) => {
-    const xAdjust = x % 50;
-    const yAdjust = y % 50;
-
-    return {
-        x: xAdjust <= 25
-            ?   x - xAdjust
-            :   x + (50 % xAdjust),
-        y: yAdjust <= 25
-            ?   y - yAdjust
-            :   y + (50 % yAdjust)
-    };
-};
