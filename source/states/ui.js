@@ -51,8 +51,9 @@ export function update () {
     this.currentPhase.setText(`Phase: ${ctx.phase}`);
 
     this.availableActions.clear(true);
-    const availableActions = actions[ctx.phase];
+    const availableActions = [ ...actions[ctx.phase] ];
     availableActions
+        .sort()
         .reverse()
         .forEach((action, i) =>
             this.availableActions.add(
