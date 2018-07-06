@@ -146,16 +146,12 @@ export default class extends Phaser.GameObjects.Container {
 
         switch (phase) {
             case 'Restoration':
-                if (this.ownedByPlayer && !exhausted) {
-                    this.once('pointerdown', this.activate, this);
-                }
+                !exhausted && this.once('pointerdown', this.activate, this);
 
                 break;
             case 'Movement':
-                if (this.isActive) {
-                    this.scene.input.on('pointermove', this.updateNavPath, this);
-                    this.scene.input.once('pointerdown', this.move, this);
-                }
+                this.isActive && this.scene.input.once('pointerdown', this.move, this);
+                this.isActive && this.scene.input.on('pointermove', this.updateNavPath, this);
 
                 break;
         }
@@ -228,6 +224,8 @@ export default class extends Phaser.GameObjects.Container {
             }
         );
     }
+
+    attack = () => this.client.moves.attackPawn(this.id)
 
     activate = () => this.client.moves.activatePawn(this.id)
 
