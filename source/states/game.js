@@ -55,6 +55,7 @@ export async function create () {
     const tileset = tilemap.addTilesetImage('level01', 'tiles');
     const levelData = tilemap.createStaticLayer('map', tileset);
     const blockedLayer = tilemap.createStaticLayer('blocked', tileset);
+    this.interactionLayer = tilemap.createStaticLayer('interactions', tileset);
 
     this.renderTex = this.add.renderTexture(0, 0, 800, 600);
     this.blood = this.add.sprite(0, 0, 'blood').setVisible(false);
