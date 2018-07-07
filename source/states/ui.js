@@ -72,7 +72,8 @@ export function update () {
 
 const actions = {
     Restoration: [],
-    Activation: [ 'Movement', 'Attack' ],
+    Activation: [ 'Movement', 'Attack', 'Search' ],
     Movement: [ 'Cancel' ],
-    Attack: [ 'Cancel' ]
+    Attack: [ 'Cancel' ],
+    Search: [ 'Cancel' ]
 };
