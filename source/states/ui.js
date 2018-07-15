@@ -51,8 +51,9 @@ export function update () {
     this.currentPhase.setText(`Phase: ${ctx.phase}`);
 
     this.availableActions.clear(true);
-    const availableActions = actions[ctx.phase];
+    const availableActions = [ ...actions[ctx.phase] ];
     availableActions
+        .sort()
         .reverse()
         .forEach((action, i) =>
             this.availableActions.add(
@@ -71,7 +72,8 @@ export function update () {
 
 const actions = {
     Restoration: [],
-    Activation: [ 'Movement', 'Attack' ],
+    Activation: [ 'Movement', 'Attack', 'Search' ],
     Movement: [ 'Cancel' ],
-    Attack: [ 'Cancel' ]
+    Attack: [ 'Cancel' ],
+    Search: [ 'Cancel' ]
 };

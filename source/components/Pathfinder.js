@@ -108,7 +108,14 @@ export default class extends Phaser.Plugins.BasePlugin {
     }
 
     isAdjacent (start, end) {
-        return this.calculatePath(start, end).length === 0;
+        const destination = this.getNode(end);
+        const path = this.calculatePath(start, end);
+
+        if (destination.closed) {
+            return 0 === path.length;
+        }
+
+        return 1 === path.length;
     }
 
     getNode ({ x = 0, y = 0 } = {}) {

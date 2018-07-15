@@ -141,21 +141,22 @@ export default class extends Phaser.GameObjects.Container {
             }
         } = this;
 
-        this.scene.input.off('pointermove', this.updateNavPath, this);
         this.off('pointerdown', this.activate, this, true);
+        this.scene.input.off('pointermove', this.updateNavPath, this);
+        this.scene.input.off('pointerdown', this.search, this);
 
         switch (phase) {
             case 'Restoration':
-                if (this.ownedByPlayer && !exhausted) {
-                    this.once('pointerdown', this.activate, this);
-                }
+                !exhausted && this.once('pointerdown', this.activate, this);
 
                 break;
             case 'Movement':
-                if (this.isActive) {
-                    this.scene.input.on('pointermove', this.updateNavPath, this);
-                    this.scene.input.once('pointerdown', this.move, this);
-                }
+                this.isActive && this.scene.input.once('pointerdown', this.move, this);
+                this.isActive && this.scene.input.on('pointermove', this.updateNavPath, this);
+
+                break;
+            case 'Search':
+                this.isActive && this.scene.input.on('pointerdown', this.search, this);
 
                 break;
         }
@@ -229,7 +230,22 @@ export default class extends Phaser.GameObjects.Container {
         );
     }
 
+    attack = () => this.client.moves.attackPawn(this.id)
+
     activate = () => this.client.moves.activatePawn(this.id)
+
+    search = ({ worldX, worldY }) => {
+        const target = this.scene.interactionLayer.getTileAtWorldXY(worldX, worldY);
+
+        if (null === target) {
+            return alert('Nothing to search!');
+        }
+
+        return this.client.moves.searchSpace({
+            x: target.pixelX,
+            y: target.pixelY
+        });
+    }
 
     move = () => {
         if (!this.navPath.length || this.navPath.length > this.speed) {
