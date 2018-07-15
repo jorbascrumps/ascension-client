@@ -8,6 +8,7 @@ export default class extends Phaser.Plugins.BasePlugin {
         this.pawns = this.pluginManager.add.group();
 
         this.client.store.subscribe(() => this.sync(this.client.store.getState()));
+        this.sync(this.client.store.getState());
     }
 
     add (options) {
