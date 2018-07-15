@@ -241,15 +241,10 @@ export default class extends Phaser.GameObjects.Container {
             return alert('Nothing to search!');
         }
 
-        const isAdjacent = this.pathfinder.isAdjacent(
-            { x: this.x, y: this.y },
-            { x: target.pixelX, y: target.pixelY }
-        );
-        if (!isAdjacent) {
-            return alert('Target is too far away!');
-        }
-
-        return alert(`Searched (${target.pixelX}, ${target.pixelY})!`);
+        return this.client.moves.searchSpace({
+            x: target.pixelX,
+            y: target.pixelY
+        });
     }
 
     move = () => {
