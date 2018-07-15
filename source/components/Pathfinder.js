@@ -132,7 +132,7 @@ function setupGrid ({
     const mapData = translateMapData(
         blocked.map((_, r) =>
             _.map((_, c) =>
-                Number(blocked[r][c].index < 0 && map[r][c].index > 0)
+                Number(blocked[r][c] === -1 && map[r][c] !== -1)
             )
         )
     );
