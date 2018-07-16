@@ -14,7 +14,7 @@ import gameConfig from '../../../common/game';
 export const key = 'LEVEL';
 
 export function preload () {
-    this.load.image('tiles', '/client/source/assets/tile/level01.png');
+    this.load.image('tiles', '/common/data/maps/level.png');
     this.load.image('player', '/client/source/assets/pawn/skeleton.png');
     this.load.image('blood', '/client/source/assets/blood.png');
 
