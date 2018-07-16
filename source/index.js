@@ -9,7 +9,7 @@ window.onload = () =>
     FBInstant.initializeAsync()
         .then(() =>
             new Phaser.Game({
-                height: 1000,
+                height: window.innerHeight,
                 parent: 'game',
                 disableContextMenu: true,
                 render: {
@@ -36,6 +36,6 @@ window.onload = () =>
                     ]
                 },
                 type: Phaser.AUTO,
-                width: 1000
+                width: window.innerWidth
             })
         );

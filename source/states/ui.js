@@ -57,7 +57,7 @@ export function update () {
         .reverse()
         .forEach((action, i) =>
             this.availableActions.add(
-                this.add.text(this.cameras.main.width - 10, this.cameras.main.width - (24 * i), action, {
+                this.add.text(this.cameras.main.width - 20, this.cameras.main.height - 20 - (24 * i), action, {
                     fontSize: 16,
                     fontFamily: 'Arial'
                 })
