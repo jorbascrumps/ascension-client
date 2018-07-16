@@ -66,14 +66,16 @@ export async function create () {
         const {
             G
         } = getState();
+        const mapHeight = G.map.length;
+        const mapWidth = G.map[0].length;
 
         unsubscribe();
 
         map = this.make.tilemap({
-            height: G.map.length,
+            height: mapHeight,
             tileHeight: 50,
             tileWidth: 50,
-            width: G.map[0].length,
+            width: mapWidth,
         });
         tileset = map.addTilesetImage('tiles');
         mapLayer = map
@@ -88,8 +90,11 @@ export async function create () {
 
         this.pathfinder.start(G.map, G.blocked, map.width);
         this.pawnManager.start(this.client, this.pathfinder);
-    });
 
+        this.cameras.main
+            .centerOn((mapWidth * 50) / 2, (mapHeight * 50) / 2)
+            .setZoom(0.5)
+    });
     this.renderTex = this.add.renderTexture(0, 0, 800, 600);
     this.blood = this.add.sprite(0, 0, 'blood').setVisible(false);
 

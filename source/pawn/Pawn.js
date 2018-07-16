@@ -198,8 +198,8 @@ export default class extends Phaser.GameObjects.Container {
     }
 
     updateNavPath = ({
-        x = 0,
-        y = 0
+        worldX: x = 0,
+        worldY: y = 0
     } = {}) => {
         const {
             client: {
