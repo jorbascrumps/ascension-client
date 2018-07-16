@@ -14,8 +14,7 @@ import gameConfig from '../../../common/game';
 export const key = 'LEVEL';
 
 export function preload () {
-    this.load.tilemapTiledJSON('map', '/client/source/data/map/level_01.json');
-    this.load.image('tiles', '/client/source/assets/tile/level01.png');
+    this.load.image('tiles', '/common/data/maps/level.png');
     this.load.image('player', '/client/source/assets/pawn/skeleton.png');
     this.load.image('blood', '/client/source/assets/blood.png');
 
@@ -38,8 +37,9 @@ export async function create () {
         y = 50
     } = qs.parse(window.location.search.substr(1));
 
+    const game = gameConfig();
     this.client = c.Client({
-        game: b.Game(gameConfig),
+        game: b.Game(game),
         multiplayer: {
             server: 'localhost:8080'
         },
@@ -48,20 +48,50 @@ export async function create () {
     });
     this.client.connect();
 
-    const tilemap = this.make.tilemap({
-        key: 'map'
-    });
+    const {
+        client: {
+            store: {
+                getState,
+                subscribe
+            }
+        }
+    } = this;
 
-    const tileset = tilemap.addTilesetImage('level01', 'tiles');
-    const levelData = tilemap.createStaticLayer('map', tileset);
-    const blockedLayer = tilemap.createStaticLayer('blocked', tileset);
-    this.interactionLayer = tilemap.createStaticLayer('interactions', tileset);
+    let map;
+    let tileset;
+    let mapLayer;
+    let blockedLayer;
+    let interactionsLayer;
+    const unsubscribe = subscribe(() => {
+        const {
+            G
+        } = getState();
+
+        unsubscribe();
+
+        map = this.make.tilemap({
+            height: G.map.length,
+            tileHeight: 50,
+            tileWidth: 50,
+            width: G.map[0].length,
+        });
+        tileset = map.addTilesetImage('tiles');
+        mapLayer = map
+            .createBlankDynamicLayer('map', tileset)
+            .putTilesAt(G.map, 0, 0, false);
+        blockedLayer = map
+            .createBlankDynamicLayer('blocked', tileset)
+            .putTilesAt(G.blocked, 0, 0, false);
+        interactionsLayer = map
+            .createBlankDynamicLayer('interactions', tileset)
+            .putTilesAt(G.interactions, 0, 0, false);
+
+        this.pathfinder.start(G.map, G.blocked, map.width);
+        this.pawnManager.start(this.client, this.pathfinder);
+    });
 
     this.renderTex = this.add.renderTexture(0, 0, 800, 600);
     this.blood = this.add.sprite(0, 0, 'blood').setVisible(false);
-
-    this.pathfinder.start(levelData.layer.data, blockedLayer.layer.data, tilemap.width);
-    this.pawnManager.start(this.client, this.pathfinder);
 
     this.input.on('gameobjectdown', (pointer, target) => {
         if (target.ownedByPlayer) {

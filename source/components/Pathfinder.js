@@ -27,6 +27,10 @@ export default class extends Phaser.Plugins.BasePlugin {
         const startNode = this.getNode(start);
         const endNode = this.getNode(end);
 
+        if (null === startNode || null === endNode) {
+            return [];
+        }
+
         return astar.search(this.graph, startNode, endNode, {
             closest: true
         });
@@ -119,7 +123,14 @@ export default class extends Phaser.Plugins.BasePlugin {
     }
 
     getNode ({ x = 0, y = 0 } = {}) {
-        return this.graph.grid[Math.floor(x / 50)][Math.floor(y / 50)];
+        const col = Math.floor(x / 50);
+        const row = Math.floor(y / 50);
+
+        if (undefined === this.graph.grid[col]) {
+            return null;
+        }
+
+        return this.graph.grid[col][row] || null;
     }
 
 }
@@ -132,7 +143,7 @@ function setupGrid ({
     const mapData = translateMapData(
         blocked.map((_, r) =>
             _.map((_, c) =>
-                Number(blocked[r][c].index < 0 && map[r][c].index > 0)
+                Number(blocked[r][c] === -1 && map[r][c] !== -1)
             )
         )
     );
