@@ -13,6 +13,8 @@ import gameConfig from '../../../common/game';
 
 export const key = 'LEVEL';
 
+let controls;
+
 export function preload () {
     this.load.image('tiles', '/common/data/maps/level.png');
     this.load.image('player', '/client/source/assets/pawn/skeleton.png');
@@ -23,7 +25,9 @@ export function preload () {
     );
 }
 
-export function update (time, delta) {}
+export function update (time, delta) {
+    controls && controls.update(delta);
+}
 
 export async function create () {
     await FBInstant.startGameAsync();
@@ -93,7 +97,15 @@ export async function create () {
 
         this.cameras.main
             .centerOn((mapWidth * 50) / 2, (mapHeight * 50) / 2)
-            .setZoom(0.5)
+            .setZoom(0.5);
+
+        controls = new Phaser.Cameras.Controls.SmoothedKeyControl({
+            ...this.input.keyboard.createCursorKeys(),
+            camera: this.cameras.main,
+            maxSpeed: 1.0,
+            acceleration: 1,
+            drag: 1
+        });
     });
     this.renderTex = this.add.renderTexture(0, 0, 800, 600);
     this.blood = this.add.sprite(0, 0, 'blood').setVisible(false);
