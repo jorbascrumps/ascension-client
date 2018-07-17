@@ -96,8 +96,7 @@ export async function create () {
         this.pawnManager.start(this.client, this.pathfinder);
 
         this.cameras.main
-            .centerOn((mapWidth * 50) / 2, (mapHeight * 50) / 2)
-            .setZoom(0.5);
+            .centerOn((mapWidth * 50) / 2, (mapHeight * 50) / 2);
 
         controls = new Phaser.Cameras.Controls.SmoothedKeyControl({
             ...this.input.keyboard.createCursorKeys(),
