@@ -7,8 +7,8 @@ import Pathfinder from './components/Pathfinder';
 
 window.onload = () =>
     FBInstant.initializeAsync()
-        .then(() =>
-            new Phaser.Game({
+        .then(() => {
+            const game = new Phaser.Game({
                 height: window.innerHeight,
                 parent: 'game',
                 disableContextMenu: true,
@@ -37,5 +37,7 @@ window.onload = () =>
                 },
                 type: Phaser.AUTO,
                 width: window.innerWidth
-            })
-        );
+            });
+
+            window.addEventListener('resize', () => game.resize(window.innerWidth, window.innerHeight), false);
+        });

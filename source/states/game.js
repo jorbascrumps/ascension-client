@@ -102,9 +102,9 @@ export async function create () {
         controls = new Phaser.Cameras.Controls.SmoothedKeyControl({
             ...this.input.keyboard.createCursorKeys(),
             camera: this.cameras.main,
-            maxSpeed: 1.0,
+            maxSpeed: 100.0,
             acceleration: 1,
-            drag: 1
+            drag: .055
         });
     });
     this.renderTex = this.add.renderTexture(0, 0, 800, 600);
@@ -128,6 +128,8 @@ export async function create () {
         target.sprite.clearTint();
     });
     this.events.on('PAWN_DESTROY', onPawnDeath, this);
+
+    this.events.on('resize', resize, this);
 }
 
 function onPawnDeath (pawn) {
@@ -146,4 +148,8 @@ function onPawnDeath (pawn) {
         -halfHeight
     );
     this.renderTex.restore();
+}
+
+function resize (width, height) {
+    this.cameras.resize(width, height);
 }
