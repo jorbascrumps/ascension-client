@@ -13,6 +13,8 @@ import gameConfig from '../../../common/game';
 
 export const key = 'LEVEL';
 
+let controls;
+
 export function preload () {
     this.load.image('tiles', '/common/data/maps/level.png');
     this.load.image('player', '/client/source/assets/pawn/skeleton.png');
@@ -23,7 +25,9 @@ export function preload () {
     );
 }
 
-export function update (time, delta) {}
+export function update (time, delta) {
+    controls && controls.update(delta);
+}
 
 export async function create () {
     await FBInstant.startGameAsync();
@@ -92,8 +96,15 @@ export async function create () {
         this.pawnManager.start(this.client, this.pathfinder);
 
         this.cameras.main
-            .centerOn((mapWidth * 50) / 2, (mapHeight * 50) / 2)
-            .setZoom(0.5)
+            .centerOn((mapWidth * 50) / 2, (mapHeight * 50) / 2);
+
+        controls = new Phaser.Cameras.Controls.SmoothedKeyControl({
+            ...this.input.keyboard.createCursorKeys(),
+            camera: this.cameras.main,
+            maxSpeed: 100.0,
+            acceleration: 1,
+            drag: .055
+        });
     });
     this.renderTex = this.add.renderTexture(0, 0, 800, 600);
     this.blood = this.add.sprite(0, 0, 'blood').setVisible(false);
@@ -116,6 +127,8 @@ export async function create () {
         target.sprite.clearTint();
     });
     this.events.on('PAWN_DESTROY', onPawnDeath, this);
+
+    this.events.on('resize', resize, this);
 }
 
 function onPawnDeath (pawn) {
@@ -134,4 +147,8 @@ function onPawnDeath (pawn) {
         -halfHeight
     );
     this.renderTex.restore();
+}
+
+function resize (width, height) {
+    this.cameras.resize(width, height);
 }
