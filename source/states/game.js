@@ -16,6 +16,7 @@ export const key = 'LEVEL';
 let controls;
 
 export function preload () {
+    this.load.image('background', '/client/source/assets/scene/stars.jpg');
     this.load.image('tiles', '/common/data/maps/level.png');
     this.load.image('player', '/client/source/assets/pawn/skeleton.png');
     this.load.image('blood', '/client/source/assets/blood.png');
@@ -26,6 +27,8 @@ export function preload () {
 }
 
 export function update (time, delta) {
+    this.background &&
+        this.background.setTilePosition(-this.cameras.main.scrollX / 50, -this.cameras.main.scrollY / 50);
     controls && controls.update(delta);
 }
 
@@ -60,6 +63,10 @@ export async function create () {
             }
         }
     } = this;
+
+    this.background = this.add.tileSprite(0, 0, this.sys.game.config.width + 20, this.sys.game.config.height + 20, 'background')
+        .setOrigin(0, 0)
+        .setScrollFactor(0);
 
     let map;
     let tileset;
@@ -101,7 +108,7 @@ export async function create () {
         controls = new Phaser.Cameras.Controls.SmoothedKeyControl({
             ...this.input.keyboard.createCursorKeys(),
             camera: this.cameras.main,
-            maxSpeed: 100.0,
+            maxSpeed: 1.0,
             acceleration: 1,
             drag: .055
         });
@@ -151,4 +158,5 @@ function onPawnDeath (pawn) {
 
 function resize (width, height) {
     this.cameras.resize(width, height);
+    this.background.setSize(width, height);
 }
