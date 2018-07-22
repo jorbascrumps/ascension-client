@@ -102,8 +102,10 @@ export async function create () {
         this.pathfinder.start(G.map, G.blocked, map.width);
         this.pawnManager.start(this.client, this.pathfinder);
 
+        const cameraCentreX = -(window.innerWidth - (mapWidth * 50 / 2));
+        const cameraCentreY = -(window.innerHeight - (mapHeight * 50 / 2));
         this.cameras.main
-            .centerOn((mapWidth * 50) / 2, (mapHeight * 50) / 2);
+            .setBounds(cameraCentreX, cameraCentreY, window.innerWidth * 2, window.innerHeight * 2, true);
 
         controls = new Phaser.Cameras.Controls.SmoothedKeyControl({
             ...this.input.keyboard.createCursorKeys(),
