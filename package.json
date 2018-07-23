@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "http-server --ssl -c-1 -p 3000 -a 127.0.0.1",
+    "start": "http-server -c-1 -p 80 -a 127.0.0.1",
     "build": "BABEL_ENV=client rollup -c -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
