@@ -26,6 +26,7 @@ export function create () {
 }
 
 export function update () {
+    const currentPlayer = this.registry.get('player');
     const {
         client: {
             store: {
@@ -37,8 +38,7 @@ export function update () {
         G,
         ctx
     } = getState();
-
-    if (ctx.currentPlayer !== FBInstant.player.getID().toString()) {
+    if (ctx.currentPlayer !== currentPlayer.id) {
         this.currentPhase.setText('');
         return this.availableActions.clear(true);
     }

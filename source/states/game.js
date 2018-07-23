@@ -22,7 +22,7 @@ export function preload () {
     this.load.image('blood', '/source/assets/blood.png');
 
     this.load.on('progress', value =>
-        FBInstant.setLoadingProgress(value * 100)
+        // TODO: Preloader
     );
 }
 
@@ -33,25 +33,27 @@ export function update (time, delta) {
 }
 
 export async function create () {
-    await FBInstant.startGameAsync();
-
     this.scene.launch('UI');
 
-    const playerID = FBInstant.player.getID();
     const {
         room,
+        player,
         x = 50,
         y = 50
     } = qs.parse(window.location.search.substr(1));
+
+    this.registry.set('player', {
+        id: player
+    });
 
     const game = gameConfig();
     this.client = c.Client({
         game: b.Game(game),
         multiplayer: {
-            server: 'localhost:8080'
+            server: 'ascension-server.herokuapp.com'
         },
         gameID: room,
-        playerID
+        playerID: player
     });
     this.client.connect();
 
