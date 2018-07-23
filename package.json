@@ -43,9 +43,6 @@
     "rollup-watch": "4.3.1",
     "trekker": "^1.0.0"
   },
-  "babel": {
-    "extends": "./core/.babelrc"
-  },
   "engines": {
     "node": "8.9.4"
   },
