@@ -21,9 +21,9 @@ export function preload () {
     this.load.image('player', '/source/assets/pawn/skeleton.png');
     this.load.image('blood', '/source/assets/blood.png');
 
-    this.load.on('progress', value =>
+    this.load.on('progress', value => {
         // TODO: Preloader
-    );
+    });
 }
 
 export function update (time, delta) {
