@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "BABEL_ENV=client rollup -c -w",
+    "start": "http-server --ssl -c-1 -p 3000 -a 127.0.0.1",
+    "build": "BABEL_ENV=client rollup -c -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,6 +27,7 @@
     "babel-preset-env": "1.7.0",
     "boardgame.io": "0.23.3",
     "eventemitter3": "2.0.3",
+    "http-server": "^0.11.1",
     "phaser": "3.0.0-beta.8",
     "phaser-kinetic-scrolling-plugin": "1.0.4",
     "redux": "3.7.2",
@@ -36,9 +38,10 @@
     "rollup-plugin-node-resolve": "3.3.0",
     "rollup-plugin-replace": "2.0.0",
     "rollup-plugin-resolve-aliases": "0.2.0",
-    "rollup-watch": "4.3.1"
+    "rollup-watch": "4.3.1",
+    "trekker": "^1.0.0"
   },
   "babel": {
-    "extends": "../.babelrc"
+    "extends": "./core/.babelrc"
   }
 }

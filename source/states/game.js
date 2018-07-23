@@ -9,17 +9,17 @@ import {
 import {
     default as b
 } from 'boardgame.io/core';
-import gameConfig from '../../../common/game';
+import gameConfig from '../../core/common/game';
 
 export const key = 'LEVEL';
 
 let controls;
 
 export function preload () {
-    this.load.image('background', '/client/source/assets/scene/stars.jpg');
-    this.load.image('tiles', '/common/data/maps/level.png');
-    this.load.image('player', '/client/source/assets/pawn/skeleton.png');
-    this.load.image('blood', '/client/source/assets/blood.png');
+    this.load.image('background', '/source/assets/scene/stars.jpg');
+    this.load.image('tiles', '/core/common/data/maps/level.png');
+    this.load.image('player', '/source/assets/pawn/skeleton.png');
+    this.load.image('blood', '/source/assets/blood.png');
 
     this.load.on('progress', value =>
         FBInstant.setLoadingProgress(value * 100)
