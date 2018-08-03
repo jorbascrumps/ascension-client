@@ -109,8 +109,14 @@ export async function create () {
         this.cameras.main
             .setBounds(cameraCentreX, cameraCentreY, window.innerWidth * 2, window.innerHeight * 2, true);
 
+        const cameraPanControls = this.input.keyboard.addKeys({
+            up: 'W',
+            right: 'D',
+            down: 'S',
+            left: 'A'
+        });
         controls = new Phaser.Cameras.Controls.SmoothedKeyControl({
-            ...this.input.keyboard.createCursorKeys(),
+            ...cameraPanControls,
             camera: this.cameras.main,
             maxSpeed: 1.0,
             acceleration: 1,
