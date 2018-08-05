@@ -43,14 +43,15 @@ export async function create () {
     } = qs.parse(window.location.search.substr(1));
 
     this.registry.set('player', {
-        id: player
+        id: player,
+        room
     });
 
     const game = gameConfig();
     this.client = c.Client({
         game: b.Game(game),
         multiplayer: {
-            server: 'ascension-server.herokuapp.com'
+            server: 'https://ascension-server.herokuapp.com'
         },
         gameID: room,
         playerID: player
