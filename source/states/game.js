@@ -147,7 +147,7 @@ export async function create () {
 }
 
 function onPawnDeath (pawn) {
-    this.goreLayer.draw(
+    return this.goreLayer.draw(
         'blood',
         pawn.x,
         pawn.y

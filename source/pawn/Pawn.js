@@ -62,7 +62,9 @@ export default class extends Phaser.GameObjects.Container {
         this.navGraphic = game.add.graphics(0, 0);
         this.pathfinder.closeNode({ x: this.x, y: this.y });
 
-        this.unsubscribe = this.client.store.subscribe(() => this.sync(this.client.store.getState()));
+        this.unsubscribe = this.client.store.subscribe(() =>
+            this.sync(this.client.store.getState())
+        );
         this.sync(this.client.store.getState());
 
         game.events.on('ATTACK_REGISTER', targetId => {
@@ -151,12 +153,16 @@ export default class extends Phaser.GameObjects.Container {
     }
 
     setupPhaseHandlers = phase => {
+        if (undefined === this.data) {
+            return console.warn('Could not setup phaser handlers'); // TODO: Find real cause
+        }
+
         const {
             data: {
                 values: {
                     exhausted
-                }
-            }
+                } = {}
+            } = {}
         } = this;
 
         this.off('pointerdown', this.activate, this, true);
