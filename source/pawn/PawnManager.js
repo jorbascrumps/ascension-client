@@ -9,6 +9,25 @@ export default class extends Phaser.Plugins.BasePlugin {
 
         this.client.store.subscribe(() => this.sync(this.client.store.getState()));
         this.sync(this.client.store.getState());
+    
+        const {
+            pluginManager: {
+                scene: {
+                    scene
+                }
+            }
+        } = this;
+
+        scene.input.keyboard.on('keydown_V', () =>
+            this.pawns.children.each(pawn => pawn.data.set({
+                showHealthBar: true
+            }))
+        )
+        scene.input.keyboard.on('keyup_V', () =>
+            this.pawns.children.each(pawn => pawn.data.set({
+                showHealthBar: false
+            }))
+        )
     }
 
     add (options) {
