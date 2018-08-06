@@ -154,7 +154,7 @@ export default class extends Phaser.GameObjects.Container {
 
     setupPhaseHandlers = phase => {
         if (undefined === this.data) {
-            return console.warn('Could not setup phaser handlers'); // TODO: Find real cause
+            return console.warn('Could not setup phase handlers'); // TODO: Find real cause
         }
 
         const {
