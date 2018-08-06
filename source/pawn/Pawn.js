@@ -83,6 +83,17 @@ export default class extends Phaser.GameObjects.Container {
             this.client.moves.attackPawn(this.id, targetId);
         });
 
+        this.on('pointerover', () =>
+            this.data.set({
+                showHealthBar: true
+            })
+        );
+        this.on('pointerout', () =>
+            this.data.set({
+                showHealthBar: false
+            })
+        );
+
         this.on('destroy', this.onDestroy);
     }
 
