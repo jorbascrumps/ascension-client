@@ -28,7 +28,7 @@ export function create () {
 
     this.scene.transition({
         target: 'LEVEL',
-        duration: 750,
+        duration: 500,
         moveBelow: true,
         onUpdate: transition.bind(this)
     });

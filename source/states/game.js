@@ -22,7 +22,19 @@ export function update (time, delta) {
 }
 
 export async function create () {
-    this.scene.launch('UI');
+    this.events.on('transitionstart', (fromScene, duration) =>
+        this.tweens.add({
+            targets: this.cameras.main,
+            duration,
+            alpha: 1,
+            onStart: (tween, [ target ]) => {
+                target.alpha = 0;
+            },
+            onComplete: () => {
+                this.scene.launch('UI');
+            }
+        })
+    );
 
     const {
         room,
