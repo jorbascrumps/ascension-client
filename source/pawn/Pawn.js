@@ -35,7 +35,11 @@ export default class extends Phaser.GameObjects.Container {
         this.add(this.sprite);
 
         // Setup health
-        this.healthBar = game.add.graphics(0, 0);
+        this.data.set({
+            showHealthBar: false
+        });
+        this.healthBar = game.add.graphics(0, 0)
+            .setVisible(false);
         this.add(this.healthBar);
 
         this.client = client;
@@ -167,7 +171,15 @@ export default class extends Phaser.GameObjects.Container {
     }
 
     update () {
-        this.renderHealthBar();
+        const {
+            data: {
+                values: {
+                    showHealthBar
+                }
+            }
+        } = this;
+
+        this.renderHealthBar(showHealthBar);
 
         this.isActive && this.pathfinder.renderPath(
             this.navPath,
@@ -176,8 +188,15 @@ export default class extends Phaser.GameObjects.Container {
         );
     }
 
-    renderHealthBar = () => {
-        this.healthBar.clear();
+    renderHealthBar = (show) => {
+        this.healthBar
+            .setVisible(show)
+            .clear();
+
+        if (false === show) {
+            return;
+        }
+
         this.healthBar.depth = 2;
 
         const {
