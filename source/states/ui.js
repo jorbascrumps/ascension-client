@@ -3,25 +3,28 @@ export const key = 'UI';
 let cachedPhase;
 
 export function create () {
+    this.actionBar.start(
+        this.cameras.main.centerX,
+        this.cameras.main.height,
+        ({ target: { title: action } }) => {
+            if ('' === action) {
+                return;
+            }
+
+            const {
+                client
+            } = this.scene.get('LEVEL');
+
+            if (action === 'Cancel') {
+                return client.events.endPhase('Activation');
+            }
+
+            client.events.endPhase(action);
+        }
+    );
     this.currentPhase = this.add.text(10, 10, '', {
         fontSize: 10,
         fontFamily: 'Arial'
-    });
-
-    this.availableActions = this.add.group();
-
-    this.input.on('gameobjectover', (p, o) => o.setTint(0x00ff00));
-    this.input.on("gameobjectout", (p, o) => o.clearTint());
-    this.input.on('gameobjectdown', (p, { text: action = '' }) => {
-        const {
-            client
-        } = this.scene.get('LEVEL');
-
-        if (action === 'Cancel') {
-            return client.events.endPhase('Activation');
-        }
-
-        client.events.endPhase(action);
     });
 }
 
@@ -35,12 +38,10 @@ export function update () {
         }
     } = this.scene.get('LEVEL');
     const {
-        G,
         ctx
     } = getState();
     if (ctx.currentPlayer !== currentPlayer.id) {
-        this.currentPhase.setText('');
-        return this.availableActions.clear(true);
+        return this.currentPhase.setText('');
     }
 
     if (ctx.phase === cachedPhase) {
@@ -48,26 +49,10 @@ export function update () {
     }
 
     cachedPhase = ctx.phase;
-    this.currentPhase.setText(`Phase: ${ctx.phase}`);
+    this.currentPhase.setText(`Phase: ${ctx.phase}`)
+        .setFixedSize(2000, 0);;
 
-    this.availableActions.clear(true);
-    const availableActions = [ ...actions[ctx.phase] ];
-    availableActions
-        .sort()
-        .reverse()
-        .forEach((action, i) =>
-            this.availableActions.add(
-                this.add.text(this.cameras.main.width - 20, this.cameras.main.height - 20 - (24 * i), action, {
-                    fontSize: 16,
-                    fontFamily: 'Arial'
-                })
-                    .setOrigin(1, 1)
-                    .setInteractive({
-                        useHandCursor: true
-                    }),
-                true
-            )
-        );
+    this.actionBar.setActions(actions[ctx.phase]);
 }
 
 const actions = {

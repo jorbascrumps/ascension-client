@@ -1,0 +1,58 @@
+<style>
+    #actionBar {
+        border-radius: 12px 12px 0 0;
+        counter-reset: i 0;
+        display: grid;
+        grid-template-columns: repeat(<%- actions.length %>, 1fr);
+        grid-gap: 10px;
+        list-style: none;
+        margin: 0 0 0 0;
+        padding: 10px;
+        width: <%- actions.length * (actions.length > 1 ? 75 : 68) %>px;
+    }
+    #actionBar li {
+        background: rgba(0, 0, 0, 0.5) url(/source/plugins/ActionBar/move.svg) no-repeat center center;
+        background-size: 50%;
+        border: 2px solid rgba(255, 255, 255, 1);
+        border-radius: 2px;
+        cursor: pointer;
+        margin: 0;
+        padding: 0;
+        position: relative;
+        transition: all .15s;
+    }
+    #actionBar li[title="Attack"] {
+        background-image: url(/source/plugins/ActionBar/attack.svg);
+    }
+    #actionBar li[title="Cancel"] {
+        background-image: url(/source/plugins/ActionBar/cancel.svg);
+    }
+    #actionBar li[title="Search"] {
+        background-image: url(/source/plugins/ActionBar/search.svg);
+    }
+    #actionBar li:before {
+        content: '';
+        display: block;
+        padding-top: 100%;
+    }
+    #actionBar li:after {
+        bottom: 4px;
+        color: white;
+        content: counter(i);
+        counter-increment: i 1;
+        font-size: 12px;
+        left: 4px;
+        line-height: 12px;
+        position: absolute;
+    }
+    #actionBar li:hover {
+        background-color: rgba(0, 0, 0, 0.75);
+        border: 2px solid rgba(113, 245, 167, 1);
+    }
+</style>
+
+<ol id="actionBar">
+    <% forEach(actions, function (action) { %>
+    <li title="<%- action %>"></li>
+    <% }); %>
+</ol>
