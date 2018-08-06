@@ -35,7 +35,11 @@ export default class extends Phaser.GameObjects.Container {
         this.add(this.sprite);
 
         // Setup health
-        this.healthBar = game.add.graphics(0, 0);
+        this.data.set({
+            showHealthBar: false
+        });
+        this.healthBar = game.add.graphics(0, 0)
+            .setVisible(false);
         this.add(this.healthBar);
 
         this.client = client;
@@ -58,11 +62,13 @@ export default class extends Phaser.GameObjects.Container {
         this.navGraphic = game.add.graphics(0, 0);
         this.pathfinder.closeNode({ x: this.x, y: this.y });
 
-        this.unsubscribe = this.client.store.subscribe(() => this.sync(this.client.store.getState()));
+        this.unsubscribe = this.client.store.subscribe(() =>
+            this.sync(this.client.store.getState())
+        );
         this.sync(this.client.store.getState());
 
         game.events.on('ATTACK_REGISTER', targetId => {
-            if (!this.isActive) {
+            if (!this.isActive || targetId === this.id) {
                 return;
             }
 
@@ -73,11 +79,25 @@ export default class extends Phaser.GameObjects.Container {
             );
 
             if (!isAdjacent) {
-                return;
+                return console.warn('Target out of range');
             }
 
             this.client.moves.attackPawn(this.id, targetId);
         });
+
+        this.on('pointerover', () =>
+            this.data.set({
+                showHealthBar: true
+            })
+        );
+        this.on('pointerout', () =>
+            this.data.set({
+                showHealthBar: false
+            })
+        );
+        this.on('pointerdown', () =>
+            this.scene.events.emit('ATTACK_REGISTER', this.id)
+        );
 
         this.on('destroy', this.onDestroy);
     }
@@ -133,12 +153,16 @@ export default class extends Phaser.GameObjects.Container {
     }
 
     setupPhaseHandlers = phase => {
+        if (undefined === this.data) {
+            return console.warn('Could not setup phase handlers'); // TODO: Find real cause
+        }
+
         const {
             data: {
                 values: {
                     exhausted
-                }
-            }
+                } = {}
+            } = {}
         } = this;
 
         this.off('pointerdown', this.activate, this, true);
@@ -167,7 +191,15 @@ export default class extends Phaser.GameObjects.Container {
     }
 
     update () {
-        this.renderHealthBar();
+        const {
+            data: {
+                values: {
+                    showHealthBar
+                }
+            }
+        } = this;
+
+        this.renderHealthBar(showHealthBar);
 
         this.isActive && this.pathfinder.renderPath(
             this.navPath,
@@ -176,8 +208,15 @@ export default class extends Phaser.GameObjects.Container {
         );
     }
 
-    renderHealthBar = () => {
-        this.healthBar.clear();
+    renderHealthBar = (show) => {
+        this.healthBar
+            .setVisible(show)
+            .clear();
+
+        if (false === show) {
+            return;
+        }
+
         this.healthBar.depth = 2;
 
         const {
