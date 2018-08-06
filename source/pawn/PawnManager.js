@@ -69,7 +69,7 @@ export default class extends Phaser.Plugins.BasePlugin {
             .forEach(id => {
                 const pawn = this.get('id', id);
 
-                if (typeof pawn !== 'undefined') {
+                if (typeof pawn !== 'undefined' || pawns[id].currentHealth <= 0) {
                     return;
                 }
 
