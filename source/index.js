@@ -1,5 +1,6 @@
 import "@babel/polyfill";
 
+import * as preloader from './states/preloader';
 import * as level from './states/game';
 import * as ui from './states/ui';
 import PawnManager from './pawn/PawnManager';
@@ -20,6 +21,7 @@ window.onload = () => {
             roundPixels: true,
         },
         scene: [
+            preloader,
             level,
             ui
         ],
