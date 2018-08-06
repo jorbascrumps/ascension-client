@@ -15,17 +15,6 @@ export const key = 'LEVEL';
 
 let controls;
 
-export function preload () {
-    this.load.image('background', '/source/assets/scene/stars.jpg');
-    this.load.image('tiles', '/core/common/data/maps/level.png');
-    this.load.image('player', '/source/assets/pawn/skeleton.png');
-    this.load.image('blood', '/source/assets/blood.png');
-
-    this.load.on('progress', value => {
-        // TODO: Preloader
-    });
-}
-
 export function update (time, delta) {
     this.background &&
         this.background.setTilePosition(-this.cameras.main.scrollX / 50, -this.cameras.main.scrollY / 50);
@@ -33,7 +22,19 @@ export function update (time, delta) {
 }
 
 export async function create () {
-    this.scene.launch('UI');
+    this.events.on('transitionstart', (fromScene, duration) =>
+        this.tweens.add({
+            targets: this.cameras.main,
+            duration,
+            alpha: 1,
+            onStart: (tween, [ target ]) => {
+                target.alpha = 0;
+            },
+            onComplete: () => {
+                this.scene.launch('UI');
+            }
+        })
+    );
 
     const {
         room,
