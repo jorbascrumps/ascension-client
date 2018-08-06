@@ -66,7 +66,7 @@ export default class extends Phaser.GameObjects.Container {
         this.sync(this.client.store.getState());
 
         game.events.on('ATTACK_REGISTER', targetId => {
-            if (!this.isActive) {
+            if (!this.isActive || targetId === this.id) {
                 return;
             }
 
@@ -77,7 +77,7 @@ export default class extends Phaser.GameObjects.Container {
             );
 
             if (!isAdjacent) {
-                return;
+                return console.warn('Target out of range');
             }
 
             this.client.moves.attackPawn(this.id, targetId);
@@ -92,6 +92,9 @@ export default class extends Phaser.GameObjects.Container {
             this.data.set({
                 showHealthBar: false
             })
+        );
+        this.on('pointerdown', () =>
+            this.scene.events.emit('ATTACK_REGISTER', this.id)
         );
 
         this.on('destroy', this.onDestroy);

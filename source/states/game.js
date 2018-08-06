@@ -45,7 +45,8 @@ export async function create () {
 
     this.registry.set('player', {
         id: player,
-        room
+        room,
+        isCurrentTurn: false
     });
 
     const game = gameConfig();
@@ -106,6 +107,8 @@ export async function create () {
         this.pathfinder.start(G.map, G.blocked, map.width);
         this.pawnManager.start(this.client, this.pathfinder);
 
+        this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
+
         const cameraCentreX = -(window.innerWidth - (mapWidth * 50 / 2));
         const cameraCentreY = -(window.innerHeight - (mapHeight * 50 / 2));
         this.cameras.main
@@ -125,47 +128,30 @@ export async function create () {
             drag: .055
         });
     });
-    this.renderTex = this.add.renderTexture(0, 0, 800, 600);
-    this.blood = this.add.sprite(0, 0, 'blood').setVisible(false);
 
-    this.input.on('gameobjectdown', (pointer, target) => {
-        if (target.ownedByPlayer) {
-            return;
-        }
+    subscribe(() => {
+        const {
+            ctx
+        } = getState();
+        const player = this.registry.get('player');
 
-        target.sprite.setTint(0xff0000);
-        this.events.emit('ATTACK_REGISTER', target.id);
+        this.registry.set('player', {
+            ...player,
+            isCurrentTurn: player.id === ctx.currentPlayer
+        });
     });
-    this.input.on('gameobjectup', (pointer, target) => {
-        target.sprite.setTint(0xe3e3e3);
-    });
-    this.input.on('gameobjectover', (pointer, target) => {
-        target.sprite.setTint(0xe3e3e3);
-    });
-    this.input.on('gameobjectout', (pointer, target) => {
-        target.sprite.clearTint();
-    });
+
     this.events.on('PAWN_DESTROY', onPawnDeath, this);
 
     this.events.on('resize', resize, this);
 }
 
 function onPawnDeath (pawn) {
-    const halfHeight = this.blood.frame.halfHeight;
-    const halfWidth = this.blood.frame.halfWidth;
-
-    this.renderTex.save();
-    this.renderTex.translate(pawn.x, pawn.y);
-    this.renderTex.translate(halfWidth, halfHeight);
-
-    this.renderTex.rotate(Phaser.Math.Between(0, 360) * Phaser.Math.DEG_TO_RAD);
-    this.renderTex.draw(
-        this.blood.texture,
-        this.blood.frame,
-        -halfWidth,
-        -halfHeight
+    this.goreLayer.draw(
+        'blood',
+        pawn.x,
+        pawn.y
     );
-    this.renderTex.restore();
 }
 
 function resize (width, height) {
