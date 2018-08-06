@@ -41,6 +41,7 @@ export function update () {
         ctx
     } = getState();
     if (ctx.currentPlayer !== currentPlayer.id) {
+        this.actionBar.setActions();
         return this.currentPhase.setText('');
     }
 
