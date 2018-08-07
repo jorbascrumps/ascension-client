@@ -133,7 +133,14 @@ export async function create () {
         const {
             ctx
         } = getState();
-        const player = this.registry.get('player');
+        const {
+            player,
+            phase
+        } = this.registry.getAll();
+
+        if (phase !== ctx.phase) {
+            this.registry.set('phase', ctx.phase);
+        }
 
         this.registry.set('player', {
             ...player,
