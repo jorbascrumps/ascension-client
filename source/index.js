@@ -3,6 +3,7 @@ import "@babel/polyfill";
 import * as preloader from './states/preloader';
 import * as level from './states/game';
 import * as ui from './states/ui';
+import * as gameover from './states/gameover';
 import PawnManager from './pawn/PawnManager';
 import Pathfinder from './components/Pathfinder';
 import ActionBarPlugin from './plugins/ActionBar';
@@ -23,7 +24,8 @@ window.onload = () => {
         scene: [
             preloader,
             level,
-            ui
+            ui,
+            gameover
         ],
         plugins: {
             scene: [
