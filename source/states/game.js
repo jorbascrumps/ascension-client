@@ -107,7 +107,7 @@ export async function create () {
         this.pathfinder.start(G.map, G.blocked, map.width);
         this.pawnManager.start(this.client, this.pathfinder);
 
-        // this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
+        this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
 
         const cameraCentreX = -(window.innerWidth - (mapWidth * 50 / 2));
         const cameraCentreY = -(window.innerHeight - (mapHeight * 50 / 2));
@@ -162,11 +162,11 @@ export async function create () {
 }
 
 function onPawnDeath (pawn) {
-    // return this.goreLayer.draw(
-    //     'blood',
-    //     pawn.x,
-    //     pawn.y
-    // );
+    return this.goreLayer.draw(
+        'blood',
+        pawn.x,
+        pawn.y
+    );
 }
 
 function resize (width, height) {
