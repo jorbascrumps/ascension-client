@@ -128,7 +128,7 @@ export async function create () {
         });
     });
 
-    subscribe(() => {
+    const disableSync = subscribe(() => {
         const {
             ctx
         } = getState();
@@ -138,7 +138,7 @@ export async function create () {
         } = this.registry.getAll();
 
         if (ctx.gameover) {
-            unsubscribe();
+            disableSync();
             this.scene.stop('UI');
             return this.scene.start('GAMEOVER', {
                 isWinner: ctx.gameover.winner === player.id
