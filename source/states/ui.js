@@ -44,8 +44,16 @@ export function create () {
 }
 
 function onChangeData (_, key, val) {
+    const {
+        player
+    } = this.registry.getAll();
+
     switch (key) {
         case 'phase':
+            if (!player.isCurrentTurn) {
+                return;
+            }
+
             this.phaseContainer
                 .getByName('label')
                 .setText(val.toUpperCase())
