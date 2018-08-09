@@ -49,6 +49,13 @@ export default class extends Phaser.Plugins.BasePlugin {
 
         this.pawns.add(pawn, true);
 
+        const {
+            currentHealth
+        } = pawn.data.getAll();
+        if (currentHealth <= 0) {
+            pawn.destroy();
+        }
+
         return pawn;
     }
 
@@ -69,7 +76,7 @@ export default class extends Phaser.Plugins.BasePlugin {
             .forEach(id => {
                 const pawn = this.get('id', id);
 
-                if (typeof pawn !== 'undefined' || pawns[id].currentHealth <= 0) {
+                if (typeof pawn !== 'undefined') {
                     return;
                 }
 
