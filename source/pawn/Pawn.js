@@ -26,7 +26,14 @@ export default class extends Phaser.GameObjects.Container {
         this.id = (id || Date.now()).toString();
 
         this.setDataEnabled();
-        this.on('changedata', this.onChangeData);
+        this.on('changedata_currentHealth', (_, val, prev) => this.setHealth(val, prev));
+
+        this.damageNum = game.add.text(initialX + 25, initialY, '00')
+            .setAlpha(0)
+            .setAlign('center')
+            .setColor('#ff0000')
+            .setFontStyle('bold')
+            .setOrigin(0.5, 1);
 
         // Setup sprite
         this.sprite = game.add.sprite(0, 0, asset);
@@ -140,15 +147,6 @@ export default class extends Phaser.GameObjects.Container {
         if (this.ownedByPlayer && (phase !== this.currentPhase || turnEnded)) {
             this.currentPhase = phase;
             this.setupPhaseHandlers(phase);
-        }
-    }
-
-    onChangeData = (_, key, val) => {
-        const currentVal = this.data.get(key);
-
-        switch (key) {
-            case 'currentHealth':
-                return val <= 0 && this.destroy();
         }
     }
 
@@ -363,6 +361,36 @@ export default class extends Phaser.GameObjects.Container {
         });
 
         this.scene.events.emit('PAWN_DESTROY', this);
+    }
+    
+    setHealth = (val, prev) => {
+        if (val === prev) {
+            return;
+        }
+
+        if (val < prev) {
+            this.damageNum.setText(`-${prev - val}`);
+            this.scene.tweens.add({
+                targets: this.damageNum,
+                duration: 500,
+                alpha: {
+                    value: 1,
+                    yoyo: 1,
+                    duration: 250
+                },
+                y: '-=25',
+                onStart: (tween, [ target ]) => {
+                    target.setPosition(this.x + 25, this.y);
+                },
+                onComplete: (tween, [ target ]) => {
+                    target.setY(this.y);
+                }
+            });
+        }
+
+        if (val <= 0) {
+            return this.destroy();
+        }
     }
 
 }
