@@ -130,12 +130,17 @@ export async function create () {
 
     const disableSync = subscribe(() => {
         const {
-            ctx
-        } = getState();
-        const {
             player,
             phase
         } = this.registry.getAll();
+        const {
+            ctx,
+            G: {
+                players: {
+                    [player.id]: playerData
+                }
+            }
+        } = getState();
 
         if (ctx.gameover) {
             disableSync();
@@ -151,6 +156,7 @@ export async function create () {
 
         this.registry.set('player', {
             ...player,
+            ...playerData,
             isCurrentTurn: player.id === ctx.currentPlayer
         });
     });

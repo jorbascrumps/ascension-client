@@ -26,6 +26,10 @@ export function create () {
         fontSize: 10,
         fontFamily: 'Arial'
     });
+    this.goldCount = this.add.text(this.cameras.main.width - 10, 10, '', {
+        fontSize: 12
+    })
+        .setOrigin(1, 0);
 
     this.registry.events.on('changedata', onChangeData, this);
     this.phaseContainer = this.add.container(0, this.cameras.main.height / 2)
@@ -55,7 +59,9 @@ function onChangeData (_, key, val) {
                 yoyo: true,
                 hold: 500,
                 duration: 250
-            })
+            });
+        case 'player':
+            return this.goldCount.setText(`Gold: ${val.gold}`);
     }
 }
 
