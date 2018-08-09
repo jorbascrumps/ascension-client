@@ -42,6 +42,8 @@ export default class extends Phaser.GameObjects.Container {
             .setVisible(false);
         this.add(this.healthBar);
 
+        this.inventory = game.add.text(initialX, initialY + 50);
+
         this.client = client;
         this.pathfinder = pathfinder;
         this.manager = manager;
@@ -109,6 +111,7 @@ export default class extends Phaser.GameObjects.Container {
                     active,
                     currentHealth,
                     exhausted,
+                    inventory,
                     maxHealth,
                     position = {
                         x: this.x,
@@ -133,6 +136,7 @@ export default class extends Phaser.GameObjects.Container {
             this.data.set({
                 exhausted,
                 currentHealth,
+                inventory,
                 maxHealth
             });
         } catch (e) {}
@@ -144,11 +148,16 @@ export default class extends Phaser.GameObjects.Container {
     }
 
     onChangeData = (_, key, val) => {
-        const currentVal = this.data.get(key);
-
         switch (key) {
             case 'currentHealth':
                 return val <= 0 && this.destroy();
+            case 'inventory':
+                const inventoryText = Object.keys(val)
+                    .reduce((inv, id) => ([
+                        ...inv,
+                        `Item #${id} x ${val[id]}`
+                    ]), []);
+                return this.inventory.setText(inventoryText);
         }
     }
 
@@ -200,6 +209,8 @@ export default class extends Phaser.GameObjects.Container {
         } = this;
 
         this.renderHealthBar(showHealthBar);
+
+        this.inventory.setPosition(this.x, this.y + 50);
 
         this.isActive && this.pathfinder.renderPath(
             this.navPath,
