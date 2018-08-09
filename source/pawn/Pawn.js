@@ -274,7 +274,7 @@ export default class extends Phaser.GameObjects.Container {
     activate = () => this.client.moves.activatePawn(this.id)
 
     search = ({ worldX, worldY }) => {
-        const target = this.scene.interactionLayer.getTileAtWorldXY(worldX, worldY);
+        const target = this.scene.interactionsLayer.getTileAtWorldXY(worldX, worldY);
 
         if (null === target) {
             return alert('Nothing to search!');

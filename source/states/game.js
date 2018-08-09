@@ -77,7 +77,6 @@ export async function create () {
     let tileset;
     let mapLayer;
     let blockedLayer;
-    let interactionsLayer;
     const unsubscribe = subscribe(() => {
         const {
             G
@@ -100,7 +99,7 @@ export async function create () {
         blockedLayer = map
             .createBlankDynamicLayer('blocked', tileset)
             .putTilesAt(G.blocked, 0, 0, false);
-        interactionsLayer = map
+        this.interactionsLayer = map
             .createBlankDynamicLayer('interactions', tileset)
             .putTilesAt(G.interactions, 0, 0, false);
 
