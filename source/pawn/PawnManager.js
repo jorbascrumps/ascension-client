@@ -6,6 +6,7 @@ export default class extends Phaser.Plugins.BasePlugin {
         this.client = client;
         this.pathfinder = pathfinder;
         this.pawns = this.pluginManager.add.group();
+        this.deceased = [];
 
         this.client.store.subscribe(() => this.sync(this.client.store.getState()));
         this.sync(this.client.store.getState());
@@ -28,6 +29,8 @@ export default class extends Phaser.Plugins.BasePlugin {
                 showHealthBar: false
             }))
         )
+
+        scene.events.on('PAWN_DESTROY', pawn => this.deceased.push(pawn.id));
     }
 
     add (options) {
@@ -49,6 +52,13 @@ export default class extends Phaser.Plugins.BasePlugin {
 
         this.pawns.add(pawn, true);
 
+        const {
+            currentHealth
+        } = pawn.data.getAll();
+        if (currentHealth <= 0) {
+            pawn.destroy();
+        }
+
         return pawn;
     }
 
@@ -69,7 +79,7 @@ export default class extends Phaser.Plugins.BasePlugin {
             .forEach(id => {
                 const pawn = this.get('id', id);
 
-                if (typeof pawn !== 'undefined' || pawns[id].currentHealth <= 0) {
+                if (typeof pawn !== 'undefined' || this.deceased.indexOf(id) > -1) {
                     return;
                 }
 

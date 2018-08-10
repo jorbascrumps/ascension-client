@@ -103,10 +103,9 @@ export async function create () {
             .createBlankDynamicLayer('interactions', tileset)
             .putTilesAt(G.interactions, 0, 0, false);
 
+        this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
         this.pathfinder.start(G.map, G.blocked, map.width);
         this.pawnManager.start(this.client, this.pathfinder);
-
-        this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
 
         const cameraCentreX = -(window.innerWidth - (mapWidth * 50 / 2));
         const cameraCentreY = -(window.innerHeight - (mapHeight * 50 / 2));
