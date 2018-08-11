@@ -1,4 +1,5 @@
 import * as Util from '../components/Util';
+import isEqual from 'lodash/isEqual';
 
 export default class extends Phaser.GameObjects.Container {
 
@@ -27,6 +28,19 @@ export default class extends Phaser.GameObjects.Container {
 
         this.setDataEnabled();
         this.on('changedata_currentHealth', (_, val, prev) => this.setHealth(val, prev));
+        this.on('changedata_inventory', (_, val, prev) => {
+            if (isEqual(val, prev)) {
+                return;
+            }
+
+            const inventoryText = Object.keys(val)
+                .reduce((inv, id) => ([
+                    ...inv,
+                    `Item #${id} x ${val[id]}`
+                ]), []);
+
+            return this.inventory.setText(inventoryText);
+        });
 
         this.damageNum = game.add.text(initialX + 25, initialY, '00')
             .setAlpha(0)
