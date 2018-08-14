@@ -19,6 +19,42 @@ export function update (time, delta) {
     this.background &&
         this.background.setTilePosition(-this.cameras.main.scrollX / 50, -this.cameras.main.scrollY / 50);
     controls && controls.update(delta);
+
+    const activePawn = this.pawnManager.get('active', true);
+    if (activePawn) {
+        this.fogGraphic.clear();
+        this.fogCircle.setPosition(activePawn.x + 25, activePawn.y + 25)
+
+        this.mapLayer.forEachTile(maskTile, this);
+
+        const tiles = this.mapLayer.getTilesWithinShape(this.fogCircle, {
+            isNotEmpty: true
+        });
+        tiles.forEach(tile => applyFogOpacity.call(this, tile, activePawn, this.fogCircle.radius / 50));
+    }
+}
+
+function maskTile (tile) {
+    const alpha = Number(tile.index === -1);
+
+    this.fogGraphic
+        .fillStyle(0x000000, alpha)
+        .fillRect(tile.x * tile.width, tile.y * tile.height, tile.width, tile.height);
+}
+
+function applyFogOpacity (tile, { x = 0, y = 0 }, maxDistance = 1) {
+    const distance =
+        Phaser.Math.Clamp(
+            Math.max(Math.abs(x - tile.x * 50), Math.abs(y - tile.y * 50)) / 50 - 2,
+            0,
+            maxDistance
+        )
+    ;
+    const alpha = 1 - distance / maxDistance;
+
+    this.fogGraphic
+        .fillStyle(0x000000, alpha)
+        .fillRect(tile.x * tile.width, tile.y * tile.height, tile.width, tile.height);
 }
 
 export async function create () {
@@ -75,7 +111,6 @@ export async function create () {
 
     let map;
     let tileset;
-    let mapLayer;
     let blockedLayer;
     let interactionsLayer;
     const unsubscribe = subscribe(() => {
@@ -94,7 +129,7 @@ export async function create () {
             width: mapWidth,
         });
         tileset = map.addTilesetImage('tiles');
-        mapLayer = map
+        this.mapLayer = map
             .createBlankDynamicLayer('map', tileset)
             .putTilesAt(G.map, 0, 0, false);
         blockedLayer = map
@@ -105,8 +140,17 @@ export async function create () {
             .putTilesAt(G.interactions, 0, 0, false);
 
         this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
+        this.fogGraphicLayer = this.add.renderTexture(0, 0, mapWidth * 50, mapHeight * 50)
+            .fill('rgb(0, 0, 0)', .8);
+        this.fogGraphic = this.add.graphics(0, 0)
+            .setVisible(false);
+        this.fogCircle = new Phaser.Geom.Circle(275, 275, 225);
+
         this.pathfinder.start(G.map, G.blocked, map.width);
         this.pawnManager.start(this.client, this.pathfinder);
+
+        this.fogGraphicLayer.mask = new Phaser.Display.Masks.BitmapMask(this, this.fogGraphic);
+        this.fogGraphicLayer.mask.invertAlpha = true;
 
         const cameraCentreX = -(window.innerWidth - (mapWidth * 50 / 2));
         const cameraCentreY = -(window.innerHeight - (mapHeight * 50 / 2));
