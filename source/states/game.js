@@ -20,7 +20,7 @@ export function update (time, delta) {
         this.background.setTilePosition(-this.cameras.main.scrollX / 50, -this.cameras.main.scrollY / 50);
     controls && controls.update(delta);
 
-    const activePawn = this.pawnManager.get('active', true);
+    const activePawn = this.pawnManager.get('isActive', true);
     if (activePawn) {
         this.fogGraphic.clear();
         this.fogCircle.setPosition(activePawn.x + 25, activePawn.y + 25)

@@ -27,6 +27,7 @@ export default class extends Phaser.GameObjects.Container {
 
         this.setDataEnabled();
         this.on('changedata_currentHealth', (_, val, prev) => this.setHealth(val, prev));
+        this.on('changedata_active', (_, val, prev) => this.setActive(val, prev));
 
         this.damageNum = game.add.text(initialX + 25, initialY, '00')
             .setAlpha(0)
@@ -138,6 +139,7 @@ export default class extends Phaser.GameObjects.Container {
 
         try {
             this.data.set({
+                active,
                 exhausted,
                 currentHealth,
                 maxHealth
@@ -392,5 +394,7 @@ export default class extends Phaser.GameObjects.Container {
             return this.destroy();
         }
     }
+
+    setActive = val => this.isActive = val
 
 }
