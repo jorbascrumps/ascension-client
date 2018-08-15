@@ -28,6 +28,7 @@ export default class extends Phaser.GameObjects.Container {
         this.setDataEnabled();
         this.on('changedata_currentHealth', (_, val, prev) => this.setHealth(val, prev));
         this.on('changedata_active', (_, val, prev) => this.setActive(val, prev));
+        this.on('changedata_lightRadius', (_, val, prev) => this.setLightRadius(val, prev));
 
         this.damageNum = game.add.text(initialX + 25, initialY, '00')
             .setAlpha(0)
@@ -59,6 +60,7 @@ export default class extends Phaser.GameObjects.Container {
         this.busy = false;
         this.isActive = false;
         this.currentPhase = undefined;
+        this.lightRadius = 5;
         this.setInteractive({
             hitArea: new Phaser.Geom.Rectangle(0, 0, 50, 50),
             hitAreaCallback: Phaser.Geom.Rectangle.Contains,
@@ -117,6 +119,7 @@ export default class extends Phaser.GameObjects.Container {
                     active,
                     currentHealth,
                     exhausted,
+                    lightRadius,
                     maxHealth,
                     position = {
                         x: this.x,
@@ -142,6 +145,7 @@ export default class extends Phaser.GameObjects.Container {
                 active,
                 exhausted,
                 currentHealth,
+                lightRadius,
                 maxHealth
             });
         } catch (e) {}
@@ -396,5 +400,7 @@ export default class extends Phaser.GameObjects.Container {
     }
 
     setActive = val => this.isActive = val
+
+    setLightRadius = val => this.lightRadius = val
 
 }

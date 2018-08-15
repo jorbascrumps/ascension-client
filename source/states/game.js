@@ -23,14 +23,15 @@ export function update (time, delta) {
     const activePawn = this.pawnManager.get('isActive', true);
     if (activePawn) {
         this.fogGraphic.clear();
-        this.fogCircle.setPosition(activePawn.x + 25, activePawn.y + 25)
+        this.fogCircle.setPosition(activePawn.x + 25, activePawn.y + 25);
+        this.fogCircle.radius = activePawn.lightRadius * 50;
 
         this.mapLayer.forEachTile(maskTile, this);
 
         const tiles = this.mapLayer.getTilesWithinShape(this.fogCircle, {
             isNotEmpty: true
         });
-        tiles.forEach(tile => applyFogOpacity.call(this, tile, activePawn, this.fogCircle.radius / 50));
+        tiles.forEach(tile => applyFogOpacity.call(this, tile, activePawn.x, activePawn.y, activePawn.lightRadius));
     }
 }
 
@@ -42,15 +43,15 @@ function maskTile (tile) {
         .fillRect(tile.x * tile.width, tile.y * tile.height, tile.width, tile.height);
 }
 
-function applyFogOpacity (tile, { x = 0, y = 0 }, maxDistance = 1) {
+function applyFogOpacity (tile, x = 0, y = 0, radius = 1) {
     const distance =
         Phaser.Math.Clamp(
             Math.max(Math.abs(x - tile.x * 50), Math.abs(y - tile.y * 50)) / 50 - 2,
             0,
-            maxDistance
+            radius
         )
     ;
-    const alpha = 1 - distance / maxDistance;
+    const alpha = 1 - distance / radius;
 
     this.fogGraphic
         .fillStyle(0x000000, alpha)
@@ -144,7 +145,7 @@ export async function create () {
             .fill('rgb(0, 0, 0)', .8);
         this.fogGraphic = this.add.graphics(0, 0)
             .setVisible(false);
-        this.fogCircle = new Phaser.Geom.Circle(275, 275, 225);
+        this.fogCircle = new Phaser.Geom.Circle(275, 275, 525);
 
         this.pathfinder.start(G.map, G.blocked, map.width);
         this.pawnManager.start(this.client, this.pathfinder);
