@@ -63,6 +63,10 @@ export default class extends Phaser.Plugins.BasePlugin {
     }
 
     get (field, value) {
+        if (!this.pawns) {
+            return;
+        }
+
         if (field) {
             return this.pawns.children.get(field, value);
         }
