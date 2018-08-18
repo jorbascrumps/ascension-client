@@ -15,7 +15,7 @@ export function preload () {
         style: {
             fill: '#ffffff'
         },
-        text: 'Pre-alpha v0.1.0',
+        text: `v${this.sys.game.config.gameVersion}`,
         x: this.cameras.main.width - 10,
         y: this.cameras.main.height - 10
     })

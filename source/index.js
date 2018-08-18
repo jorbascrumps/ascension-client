@@ -8,8 +8,11 @@ import PawnManager from './pawn/PawnManager';
 import Pathfinder from './components/Pathfinder';
 import ActionBarPlugin from './plugins/ActionBar';
 
+import packageJson from '../package.json';
+
 window.onload = () => {
     const game = new Phaser.Game({
+        version: packageJson.version,
         height: window.innerHeight,
         parent: 'game',
         disableContextMenu: true,
