@@ -11,6 +11,24 @@ export const loader = {
 export function preload () {
     this.letterbox = this.add.graphics();
     this.progressBar = this.add.graphics();
+    this.versionNum = this.make.text({
+        style: {
+            fill: '#ffffff'
+        },
+        text: 'Pre-alpha v0.1.0',
+        x: this.cameras.main.width - 10,
+        y: this.cameras.main.height - 10
+    })
+        .setOrigin(1, 1);
+    this.loadedAsset = this.make.text({
+        style: {
+            fill: '#ffffff'
+        },
+        text: '',
+        x: this.versionNum.x,
+        y: this.versionNum.y - this.versionNum.displayHeight
+    })
+        .setOrigin(1, 1);
     transition.call(this, 0);
 
     this.load.image(IMAGES);
@@ -21,6 +39,10 @@ export function preload () {
             .fillStyle(0x71f5a7, 1)
             .fillRect(0, (this.cameras.main.height / 2) - 2, this.cameras.main.width * value, 4)
     });
+
+    this.load.on('fileprogress', asset =>
+        this.loadedAsset.setText(asset.src)
+    );
 }
 
 export function create () {
