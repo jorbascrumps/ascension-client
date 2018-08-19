@@ -1,6 +1,13 @@
+import compose from 'lodash/fp/compose';
+
+import Entity from '../components/Entity';
+import StateMachine from '../behaviours/StateMachine';
 import * as Util from '../components/Util';
 
-export default class extends Phaser.GameObjects.Container {
+const Behaviours = compose(
+    StateMachine
+);
+export default class extends Behaviours(Entity) {
 
     constructor ({
         game,
