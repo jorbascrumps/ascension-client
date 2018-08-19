@@ -81,6 +81,5 @@ function transition (progress) {
         .moveTo(0, screenMiddle + screenMiddle * progress + 1)
         .lineTo(this.cameras.main.width, screenMiddle + screenMiddle * progress + 1)
         .closePath()
-        .strokePath()
-
+        .strokePath();
 }

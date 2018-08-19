@@ -1,5 +1,6 @@
 import "@babel/polyfill";
 
+import * as server from './states/server';
 import * as preloader from './states/preloader';
 import * as level from './states/game';
 import * as ui from './states/ui';
@@ -10,6 +11,7 @@ import ActionBarPlugin from './plugins/ActionBar';
 
 import packageJson from '../package.json';
 
+window.client = undefined;
 window.onload = () => {
     const game = new Phaser.Game({
         version: packageJson.version,
@@ -25,6 +27,7 @@ window.onload = () => {
             roundPixels: true,
         },
         scene: [
+            server,
             preloader,
             level,
             ui,

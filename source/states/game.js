@@ -1,16 +1,6 @@
 // https://phaser.io/examples/v2/bitmapdata/draw-sprite
 // https://phaser.io/phaser3/devlog/99
 
-import qs from 'querystring';
-
-import {
-    default as c
-} from 'boardgame.io/client';
-import {
-    default as b
-} from 'boardgame.io/core';
-import gameConfig from '../../core/common/game';
-
 export const key = 'LEVEL';
 
 let controls;
@@ -59,6 +49,13 @@ function applyFogOpacity (tile, x = 0, y = 0, radius = 1) {
 }
 
 export async function create () {
+    const {
+        store: {
+            getState,
+            subscribe
+        }
+    } = window.client;
+
     this.events.on('transitionstart', (fromScene, duration) =>
         this.tweens.add({
             targets: this.cameras.main,
@@ -73,107 +70,70 @@ export async function create () {
         })
     );
 
-    const {
-        room,
-        player,
-        x = 50,
-        y = 50
-    } = qs.parse(window.location.search.substr(1));
-
-    this.registry.set('player', {
-        id: player,
-        room,
-        isCurrentTurn: false
-    });
-
-    const game = gameConfig();
-    this.client = c.Client({
-        game: b.Game(game),
-        multiplayer: {
-            server: 'https://ascension-server.herokuapp.com'
-        },
-        gameID: room,
-        playerID: player
-    });
-    this.client.connect();
-
-    const {
-        client: {
-            store: {
-                getState,
-                subscribe
-            }
-        }
-    } = this;
-
     this.background = this.add.tileSprite(0, 0, this.sys.game.config.width + 20, this.sys.game.config.height + 20, 'background')
         .setOrigin(0, 0)
         .setScrollFactor(0);
 
-    let map;
-    let tileset;
-    let blockedLayer;
-    let interactionsLayer;
-    const unsubscribe = subscribe(() => {
-        const {
-            G
-        } = getState();
-        const mapHeight = G.map.length;
-        const mapWidth = G.map[0].length;
+    const {
+        levelData: {
+            blocked: blockedData,
+            interactions: interactionsData,
+            map: mapData
+        }
+    } = this.registry.getAll();
 
-        unsubscribe();
+    const mapHeight = mapData.length;
+    const mapWidth = mapData[0].length;
+    const map = this.make.tilemap({
+        height: mapHeight,
+        tileHeight: 50,
+        tileWidth: 50,
+        width: mapWidth,
+    });
+    const tileset = map.addTilesetImage('tiles');
+    this.mapLayer = map
+        .createBlankDynamicLayer('map', tileset)
+        .putTilesAt(mapData, 0, 0, false);
+    this.blockedLayer = map
+        .createBlankDynamicLayer('blocked', tileset)
+        .putTilesAt(blockedData, 0, 0, false);
+    this.interactionsLayer = map
+        .createBlankDynamicLayer('interactions', tileset)
+        .putTilesAt(interactionsData, 0, 0, false);
 
-        map = this.make.tilemap({
-            height: mapHeight,
-            tileHeight: 50,
-            tileWidth: 50,
-            width: mapWidth,
-        });
-        tileset = map.addTilesetImage('tiles');
-        this.mapLayer = map
-            .createBlankDynamicLayer('map', tileset)
-            .putTilesAt(G.map, 0, 0, false);
-        blockedLayer = map
-            .createBlankDynamicLayer('blocked', tileset)
-            .putTilesAt(G.blocked, 0, 0, false);
-        interactionsLayer = map
-            .createBlankDynamicLayer('interactions', tileset)
-            .putTilesAt(G.interactions, 0, 0, false);
+    this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
+    this.fogGraphicLayer = this.add.renderTexture(0, 0, mapWidth * 50, mapHeight * 50)
+        .fill('rgb(0, 0, 0)', .8);
+    this.fogGraphic = this.add.graphics(0, 0)
+        .setVisible(false);
+    this.fogCircle = new Phaser.Geom.Circle(275, 275, 525);
 
-        this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
-        this.fogGraphicLayer = this.add.renderTexture(0, 0, mapWidth * 50, mapHeight * 50)
-            .fill('rgb(0, 0, 0)', .8);
-        this.fogGraphic = this.add.graphics(0, 0)
-            .setVisible(false);
-        this.fogCircle = new Phaser.Geom.Circle(275, 275, 525);
+    this.pathfinder.start(mapData, blockedData, map.width);
+    this.pawnManager.start(window.client, this.pathfinder);
 
-        this.pathfinder.start(G.map, G.blocked, map.width);
-        this.pawnManager.start(this.client, this.pathfinder);
+    this.fogGraphicLayer.mask = new Phaser.Display.Masks.BitmapMask(this, this.fogGraphic);
+    this.fogGraphicLayer.mask.invertAlpha = true;
 
-        this.fogGraphicLayer.mask = new Phaser.Display.Masks.BitmapMask(this, this.fogGraphic);
-        this.fogGraphicLayer.mask.invertAlpha = true;
+    const cameraCentreX = -(window.innerWidth - (mapWidth * 50 / 2));
+    const cameraCentreY = -(window.innerHeight - (mapHeight * 50 / 2));
+    this.cameras.main
+        .setBounds(cameraCentreX, cameraCentreY, window.innerWidth * 2, window.innerHeight * 2, true);
 
-        const cameraCentreX = -(window.innerWidth - (mapWidth * 50 / 2));
-        const cameraCentreY = -(window.innerHeight - (mapHeight * 50 / 2));
-        this.cameras.main
-            .setBounds(cameraCentreX, cameraCentreY, window.innerWidth * 2, window.innerHeight * 2, true);
-
-        const cameraPanControls = this.input.keyboard.addKeys({
-            up: 'W',
-            right: 'D',
-            down: 'S',
-            left: 'A'
-        });
-        controls = new Phaser.Cameras.Controls.SmoothedKeyControl({
-            ...cameraPanControls,
-            camera: this.cameras.main,
-            maxSpeed: 1.0,
-            acceleration: 1,
-            drag: .055
-        });
+    const cameraPanControls = this.input.keyboard.addKeys({
+        up: 'W',
+        right: 'D',
+        down: 'S',
+        left: 'A'
+    });
+    controls = new Phaser.Cameras.Controls.SmoothedKeyControl({
+        ...cameraPanControls,
+        camera: this.cameras.main,
+        maxSpeed: 1.0,
+        acceleration: 1,
+        drag: .055
     });
 
-    subscribe(() => {
+    const unsubscribe = subscribe(() => {
         const {
             ctx
         } = getState();

@@ -11,15 +11,11 @@ export function create () {
                 return;
             }
 
-            const {
-                client
-            } = this.scene.get('LEVEL');
-
             if (action === 'Cancel') {
-                return client.events.endPhase('Activation');
+                return window.client.events.endPhase('Activation');
             }
 
-            client.events.endPhase(action);
+            window.client.events.endPhase(action);
         }
     );
     this.currentPhase = this.add.text(10, 10, '', {
@@ -75,7 +71,7 @@ export function update () {
                 getState
             }
         }
-    } = this.scene.get('LEVEL');
+    } = window;
     const {
         ctx
     } = getState();
