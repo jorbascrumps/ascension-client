@@ -125,8 +125,18 @@ export default class extends Phaser.Plugins.BasePlugin {
         this.interactionsLayer.putTileAt(TILES.DOOR, x, y);
     }
 
-    spawnRoom (room) {
+    spawnEntrance (x, y) {
+        this.mapLayer.putTileAt(167, x, y);
+    }
+
+    spawnExit (x, y) {
+        this.mapLayer.putTileAt(100, x, y);
+    }
+
+    spawnRoom (room, index, rooms) {
         const {
+            centerX,
+            centerY,
             height,
             width,
             x,
@@ -156,6 +166,14 @@ export default class extends Phaser.Plugins.BasePlugin {
             .forEach(({ x: doorX, y: doorY }) =>
                 this.spawnDoor(x + doorX, y + doorY)
             );
+        
+        if (index === 0) {
+            this.spawnEntrance(centerX, centerY);
+        }
+
+        if (index === rooms.length - 1) {
+            this.spawnExit(centerX, centerY);
+        }
     }
 
     spawnWall (x = 0, y = 0, width = 1, height = 1, type = TILES.WALL.TOP) {
