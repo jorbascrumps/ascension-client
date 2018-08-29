@@ -8,6 +8,7 @@ import * as gameover from './states/gameover';
 import PawnManager from './pawn/PawnManager';
 import Pathfinder from './components/Pathfinder';
 import ActionBarPlugin from './plugins/ActionBar';
+import MapManagerPlugin from './plugins/MapManager';
 
 import packageJson from '../package.json';
 
@@ -34,6 +35,13 @@ window.onload = () => {
             gameover
         ],
         plugins: {
+            global: [
+                {
+                    key: 'mapManager',
+                    mapping: 'mapManager',
+                    plugin: MapManagerPlugin
+                }
+            ],
             scene: [
                 {
                     key: 'pawnManager',
