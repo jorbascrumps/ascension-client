@@ -53,13 +53,13 @@ export default class extends Phaser.Plugins.BasePlugin {
             height,
             rooms: {
                 height: {
-                    max: 10,
-                    min: 6,
+                    max: 11,
+                    min: 5,
                     onlyOdd: true
                 },
                 width: {
-                    max: 10,
-                    min: 6,
+                    max: 11,
+                    min: 5,
                     onlyOdd: true
                 }
             },
