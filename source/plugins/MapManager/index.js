@@ -93,6 +93,33 @@ export default class extends Phaser.Plugins.BasePlugin {
     }
 
     spawnDoor (x = 0, y = 0) {
+        const topNeighbour = this.blockedLayer.getTileAt(x, y - 1);
+        const rightNeighbour = this.blockedLayer.getTileAt(x + 1, y);
+        const bottomNeighbour = this.blockedLayer.getTileAt(x, y + 1);
+        const leftNeighbour = this.blockedLayer.getTileAt(x - 1, y);
+
+        if (topNeighbour !== null && bottomNeighbour !== null) {
+            const rightWallTiles = TILES.WALL.RIGHT.map(({ index }) => index);
+
+            if (rightWallTiles.includes(topNeighbour.index)) {
+                this.blockedLayer.putTileAt(38, x, y - 1);
+                this.blockedLayer.putTileAt(0, x, y + 1);
+            } else {
+                this.blockedLayer.putTileAt(40, x, y - 1);
+                this.blockedLayer.putTileAt(2, x, y + 1);
+            }
+        } else if (rightNeighbour !== null && leftNeighbour !== null) {
+            const topWallTiles = TILES.WALL.TOP.map(({ index }) => index);
+
+            if (topWallTiles.includes(rightNeighbour.index)) {
+                this.blockedLayer.putTileAt(40, x - 1, y);
+                this.blockedLayer.putTileAt(38, x + 1, y);
+            } else {
+                this.blockedLayer.putTileAt(2, x - 1, y);
+                this.blockedLayer.putTileAt(0, x + 1, y);
+            }
+        }
+
         this.blockedLayer.removeTileAt(x, y);
         this.mapLayer.putTileAt(TILES.DOOR, x, y);
         this.interactionsLayer.putTileAt(TILES.DOOR, x, y);
