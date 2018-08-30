@@ -88,6 +88,14 @@ export default class extends Phaser.Plugins.BasePlugin {
         return this;
     }
 
+    get blocked () {
+        return getLayerIndices(this.blockedLayer);
+    }
+
+    get walkable () {
+        return getLayerIndices(this.mapLayer);
+    }
+
     spawnCorner (x = 0, y = 0, type = TILES.WALL.TOP_RIGHT) {
         this.blockedLayer.putTileAt(type, x, y);
     }
@@ -181,3 +189,11 @@ export default class extends Phaser.Plugins.BasePlugin {
     }
     
 }
+
+const getLayerIndices = ({ layer: { data }}) => data
+    .map(row => row
+        .reduce((cache, col) => ([
+            ...cache,
+            col.index
+        ]), [])
+    );
