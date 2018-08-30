@@ -96,6 +96,12 @@ export default class extends Phaser.Plugins.BasePlugin {
         return getLayerIndices(this.mapLayer);
     }
 
+    setRoomAlpha ({ height = 1, width = 1, x = 0, y = 0 }, alpha = 1) {
+        this.blockedLayer.forEachTile(tile => tile.alpha = alpha, undefined, x, y, width, height);
+        this.interactionsLayer.forEachTile(tile => tile.alpha = alpha, undefined, x, y, width, height);
+        this.mapLayer.forEachTile(tile => tile.alpha = alpha, undefined, x, y, width, height);
+    }
+
     spawnCorner (x = 0, y = 0, type = TILES.WALL.TOP_RIGHT) {
         this.blockedLayer.putTileAt(type, x, y);
     }
@@ -177,6 +183,8 @@ export default class extends Phaser.Plugins.BasePlugin {
         
         if (index === 0) {
             this.spawnEntrance(centerX, centerY);
+        } else {
+            this.setRoomAlpha(room, 0);
         }
 
         if (index === rooms.length - 1) {
