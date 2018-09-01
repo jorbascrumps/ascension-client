@@ -18,19 +18,26 @@ export function update (time, delta) {
 
         this.mapLayer.forEachTile(maskTile, this);
 
-        const tiles = this.mapLayer.getTilesWithinShape(this.fogCircle, {
+        this.mapLayer.getTilesWithinShape(this.fogCircle, {
             isNotEmpty: true
-        });
-        tiles.forEach(tile => applyFogOpacity.call(this, tile, activePawn.x, activePawn.y, activePawn.lightRadius));
+        })
+            .forEach(tile => applyFogOpacity.call(this, tile, activePawn.x, activePawn.y, activePawn.lightRadius));
     }
 }
 
-function maskTile (tile) {
-    const alpha = Number(tile.index === -1);
+function maskTile ({
+    alpha,
+    height,
+    index,
+    width,
+    x,
+    y
+} = {}) {
+    const opacity = Number(index === -1 || alpha !== 1);
 
     this.fogGraphic
-        .fillStyle(0x000000, alpha)
-        .fillRect(tile.x * tile.width, tile.y * tile.height, tile.width, tile.height);
+        .fillStyle(0x000000, opacity)
+        .fillRect(x * width, y * height, width, height);
 }
 
 function applyFogOpacity (tile, x = 0, y = 0, radius = 1) {
