@@ -10,27 +10,33 @@ export function update (time, delta) {
         this.background.setTilePosition(-this.cameras.main.scrollX / 50, -this.cameras.main.scrollY / 50);
     controls && controls.update(delta);
 
+    this.fogGraphic.clear();
+    this.mapManager.mapLayer.forEachTile(maskTile, this);
     const activePawn = this.pawnManager.get('isActive', true);
     if (activePawn) {
-        this.fogGraphic.clear();
         this.fogCircle.setPosition(activePawn.x + 25, activePawn.y + 25);
         this.fogCircle.radius = activePawn.lightRadius * 50;
 
-        this.mapLayer.forEachTile(maskTile, this);
-
-        const tiles = this.mapLayer.getTilesWithinShape(this.fogCircle, {
+        this.mapManager.mapLayer.getTilesWithinShape(this.fogCircle, {
             isNotEmpty: true
-        });
-        tiles.forEach(tile => applyFogOpacity.call(this, tile, activePawn.x, activePawn.y, activePawn.lightRadius));
+        })
+            .forEach(tile => applyFogOpacity.call(this, tile, activePawn.x, activePawn.y, activePawn.lightRadius));
     }
 }
 
-function maskTile (tile) {
-    const alpha = Number(tile.index === -1);
+function maskTile ({
+    alpha,
+    height,
+    index,
+    width,
+    x,
+    y
+} = {}) {
+    const opacity = Number(index === -1 || alpha !== 1);
 
     this.fogGraphic
-        .fillStyle(0x000000, alpha)
-        .fillRect(tile.x * tile.width, tile.y * tile.height, tile.width, tile.height);
+        .fillStyle(0x000000, opacity)
+        .fillRect(x * width, y * height, width, height);
 }
 
 function applyFogOpacity (tile, x = 0, y = 0, radius = 1) {
@@ -74,32 +80,12 @@ export async function create () {
         .setOrigin(0, 0)
         .setScrollFactor(0);
 
-    const {
-        levelData: {
-            blocked: blockedData,
-            interactions: interactionsData,
-            map: mapData
-        }
-    } = this.registry.getAll();
+    const mapHeight = 30;
+    const mapWidth = 30;
 
-    const mapHeight = mapData.length;
-    const mapWidth = mapData[0].length;
-    const map = this.make.tilemap({
-        height: mapHeight,
-        tileHeight: 50,
-        tileWidth: 50,
-        width: mapWidth,
-    });
-    const tileset = map.addTilesetImage('tiles');
-    this.mapLayer = map
-        .createBlankDynamicLayer('map', tileset)
-        .putTilesAt(mapData, 0, 0, false);
-    this.blockedLayer = map
-        .createBlankDynamicLayer('blocked', tileset)
-        .putTilesAt(blockedData, 0, 0, false);
-    this.interactionsLayer = map
-        .createBlankDynamicLayer('interactions', tileset)
-        .putTilesAt(interactionsData, 0, 0, false);
+    this.mapManager.init(mapHeight, mapWidth);
+    this.blockedLayer = this.mapManager.blockedLayer;
+    this.interactionsLayer = this.mapManager.interactionsLayer;
 
     this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
     this.fogGraphicLayer = this.add.renderTexture(0, 0, mapWidth * 50, mapHeight * 50)
@@ -108,7 +94,7 @@ export async function create () {
         .setVisible(false);
     this.fogCircle = new Phaser.Geom.Circle(275, 275, 525);
 
-    this.pathfinder.start(mapData, blockedData, map.width);
+    this.pathfinder.start(this.mapManager.walkable, this.mapManager.blocked, mapWidth);
     this.pawnManager.start(window.client, this.pathfinder);
 
     this.fogGraphicLayer.mask = new Phaser.Display.Masks.BitmapMask(this, this.fogGraphic);

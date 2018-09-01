@@ -23,6 +23,7 @@
   "homepage": "https://github.com/iamchristopher/ascension-client#readme",
   "devDependencies": {
     "@babel/polyfill": "7.0.0-beta.54",
+    "@mikewesthad/dungeon": "1.2.1",
     "babel-core": "6.26.3",
     "babel-plugin-external-helpers": "6.22.0",
     "babel-plugin-transform-class-properties": "6.24.1",
