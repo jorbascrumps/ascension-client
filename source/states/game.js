@@ -10,15 +10,14 @@ export function update (time, delta) {
         this.background.setTilePosition(-this.cameras.main.scrollX / 50, -this.cameras.main.scrollY / 50);
     controls && controls.update(delta);
 
+    this.fogGraphic.clear();
+    this.mapManager.mapLayer.forEachTile(maskTile, this);
     const activePawn = this.pawnManager.get('isActive', true);
     if (activePawn) {
-        this.fogGraphic.clear();
         this.fogCircle.setPosition(activePawn.x + 25, activePawn.y + 25);
         this.fogCircle.radius = activePawn.lightRadius * 50;
 
-        this.mapLayer.forEachTile(maskTile, this);
-
-        this.mapLayer.getTilesWithinShape(this.fogCircle, {
+        this.mapManager.mapLayer.getTilesWithinShape(this.fogCircle, {
             isNotEmpty: true
         })
             .forEach(tile => applyFogOpacity.call(this, tile, activePawn.x, activePawn.y, activePawn.lightRadius));
@@ -85,7 +84,6 @@ export async function create () {
     const mapWidth = 30;
 
     this.mapManager.init(mapHeight, mapWidth);
-    this.mapLayer = this.mapManager.mapLayer;
     this.blockedLayer = this.mapManager.blockedLayer;
     this.interactionsLayer = this.mapManager.interactionsLayer;
 
