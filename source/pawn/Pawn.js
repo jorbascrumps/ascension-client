@@ -176,6 +176,7 @@ export default class extends Phaser.GameObjects.Container {
         switch (phase) {
             case 'Restoration':
                 !exhausted && this.once('pointerdown', this.activate, this);
+                this.scene.events.emit('MAP_ROOM_REVEAL', this.x, this.y);
 
                 break;
             case 'Movement':

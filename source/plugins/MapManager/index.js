@@ -85,6 +85,8 @@ export default class extends Phaser.Plugins.BasePlugin {
         this.raw.rooms
             .forEach(this.spawnRoom, this);
 
+        scene.events.on('MAP_ROOM_REVEAL', this.revealRoom, this);
+
         return this;
     }
 
@@ -94,6 +96,34 @@ export default class extends Phaser.Plugins.BasePlugin {
 
     get walkable () {
         return getLayerIndices(this.mapLayer);
+    }
+    
+    revealRoom (x, y) {
+        const {
+            index: tileIndex,
+            x: tileX,
+            y: tileY
+        } = this.interactionsLayer.getTileAtWorldXY(x, y, true);
+
+        if (tileIndex !== TILES.DOOR) {
+            return;
+        }
+
+        const hiddenRoom = [
+            [ tileX, tileY - 1 ],
+            [ tileX + 1, tileY ],
+            [ tileX, tileY + 1 ],
+            [ tileX - 1, tileY ],
+        ]
+            .map(([ x, y ]) => this.mapLayer.getTileAt(x, y, true))
+            .find(({ alpha }) => alpha === 0);
+
+        if (typeof hiddenRoom === 'undefined') {
+            return;
+        }
+
+        const room = this.raw.getRoomAt(hiddenRoom.x, hiddenRoom.y);
+        this.setRoomAlpha(room, 1);
     }
 
     setRoomAlpha ({ height = 1, width = 1, x = 0, y = 0 }, alpha = 1) {
