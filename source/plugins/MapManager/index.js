@@ -200,8 +200,8 @@ export default class extends Phaser.Plugins.BasePlugin {
 
 const getLayerIndices = ({ layer: { data }}) => data
     .map(row => row
-        .reduce((cache, col) => ([
+        .reduce((cache, { alpha, index }) => ([
             ...cache,
-            col.index
+            alpha === 1 ? index : -1
         ]), [])
     );
