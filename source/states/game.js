@@ -74,32 +74,13 @@ export async function create () {
         .setOrigin(0, 0)
         .setScrollFactor(0);
 
-    const {
-        levelData: {
-            blocked: blockedData,
-            interactions: interactionsData,
-            map: mapData
-        }
-    } = this.registry.getAll();
+    const mapHeight = 30;
+    const mapWidth = 30;
 
-    const mapHeight = mapData.length;
-    const mapWidth = mapData[0].length;
-    const map = this.make.tilemap({
-        height: mapHeight,
-        tileHeight: 50,
-        tileWidth: 50,
-        width: mapWidth,
-    });
-    const tileset = map.addTilesetImage('tiles');
-    this.mapLayer = map
-        .createBlankDynamicLayer('map', tileset)
-        .putTilesAt(mapData, 0, 0, false);
-    this.blockedLayer = map
-        .createBlankDynamicLayer('blocked', tileset)
-        .putTilesAt(blockedData, 0, 0, false);
-    this.interactionsLayer = map
-        .createBlankDynamicLayer('interactions', tileset)
-        .putTilesAt(interactionsData, 0, 0, false);
+    this.mapManager.init(mapHeight, mapWidth);
+    this.mapLayer = this.mapManager.mapLayer;
+    this.blockedLayer = this.mapManager.blockedLayer;
+    this.interactionsLayer = this.mapManager.interactionsLayer;
 
     this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
     this.fogGraphicLayer = this.add.renderTexture(0, 0, mapWidth * 50, mapHeight * 50)
@@ -108,7 +89,7 @@ export async function create () {
         .setVisible(false);
     this.fogCircle = new Phaser.Geom.Circle(275, 275, 525);
 
-    this.pathfinder.start(mapData, blockedData, map.width);
+    this.pathfinder.start(this.mapManager.walkable, this.mapManager.blocked, mapWidth);
     this.pawnManager.start(window.client, this.pathfinder);
 
     this.fogGraphicLayer.mask = new Phaser.Display.Masks.BitmapMask(this, this.fogGraphic);
