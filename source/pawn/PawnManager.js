@@ -74,6 +74,19 @@ export default class extends Phaser.Plugins.BasePlugin {
         return this.pawns.getChildren();
     }
 
+    getAll (field, value) {
+        if (!this.pawns) {
+            return;
+        }
+
+        if (field) {
+            return this.pawns.getChildren()
+                .filter(child => child[field] === value);
+        }
+
+        return this.pawns.getChildren();
+    }
+
     sync ({
         G: {
             pawns
