@@ -1,6 +1,8 @@
 // https://phaser.io/examples/v2/bitmapdata/draw-sprite
 // https://phaser.io/phaser3/devlog/99
 
+import union from 'lodash/unionWith';
+
 export const key = 'LEVEL';
 
 let controls;
@@ -10,32 +12,54 @@ export function update (time, delta) {
         this.background.setTilePosition(-this.cameras.main.scrollX / 50, -this.cameras.main.scrollY / 50);
     controls && controls.update(delta);
 
-    this.fogGraphic.clear();
-    this.mapManager.mapLayer.forEachTile(maskTile, this);
-    const activePawn = this.pawnManager.get('isActive', true);
-    if (activePawn) {
-        this.fogCircle.setPosition(activePawn.x + 25, activePawn.y + 25);
-        this.fogCircle.radius = activePawn.lightRadius * 50;
+    this.fogGraphic
+        .clear()
+        // .fillStyle(0x000000, .5)
+        // .fillRect(0, 0, this.mapManager.width / 2, this.mapManager.height);
 
-        this.mapManager.mapLayer.getTilesWithinShape(this.fogCircle, {
-            isNotEmpty: true
-        })
-            .forEach(tile => applyFogOpacity.call(this, tile, activePawn.x, activePawn.y, activePawn.lightRadius));
-    }
+    // this.fogGraphic.beginPath();
+    // this.mapManager.mapLayer.forEachTile(maskTile, this);
+    // this.mapManager.blockedLayer.forEachTile(maskTile, this);
+
+    // const walkableLayer = this.mapManager.mapLayer.forEachTile(maskTile, this, undefined, undefined, undefined, undefined, {
+    //     isNotEmpty: true
+    // });
+    // const blockedLayer = this.mapManager.blockedLayer.forEachTile(maskTile, this, undefined, undefined, undefined, undefined, {
+    //     isNotEmpty: true
+    // });
+    // union(walkableLayer, blockedLayer).forEach(maskTile, this);
+
+    // this.fogGraphic.beginPath();
+    // this.pawnManager.getAll('ownedByPlayer', true)
+    //     .forEach(({ lightRadius, x, y }) => {
+    //         this.fogCircle.setPosition(x + 25, y + 25);
+    //         this.fogCircle.radius = lightRadius * 50;
+    //
+    //         const walkable = this.mapManager.mapLayer.getTilesWithinShape(this.fogCircle, {
+    //             isNotEmpty: true
+    //         });
+    //         const blocked = this.mapManager.blockedLayer.getTilesWithinShape(this.fogCircle, {
+    //             isNotEmpty: true
+    //         });
+    //
+    //         const merged = union(walkable, blocked)
+    //         walkable.forEach(tile => applyFogOpacity.call(this, tile, x, y, lightRadius));
+    //     });
 }
 
 function maskTile ({
-    alpha,
     height,
     index,
     width,
     x,
     y
 } = {}) {
-    const opacity = Number(index === -1 || alpha !== 1);
+    if (index === -1) {
+        return;
+    }
 
     this.fogGraphic
-        .fillStyle(0x000000, opacity)
+        .fillStyle(0x000000, 0.75)
         .fillRect(x * width, y * height, width, height);
 }
 
@@ -48,9 +72,10 @@ function applyFogOpacity (tile, x = 0, y = 0, radius = 1) {
         )
     ;
     const alpha = 1 - distance / radius;
+    // tile.alpha = 1
 
     this.fogGraphic
-        .fillStyle(0x000000, alpha)
+        .fillStyle(0x000000, .5)
         .fillRect(tile.x * tile.width, tile.y * tile.height, tile.width, tile.height);
 }
 
@@ -89,15 +114,20 @@ export async function create () {
 
     this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
     this.fogGraphicLayer = this.add.renderTexture(0, 0, mapWidth * 50, mapHeight * 50)
-        .fill('rgb(0, 0, 0)', .8);
+        .fill('rgb(0, 0, 0)', 0.5);
     this.fogGraphic = this.add.graphics(0, 0)
-        .setVisible(false);
+        // .setVisible(false);
     this.fogCircle = new Phaser.Geom.Circle(275, 275, 525);
 
     this.pathfinder.start(this.mapManager.walkable, this.mapManager.blocked, mapWidth);
     this.pawnManager.start(window.client, this.pathfinder);
 
-    this.fogGraphicLayer.mask = new Phaser.Display.Masks.BitmapMask(this, this.fogGraphic);
+    this.fogGraphic
+        .fillStyle(0x000000)
+        .beginPath()
+        .fillRect(0, 0, 500, 500)
+    this.fogGraphicLayer.setMask(this.fogGraphic.createGeometryMask())
+    // this.fogGraphicLayer.mask = new Phaser.Display.Masks.GeometryMask(this, this.fogGraphic);
     this.fogGraphicLayer.mask.invertAlpha = true;
 
     const cameraCentreX = -(window.innerWidth - (mapWidth * 50 / 2));
