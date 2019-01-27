@@ -7,10 +7,10 @@ import * as ui from './states/ui';
 import * as gameover from './states/gameover';
 import PawnManager from './pawn/PawnManager';
 import Pathfinder from './components/Pathfinder';
-import ActionBarPlugin from './plugins/ActionBar';
 import MapManagerPlugin from './plugins/MapManager';
 
 import packageJson from '../package.json';
+import ListViewPlugin from 'phaser-plugin-list-view';
 
 window.client = undefined;
 window.onload = () => {
@@ -54,10 +54,10 @@ window.onload = () => {
                     mapping: 'pathfinder'
                 },
                 {
-                    key: 'ActionBar',
-                    plugin: ActionBarPlugin,
-                    mapping: 'actionBar'
-                }
+                    key: 'ListView',
+                    plugin: ListViewPlugin,
+                    start: true
+                },
             ]
         },
         type: Phaser.AUTO,
