@@ -7,22 +7,24 @@ export const key = 'LEVEL';
 
 let controls;
 export function update (time, delta) {
-    const player = this.pawnManager.get('id', '3');
+    const player = this.pawnManager.get('isActive', true);
     const camera = this.cameras.main;
 
-    this.fov.update(
-        new Phaser.Math.Vector2({
-            x: this.mapManager.mapLayer.worldToTileX(player.x),
-            y: this.mapManager.mapLayer.worldToTileY(player.y),
-        }),
-        new Phaser.Geom.Rectangle(
-            this.mapManager.mapLayer.worldToTileX(camera.worldView.x) - 1,
-            this.mapManager.mapLayer.worldToTileY(camera.worldView.y) - 1,
-            this.mapManager.mapLayer.worldToTileX(camera.worldView.width) + 2,
-            this.mapManager.mapLayer.worldToTileX(camera.worldView.height) + 2
-        ),
-        delta,
-    );
+    if (player) {
+        this.fov.update(
+            new Phaser.Math.Vector2({
+                x: this.mapManager.mapLayer.worldToTileX(player.x),
+                y: this.mapManager.mapLayer.worldToTileY(player.y),
+            }),
+            new Phaser.Geom.Rectangle(
+                this.mapManager.mapLayer.worldToTileX(camera.worldView.x) - 1,
+                this.mapManager.mapLayer.worldToTileY(camera.worldView.y) - 1,
+                this.mapManager.mapLayer.worldToTileX(camera.worldView.width) + 2,
+                this.mapManager.mapLayer.worldToTileX(camera.worldView.height) + 2
+            ),
+            delta,
+        );
+    }
 
     controls && controls.update(delta);
 
