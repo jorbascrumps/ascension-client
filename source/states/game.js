@@ -1,57 +1,33 @@
 // https://phaser.io/examples/v2/bitmapdata/draw-sprite
 // https://phaser.io/phaser3/devlog/99
 
+import FOVLayer from '../components/FOVLayer';
+
 export const key = 'LEVEL';
 
 let controls;
-
 export function update (time, delta) {
-    this.background &&
-        this.background.setTilePosition(-this.cameras.main.scrollX / 50, -this.cameras.main.scrollY / 50);
+    const player = this.pawnManager.get('id', '3');
+    const camera = this.cameras.main;
+
+    this.fov.update(
+        new Phaser.Math.Vector2({
+            x: this.mapManager.mapLayer.worldToTileX(player.x),
+            y: this.mapManager.mapLayer.worldToTileY(player.y),
+        }),
+        new Phaser.Geom.Rectangle(
+            this.mapManager.mapLayer.worldToTileX(camera.worldView.x) - 1,
+            this.mapManager.mapLayer.worldToTileY(camera.worldView.y) - 1,
+            this.mapManager.mapLayer.worldToTileX(camera.worldView.width) + 2,
+            this.mapManager.mapLayer.worldToTileX(camera.worldView.height) + 2
+        ),
+        delta,
+    );
+
     controls && controls.update(delta);
 
-    this.fogGraphic.clear();
-    this.mapManager.mapLayer.forEachTile(maskTile, this);
-    const activePawn = this.pawnManager.get('isActive', true);
-    if (activePawn) {
-        this.fogCircle.setPosition(activePawn.x + 25, activePawn.y + 25);
-        this.fogCircle.radius = activePawn.lightRadius * 50;
-
-        this.mapManager.mapLayer.getTilesWithinShape(this.fogCircle, {
-            isNotEmpty: true
-        })
-            .forEach(tile => applyFogOpacity.call(this, tile, activePawn.x, activePawn.y, activePawn.lightRadius));
-    }
-}
-
-function maskTile ({
-    alpha,
-    height,
-    index,
-    width,
-    x,
-    y
-} = {}) {
-    const opacity = Number(index === -1 || alpha !== 1);
-
-    this.fogGraphic
-        .fillStyle(0x000000, opacity)
-        .fillRect(x * width, y * height, width, height);
-}
-
-function applyFogOpacity (tile, x = 0, y = 0, radius = 1) {
-    const distance =
-        Phaser.Math.Clamp(
-            Math.max(Math.abs(x - tile.x * 50), Math.abs(y - tile.y * 50)) / 50 - 2,
-            0,
-            radius
-        )
-    ;
-    const alpha = 1 - distance / radius;
-
-    this.fogGraphic
-        .fillStyle(0x000000, alpha)
-        .fillRect(tile.x * tile.width, tile.y * tile.height, tile.width, tile.height);
+    this.background &&
+        this.background.setTilePosition(-this.cameras.main.scrollX / 50, -this.cameras.main.scrollY / 50);
 }
 
 export async function create () {
@@ -87,18 +63,20 @@ export async function create () {
     this.blockedLayer = this.mapManager.blockedLayer;
     this.interactionsLayer = this.mapManager.interactionsLayer;
 
+    this.make.graphics({
+        add: false,
+        x: 0,
+        y: 0,
+    })
+        .fillStyle(0x000000)
+        .fillRect(0, 0, 50, 50)
+        .generateTexture('fov');
+    this.fov = new FOVLayer(this, this.mapManager.mapLayer, this.mapManager.blockedLayer, 'fov');
+
     this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
-    this.fogGraphicLayer = this.add.renderTexture(0, 0, mapWidth * 50, mapHeight * 50)
-        .fill('rgb(0, 0, 0)', .8);
-    this.fogGraphic = this.add.graphics(0, 0)
-        .setVisible(false);
-    this.fogCircle = new Phaser.Geom.Circle(275, 275, 525);
 
     this.pathfinder.start(this.mapManager.walkable, this.mapManager.blocked, mapWidth);
     this.pawnManager.start(window.client, this.pathfinder);
-
-    this.fogGraphicLayer.mask = new Phaser.Display.Masks.BitmapMask(this, this.fogGraphic);
-    this.fogGraphicLayer.mask.invertAlpha = true;
 
     const cameraCentreX = -(window.innerWidth - (mapWidth * 50 / 2));
     const cameraCentreY = -(window.innerHeight - (mapHeight * 50 / 2));
