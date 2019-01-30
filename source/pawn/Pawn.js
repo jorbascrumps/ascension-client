@@ -119,6 +119,7 @@ export default class extends Phaser.GameObjects.Container {
                     active,
                     currentHealth,
                     exhausted,
+                    inventory,
                     lightRadius,
                     maxHealth,
                     position = {
@@ -145,6 +146,7 @@ export default class extends Phaser.GameObjects.Container {
                 active,
                 exhausted,
                 currentHealth,
+                inventory,
                 lightRadius,
                 maxHealth
             });
@@ -279,7 +281,7 @@ export default class extends Phaser.GameObjects.Container {
     activate = () => this.client.moves.activatePawn(this.id)
 
     search = ({ worldX, worldY }) => {
-        const target = this.scene.interactionLayer.getTileAtWorldXY(worldX, worldY);
+        const target = this.scene.interactionsLayer.getTileAtWorldXY(worldX, worldY);
 
         if (null === target) {
             return alert('Nothing to search!');
@@ -369,7 +371,7 @@ export default class extends Phaser.GameObjects.Container {
 
         this.scene.events.emit('PAWN_DESTROY', this);
     }
-    
+
     setHealth = (val, prev) => {
         if (val === prev) {
             return;

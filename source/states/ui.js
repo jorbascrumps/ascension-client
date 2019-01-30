@@ -1,8 +1,12 @@
+import items from '../../core/common/data/items';
+
 export const key = 'UI';
 
 let cachedPhase;
 
 export function create () {
+    const currentPlayer = this.registry.get('player');
+
     this.currentPhase = this.add.text(10, 10, '', {
         fontSize: 10,
         fontFamily: 'Arial'
@@ -40,6 +44,16 @@ export function create () {
             });
         })
         .on('pointerup', item => item.setAlpha(1));
+
+    // Setup temporary inventory UI for each owned Pawn
+    const {
+        pawnManager
+    } = this.scene.get('LEVEL');
+    pawnManager.getAll('owner', currentPlayer.id)
+        .forEach((pawn, i) => {
+            this[`inventory${pawn.id}`] = this.add.listview(200 * (i + 1), 30, 150, 150);
+            pawn.data.events.on('changedata-inventory', onInventoryChange.bind(this))
+        });
 }
 
 function onChangeData (_, key, val) {
@@ -66,6 +80,19 @@ function onChangeData (_, key, val) {
     }
 }
 
+function onInventoryChange (pawn, next, prev) {
+    this[`inventory${pawn.id}`].clear(true, true);
+
+    for (const id in next) {
+        this[`inventory${pawn.id}`].add(
+            this.add.text(0, 0, `${items[id].name} x ${next[id]}`, {
+                fontSize: 20,
+                fontFamily: 'Arial'
+            })
+        );
+    }
+}
+
 export function update () {
     const currentPlayer = this.registry.get('player');
     const {
@@ -80,7 +107,7 @@ export function update () {
     } = getState();
 
     if (ctx.currentPlayer !== currentPlayer.id) {
-        this.actions.clear()
+        this.actions.clear(true, true);
         return this.currentPhase.setText('');
     }
 
@@ -116,7 +143,7 @@ export function update () {
         });
 
     this.actions
-        .clear()
+        .clear(true, true)
         .add(actionsControls)
 }
 
