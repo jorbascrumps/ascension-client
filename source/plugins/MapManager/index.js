@@ -35,7 +35,8 @@ const TILES = {
             { index: 58, weight: 1 },
             { index: 59, weight: 1 }
         ]
-    }
+    },
+    CHEST: 166,
 };
 
 export default class extends Phaser.Plugins.BasePlugin {
@@ -97,7 +98,7 @@ export default class extends Phaser.Plugins.BasePlugin {
     get walkable () {
         return getLayerIndices(this.mapLayer);
     }
-    
+
     revealRoom (x, y) {
         const {
             index: tileIndex,
@@ -210,7 +211,7 @@ export default class extends Phaser.Plugins.BasePlugin {
             .forEach(({ x: doorX, y: doorY }) =>
                 this.spawnDoor(x + doorX, y + doorY)
             );
-        
+
         if (index === 0) {
             this.spawnEntrance(centerX, centerY);
         } else {
@@ -220,12 +221,29 @@ export default class extends Phaser.Plugins.BasePlugin {
         if (index === rooms.length - 1) {
             this.spawnExit(centerX, centerY);
         }
+
+        // Chests
+        if (index !== rooms.length - 1 && index !== 0) {
+            const shouldSpawnChest = Phaser.Math.RND.weightedPick([ 0, 0, 0, 0, 0, 1 ]);
+
+            if (shouldSpawnChest) {
+
+                // Avoid blocking doorways by restricting spawn area
+                const spawn = new Phaser.Geom.Rectangle(0, 0, width - 4, height - 4)
+                    .getRandomPoint();
+                this.spawnChest(x + 2 + Math.floor(spawn.x), y + 2 + Math.floor(spawn.y));
+            }
+        }
     }
 
     spawnWall (x = 0, y = 0, width = 1, height = 1, type = TILES.WALL.TOP) {
         this.blockedLayer.weightedRandomize(x, y, width, height, type);
     }
-    
+
+    spawnChest (x = 0, y = 0) {
+        this.interactionsLayer.putTileAt(TILES.CHEST, x, y);
+    }
+
 }
 
 const getLayerIndices = ({ layer: { data }}) => data
