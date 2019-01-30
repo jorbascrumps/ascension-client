@@ -2,23 +2,26 @@ import {
     Mrpas,
 } from 'mrpas';
 
-const filterSeenTiles = ({ seen }) => seen;
-
-const setSeenTileAlpha = tile => tile.desiredAlpha = 0.8;
-
 export default class FOVLayer {
 
-    #sightRadius = 6
+    #sightRadius = 8
 
-    #lightDropoff = [ 0.7, 0.6, 0.3, 0.1 ]
+    #lightDropoff = [ 0.8, 0.6, 0.4, 0.2, 0 ]
+
+    #seenTileAlpha = 0.75
+
+    #fogOpacity = 0.90
+
+    #layerDepth = 99
 
     constructor (scene, map, walls, texture) {
         const tilemapTexture = map.tilemap.addTilesetImage(texture);
 
         this.layer = map.tilemap
             .createBlankDynamicLayer('fov', tilemapTexture, 0, 0)
+            .setAlpha(this.#fogOpacity)
             .fill(0x000000)
-            .setDepth(99);
+            .setDepth(this.#layerDepth);
         this.mrpas = new Mrpas(map.tilemap.width, map.tilemap.height, (x, y) => {
             return walls.getTileAt(x, y, true).index < 0
         });
@@ -63,12 +66,12 @@ export default class FOVLayer {
 
     updateMRPAS (position) {
         this.map
-            .filterTiles(filterSeenTiles)
-            .forEach(setSeenTileAlpha);
+            .filterTiles(this.filterSeenTiles)
+            .forEach(this.setSeenTileAlpha);
 
         this.walls
-            .filterTiles(filterSeenTiles)
-            .forEach(setSeenTileAlpha);
+            .filterTiles(this.filterSeenTiles)
+            .forEach(this.setSeenTileAlpha);
 
         this.mrpas.compute(
             position.x,
@@ -118,5 +121,9 @@ export default class FOVLayer {
             tile.setAlpha(Phaser.Math.MaxAdd(tile.alpha, updateFactor, desiredAlpha));
         }
     }
+
+    filterSeenTiles = ({ seen }) => seen
+
+    setSeenTileAlpha = tile => tile.desiredAlpha = this.#seenTileAlpha
 
 }
