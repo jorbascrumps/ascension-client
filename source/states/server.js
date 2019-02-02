@@ -47,12 +47,8 @@ export function create () {
         } = getState();
 
         console.log(G);
-        this.registry.set('levelData', {
-            blocked: G.blocked,
-            interactions: G.interactions,
-            map: G.map
-        });
-        
+        this.registry.set('levelData', G.map);
+
         this.scene.launch('PRELOADER');
     });
 }

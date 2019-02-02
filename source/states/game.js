@@ -61,7 +61,9 @@ export async function create () {
     const mapHeight = 30;
     const mapWidth = 30;
 
-    this.mapManager.init(mapHeight, mapWidth);
+    const mapData = this.registry.get('levelData');
+    this.mapManager = this.add.map(mapData.width, mapData.height, mapData.rooms);
+
     this.blockedLayer = this.mapManager.blockedLayer;
     this.interactionsLayer = this.mapManager.interactionsLayer;
 

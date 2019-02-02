@@ -36,11 +36,6 @@ window.onload = () => {
         ],
         plugins: {
             global: [
-                {
-                    key: 'mapManager',
-                    mapping: 'mapManager',
-                    plugin: MapManagerPlugin
-                }
             ],
             scene: [
                 {
@@ -57,6 +52,11 @@ window.onload = () => {
                     key: 'ListView',
                     plugin: ListViewPlugin,
                     start: true
+                },
+                {
+                    key: 'mapManager',
+                    plugin: MapManagerPlugin,
+                    start: true,
                 },
             ]
         },
