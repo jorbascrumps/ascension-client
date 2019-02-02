@@ -29,6 +29,8 @@ export default class FOVLayer {
         this.lastPos = new Phaser.Math.Vector2({ x: -1, y: -1 });
         this.map = map;
         this.walls = walls;
+
+        this.updateMRPAS(this.lastPos);
     }
 
     update (position, bounds, delta) {
@@ -77,7 +79,7 @@ export default class FOVLayer {
             position.x,
             position.y,
             this.#sightRadius,
-            (x, y) => this.map.getTileAt(x, y, true).seen,
+            (x, y) => this.map.getTileAt(x, y, true).properties.seen,
             (x, y) => {
                 const distance = Math.floor(
                     new Phaser.Math.Vector2(x, y)
@@ -99,13 +101,13 @@ export default class FOVLayer {
                 let tile = this.map.getTileAt(x, y);
                 if (tile) {
                     tile.desiredAlpha = alpha;
-                    tile.seen = true;
+                    tile.properties.seen = true;
                 }
 
                 let wall = this.walls.getTileAt(x, y);
                 if (wall) {
                     wall.desiredAlpha = alpha;
-                    wall.seen = true;
+                    wall.properties.seen = true;
                 }
             }
         )
@@ -122,7 +124,7 @@ export default class FOVLayer {
         }
     }
 
-    filterSeenTiles = ({ seen }) => seen
+    filterSeenTiles = ({ properties: { seen = false } = {} }) => seen
 
     setSeenTileAlpha = tile => tile.desiredAlpha = this.#seenTileAlpha
 
