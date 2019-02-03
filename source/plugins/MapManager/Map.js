@@ -43,6 +43,12 @@ const TILES = {
 
 export default class Map {
 
+    #layers = {
+        blocked: null,
+        interactions: null,
+        map: null,
+    }
+
     constructor ({
         context,
         height = 20,
@@ -60,11 +66,11 @@ export default class Map {
         });
         const tileset = this.map.addTilesetImage('tiles');
 
-        this.mapLayer = this.map
+        this.#layers.map = this.map
             .createBlankDynamicLayer('map', tileset);
-        this.blockedLayer = this.map
+        this.#layers.blocked = this.map
             .createBlankDynamicLayer('blocked', tileset);
-        this.interactionsLayer = this.map
+        this.#layers.interactions = this.map
             .createBlankDynamicLayer('interactions', tileset);
 
         this.rooms
@@ -76,11 +82,23 @@ export default class Map {
     }
 
     get blocked () {
-        return getLayerIndices(this.blockedLayer);
+        return getLayerIndices(this.#layers.blocked);
     }
 
     get walkable () {
-        return getLayerIndices(this.mapLayer);
+        return getLayerIndices(this.#layers.map);
+    }
+
+    get blockedLayer () {
+        return this.#layers.blocked;
+    }
+
+    get interactionsLayer () {
+        return this.#layers.interactions;
+    }
+
+    get mapLayer () {
+        return this.#layers.map;
     }
 
     revealRoom (x, y) {
@@ -88,7 +106,7 @@ export default class Map {
             index: tileIndex,
             x: tileX,
             y: tileY
-        } = this.interactionsLayer.getTileAtWorldXY(x, y, true);
+        } = this.#layers.interactions.getTileAtWorldXY(x, y, true);
 
         if (tileIndex !== TILES.DOOR) {
             return;
@@ -100,7 +118,7 @@ export default class Map {
             [ tileX, tileY + 1 ],
             [ tileX - 1, tileY ],
         ]
-            .map(([ x, y ]) => this.mapLayer.getTileAt(x, y, true))
+            .map(([ x, y ]) => this.#layers.map.getTileAt(x, y, true))
             .find(({ alpha }) => alpha === 0);
 
         if (typeof hiddenRoom === 'undefined') {
@@ -112,60 +130,60 @@ export default class Map {
     }
 
     setRoomAlpha ({ height = 1, width = 1, x = 0, y = 0 }, alpha = 1) {
-        this.blockedLayer.forEachTile(tile => tile.alpha = alpha, undefined, x, y, width, height);
-        this.interactionsLayer.forEachTile(tile => tile.alpha = alpha, undefined, x, y, width, height);
-        this.mapLayer.forEachTile(tile => tile.alpha = alpha, undefined, x, y, width, height);
+        this.#layers.blocked.forEachTile(tile => tile.alpha = alpha, undefined, x, y, width, height);
+        this.#layers.interactions.forEachTile(tile => tile.alpha = alpha, undefined, x, y, width, height);
+        this.#layers.map.forEachTile(tile => tile.alpha = alpha, undefined, x, y, width, height);
     }
 
     spawnCorner (x = 0, y = 0, type = TILES.WALL.TOP_RIGHT, room) {
-        this.blockedLayer.putTileAt(type, x, y);
-        const tile = this.blockedLayer.getTileAt(x, y);
+        this.#layers.blocked.putTileAt(type, x, y);
+        const tile = this.#layers.blocked.getTileAt(x, y);
         tile.properties = room.getTileAt(tile.x - x, tile.y - y) || {};
     }
 
     spawnDoor (x = 0, y = 0, room) {
-        const topNeighbour = this.blockedLayer.getTileAt(x, y - 1);
-        const rightNeighbour = this.blockedLayer.getTileAt(x + 1, y);
-        const bottomNeighbour = this.blockedLayer.getTileAt(x, y + 1);
-        const leftNeighbour = this.blockedLayer.getTileAt(x - 1, y);
+        const topNeighbour = this.#layers.blocked.getTileAt(x, y - 1);
+        const rightNeighbour = this.#layers.blocked.getTileAt(x + 1, y);
+        const bottomNeighbour = this.#layers.blocked.getTileAt(x, y + 1);
+        const leftNeighbour = this.#layers.blocked.getTileAt(x - 1, y);
 
         if (topNeighbour !== null && bottomNeighbour !== null) {
             const rightWallTiles = TILES.WALL.RIGHT.map(({ index }) => index);
 
             if (rightWallTiles.includes(topNeighbour.index)) {
-                this.blockedLayer.putTileAt(38, x, y - 1);
-                this.blockedLayer.putTileAt(0, x, y + 1);
+                this.#layers.blocked.putTileAt(38, x, y - 1);
+                this.#layers.blocked.putTileAt(0, x, y + 1);
             } else {
-                this.blockedLayer.putTileAt(40, x, y - 1);
-                this.blockedLayer.putTileAt(2, x, y + 1);
+                this.#layers.blocked.putTileAt(40, x, y - 1);
+                this.#layers.blocked.putTileAt(2, x, y + 1);
             }
         } else if (rightNeighbour !== null && leftNeighbour !== null) {
             const topWallTiles = TILES.WALL.TOP.map(({ index }) => index);
 
             if (topWallTiles.includes(rightNeighbour.index)) {
-                this.blockedLayer.putTileAt(40, x - 1, y);
-                this.blockedLayer.putTileAt(38, x + 1, y);
+                this.#layers.blocked.putTileAt(40, x - 1, y);
+                this.#layers.blocked.putTileAt(38, x + 1, y);
             } else {
-                this.blockedLayer.putTileAt(2, x - 1, y);
-                this.blockedLayer.putTileAt(0, x + 1, y);
+                this.#layers.blocked.putTileAt(2, x - 1, y);
+                this.#layers.blocked.putTileAt(0, x + 1, y);
             }
         }
 
-        this.blockedLayer.removeTileAt(x, y);
-        this.mapLayer.putTileAt(TILES.DOOR, x, y);
-        this.interactionsLayer.putTileAt(TILES.DOOR, x, y);
+        this.#layers.blocked.removeTileAt(x, y);
+        this.#layers.map.putTileAt(TILES.DOOR, x, y);
+        this.#layers.interactions.putTileAt(TILES.DOOR, x, y);
 
 
-        const tile = this.mapLayer.getTileAt(x, y);
+        const tile = this.#layers.map.getTileAt(x, y);
         tile.properties = room.getTileAt(tile.x - x, tile.y - y) || {};
     }
 
     spawnEntrance (x, y) {
-        this.mapLayer.putTileAt(167, x, y);
+        this.#layers.map.putTileAt(167, x, y);
     }
 
     spawnExit (x, y) {
-        this.mapLayer.putTileAt(100, x, y);
+        this.#layers.map.putTileAt(100, x, y);
     }
 
     spawnRoom (room, index, rooms) {
@@ -230,14 +248,14 @@ export default class Map {
     }
 
     spawnWall (x = 0, y = 0, width = 1, height = 1, type = TILES.WALL.TOP, room) {
-        this.blockedLayer.weightedRandomize(x, y, width, height, type);
-        this.blockedLayer
+        this.#layers.blocked.weightedRandomize(x, y, width, height, type);
+        this.#layers.blocked
             .getTilesWithin(x, y, width, height)
             .forEach(tile => tile.properties = room.getTileAt(tile.x - x, tile.y - y) || {});
     }
 
     spawnChest (x = 0, y = 0) {
-        this.interactionsLayer.putTileAt(TILES.CHEST, x, y);
+        this.#layers.interactions.putTileAt(TILES.CHEST, x, y);
     }
 
 }
