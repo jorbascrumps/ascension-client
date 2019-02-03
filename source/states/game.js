@@ -10,7 +10,7 @@ export function update (time, delta) {
     const player = this.pawnManager.get('isActive', true);
     const camera = this.cameras.main;
 
-    if (player) {
+    if (player && !this.registry.get('settings').disableFog) {
         this.fov.update(
             new Phaser.Math.Vector2({
                 x: this.mapManager.mapLayer.worldToTileX(player.x),
@@ -67,15 +67,17 @@ export async function create () {
     this.blockedLayer = this.mapManager.blockedLayer;
     this.interactionsLayer = this.mapManager.interactionsLayer;
 
-    this.make.graphics({
-        add: false,
-        x: 0,
-        y: 0,
-    })
-        .fillStyle(0x000000)
-        .fillRect(0, 0, 50, 50)
-        .generateTexture('fov');
-    this.fov = new FOVLayer(this, this.mapManager.mapLayer, this.mapManager.blockedLayer, 'fov');
+    if (!this.registry.get('settings').disableFog) {
+        this.make.graphics({
+            add: false,
+            x: 0,
+            y: 0,
+        })
+            .fillStyle(0x000000)
+            .fillRect(0, 0, 50, 50)
+            .generateTexture('fov');
+        this.fov = new FOVLayer(this, this.mapManager.mapLayer, this.mapManager.blockedLayer, 'fov');
+    }
 
     this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
 

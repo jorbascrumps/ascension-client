@@ -11,14 +11,19 @@ export const key = 'SERVER';
 
 export function create () {
     const {
+        disableFog = false,
         room,
-        player
+        player,
     } = qs.parse(window.location.search.substr(1));
 
     this.registry.set('player', {
         id: player,
         room,
         isCurrentTurn: false
+    });
+
+    this.registry.set('settings', {
+        disableFog,
     });
 
     const game = gameConfig();

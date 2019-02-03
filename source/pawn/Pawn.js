@@ -206,6 +206,11 @@ export default class extends Phaser.GameObjects.Container {
             }
         } = this;
 
+        if (!this.scene.registry.get('settings').disableFog) {
+            const pawnTile = this.scene.mapManager.mapLayer.getTileAtWorldXY(this.x, this.y);
+            this.setAlpha(pawnTile.properties.seen ? 1 : 0.1);
+        }
+
         this.renderHealthBar(showHealthBar);
 
         this.isActive && this.pathfinder.renderPath(
