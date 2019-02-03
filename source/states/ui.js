@@ -1,3 +1,6 @@
+import {
+    PHASES,
+} from '../../core/common/game';
 import items from '../../core/common/data/items';
 
 export const key = 'UI';
@@ -34,9 +37,9 @@ export function create () {
         .on('pointerdown', (item, i) => {
             item.setAlpha(0.75)
 
-            let next = item.getByName('action').text;
-            if (next === 'Cancel') {
-                next = 'Activation';
+            let next = item.getByName('action').text.toLowerCase();
+            if (next === 'cancel') {
+                next = PHASES.ACTIVATION;
             }
 
             window.client.events.endPhase({
@@ -121,7 +124,7 @@ export function update () {
 
     const actionsControls = actions[ctx.phase]
         .map(action => {
-            const text = this.add.text(0, 0, action, {
+            const text = this.add.text(0, 0, action.toUpperCase(), {
                 fontSize: 20,
                 fontFamily: 'Arial'
             })
@@ -147,10 +150,11 @@ export function update () {
         .add(actionsControls)
 }
 
+// TODO: Replace with ctx.allowedMoves
 const actions = {
-    Restoration: [],
-    Activation: [ 'Movement', 'Attack', 'Search' ],
-    Movement: [ 'Cancel' ],
-    Attack: [ 'Cancel' ],
-    Search: [ 'Cancel' ]
+    [PHASES.RESTORATION]: [],
+    [PHASES.ACTIVATION]: [ 'move', 'attack', 'search' ],
+    [PHASES.MOVEMENT]: [ 'cancel' ],
+    [PHASES.ATTACK]: [ 'cancel' ],
+    [PHASES.SEARCH]: [ 'cancel' ],
 };

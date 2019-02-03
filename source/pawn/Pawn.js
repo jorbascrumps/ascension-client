@@ -1,3 +1,6 @@
+import {
+    PHASES,
+} from '../../core/common/game';
 import * as Util from '../components/Util';
 
 export default class extends Phaser.GameObjects.Container {
@@ -176,17 +179,17 @@ export default class extends Phaser.GameObjects.Container {
         this.scene.input.off('pointerdown', this.search, this);
 
         switch (phase) {
-            case 'Restoration':
+            case PHASES.RESTORATION:
                 !exhausted && this.once('pointerdown', this.activate, this);
                 this.scene.events.emit('MAP_ROOM_REVEAL', this.x, this.y);
 
                 break;
-            case 'Movement':
+            case PHASES.MOVEMENT:
                 this.isActive && this.scene.input.once('pointerdown', this.move, this);
                 this.isActive && this.scene.input.on('pointermove', this.updateNavPath, this);
 
                 break;
-            case 'Search':
+            case PHASES.SEARCH:
                 this.isActive && this.scene.input.on('pointerdown', this.search, this);
 
                 break;
@@ -265,7 +268,7 @@ export default class extends Phaser.GameObjects.Container {
             }
         } = getState();
 
-        if (phase !== 'Movement' || this.busy || !this.isActive) {
+        if (phase !== PHASES.MOVEMENT || this.busy || !this.isActive) {
             return;
         }
 
