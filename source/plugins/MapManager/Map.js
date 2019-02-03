@@ -1,3 +1,5 @@
+import isEqual from 'lodash/fp/isEqual'
+
 import Room from './Room';
 
 const TILES = {
@@ -77,8 +79,23 @@ export default class Map {
             .forEach(this.spawnRoom, this);
 
         // context.events.on('MAP_ROOM_REVEAL', this.revealRoom, this);
+        context.registry.events.on('changedata-levelData', this.onLevelDataChange, this);
 
         return this;
+    }
+
+    onLevelDataChange (_, { rooms: newRooms }, { rooms: oldRooms }) {
+        newRooms
+            .filter((nR, i) =>
+                nR.tiles.some((row, j) =>
+                    row.some((tile, k) =>
+                        !isEqual(tile, oldRooms[i].tiles[j][k])
+                    )
+                )
+            )
+            .map(room => newRooms.indexOf(room))
+            .map(index => this.rooms[index] = new Room(newRooms[index]))
+            .forEach(this.setRoomTileProps);
     }
 
     get blocked () {
@@ -200,10 +217,8 @@ export default class Map {
         const bottom = y + (height - 1);
         const left = x;
 
-        this.mapLayer.weightedRandomize(x + 1, y + 1, width - 2, height - 2, TILES.FLOOR);
-        this.mapLayer
-            .getTilesWithin(x + 1, y + 1, width - 2, height - 2)
-            .forEach(tile => tile.properties = room.getTileAt(tile.x - x, tile.y - y) || {});
+        this.#layers.map.weightedRandomize(x + 1, y + 1, width - 2, height - 2, TILES.FLOOR);
+        this.setRoomTileProps(room);
 
         // Corners
         this.spawnCorner(right, top, TILES.WALL.TOP_RIGHT, room);
@@ -257,6 +272,16 @@ export default class Map {
     spawnChest (x = 0, y = 0) {
         this.#layers.interactions.putTileAt(TILES.CHEST, x, y);
     }
+
+    getRoomTiles = (room) =>
+        this.#layers.map
+            .getTilesWithin(room.x, room.y, room.width, room.height)
+
+    setRoomTileProps = room =>
+        this.getRoomTiles(room)
+            .forEach(tile =>
+                tile.properties = room.getTileAt(tile.x - room.x, tile.y - room.y) || {}
+            )
 
 }
 

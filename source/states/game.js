@@ -103,7 +103,8 @@ export async function create () {
 
     const unsubscribe = subscribe(() => {
         const {
-            ctx
+            ctx,
+            G,
         } = getState();
         const {
             player,
@@ -126,6 +127,8 @@ export async function create () {
             ...player,
             isCurrentTurn: player.id === ctx.currentPlayer
         });
+
+        this.registry.set('levelData', G.map);
     });
 
     this.events.on('PAWN_DESTROY', onPawnDeath, this);

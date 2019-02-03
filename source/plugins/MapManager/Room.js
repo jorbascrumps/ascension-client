@@ -5,7 +5,7 @@ const TILES = {
 export default class Room {
 
     constructor (config) {
-        for (const key in config) {
+        for (let key in config) {
             this[key] = config[key];
         }
     }
