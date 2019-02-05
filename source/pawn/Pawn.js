@@ -284,7 +284,7 @@ export default class extends Phaser.GameObjects.Container {
 
     attack = () => this.client.moves.attackPawn(this.id)
 
-    activate = () => this.client.moves.activatePawn(this.id)
+    activate = () => this.client.moves.activate(this.id)
 
     search = ({ worldX, worldY }) => {
         const target = this.scene.interactionsLayer.getTileAtWorldXY(worldX, worldY);
@@ -338,7 +338,7 @@ export default class extends Phaser.GameObjects.Container {
 
     moveToPath = async (path = []) => {
         for (const pos of path) {
-            this.client.moves.movePawn(this.id, pos);
+            this.client.moves.move(this.id, pos);
             await Util.wait(750);
         }
     }
