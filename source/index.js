@@ -12,12 +12,17 @@ import MapManagerPlugin from './plugins/MapManager';
 import packageJson from '../package.json';
 import ListViewPlugin from 'phaser-plugin-list-view';
 
+const height = 600;
+const ratioWidth = 16;
+const ratioHeight = 9;
+const ratio = height / ratioHeight;
+const width = ratio * ratioWidth;
+
 window.client = undefined;
 window.onload = () => {
     const game = new Phaser.Game({
         version: packageJson.version,
         height: window.innerHeight,
-        parent: 'game',
         disableContextMenu: true,
         dom: {
             createContainer: true
@@ -26,6 +31,13 @@ window.onload = () => {
             pixelArt: true,
             transparent: true,
             roundPixels: true,
+        },
+        scale: {
+            autoCenter: Phaser.Scale.CENTER_BOTH,
+            height,
+            mode: Phaser.Scale.FIT,
+            parent: 'game',
+            width,
         },
         scene: [
             server,
