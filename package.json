@@ -27,7 +27,7 @@
     "@babel/polyfill": "7.0.0-beta.54",
     "@babel/preset-env": "7.3.1",
     "@mikewesthad/dungeon": "1.2.1",
-    "boardgame.io": "0.25.3",
+    "boardgame.io": "0.31.1",
     "http-server": "0.11.1",
     "lodash": "4.17.10",
     "phaser": "3.11.0",
