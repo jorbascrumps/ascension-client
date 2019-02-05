@@ -1,5 +1,13 @@
+import EventEmitter from 'eventemitter3';
+
 import * as PHASES from '../../core/common/constants/phases';
 import * as Util from '../components/Util';
+
+import ActivationState from '../behaviours/Activation';
+import IdleState from '../behaviours/Idle';
+import MovementState from '../behaviours/Movement';
+import RestorationState from '../behaviours/Restoration';
+import SearchState from '../behaviours/Search';
 
 export default class extends Phaser.GameObjects.Container {
 
@@ -73,6 +81,11 @@ export default class extends Phaser.GameObjects.Container {
         this.navGraphic = game.add.graphics(0, 0);
         this.pathfinder.closeNode({ x: this.x, y: this.y });
 
+        // Setup events
+        this.events = new EventEmitter();
+        this.events.on('STATE_CHANGE', this.changeState, this);
+        this.events.emit('STATE_CHANGE', IdleState);
+
         this.unsubscribe = this.client.store.subscribe(() =>
             this.sync(this.client.store.getState())
         );
@@ -111,6 +124,17 @@ export default class extends Phaser.GameObjects.Container {
         );
 
         this.on('destroy', this.onDestroy);
+    }
+
+    changeState (state) {
+        if (this.state) {
+            this.state.onExit();
+        }
+
+        this.previousState = this.state;
+        this.state = typeof state === 'function'
+            ?   new state(this)
+            :   new state.constructor(this);
     }
 
     sync = ({
@@ -167,30 +191,31 @@ export default class extends Phaser.GameObjects.Container {
         const {
             data: {
                 values: {
-                    exhausted
+                    active,
+                    exhausted,
                 } = {}
             } = {}
         } = this;
 
-        this.off('pointerdown', this.activate, this, true);
-        this.scene.input.off('pointermove', this.updateNavPath, this);
-        this.scene.input.off('pointerdown', this.search, this);
-
         switch (phase) {
             case PHASES.RESTORATION:
-                !exhausted && this.once('pointerdown', this.activate, this);
-                this.scene.events.emit('MAP_ROOM_REVEAL', this.x, this.y);
-
-                break;
+                if (!exhausted) {
+                    return this.events.emit('STATE_CHANGE', RestorationState);
+                }
+            case PHASES.ACTIVATION:
+                if (active) {
+                    return this.events.emit('STATE_CHANGE', ActivationState);
+                }
             case PHASES.MOVEMENT:
-                this.isActive && this.scene.input.once('pointerdown', this.move, this);
-                this.isActive && this.scene.input.on('pointermove', this.updateNavPath, this);
-
-                break;
+                if (active) {
+                    return this.events.emit('STATE_CHANGE', MovementState);
+                }
             case PHASES.SEARCH:
-                this.isActive && this.scene.input.on('pointerdown', this.search, this);
-
-                break;
+                if (active) {
+                    return this.events.emit('STATE_CHANGE', SearchState);
+                }
+            default:
+                return this.events.emit('STATE_CHANGE', IdleState);
         }
     }
 
@@ -249,68 +274,9 @@ export default class extends Phaser.GameObjects.Container {
         this.healthBar.fillRect(anchorX, anchorY, per, height);
     }
 
-    updateNavPath = ({
-        worldX: x = 0,
-        worldY: y = 0
-    } = {}) => {
-        const {
-            client: {
-                store: {
-                    getState
-                }
-            }
-        } = this;
-        const {
-            ctx: {
-                phase
-            }
-        } = getState();
-
-        if (phase !== PHASES.MOVEMENT || this.busy || !this.isActive) {
-            return;
-        }
-
-        this.navPath = this.pathfinder.calculatePath(
-            {
-                x: Util.navPathToWorldCoord(Math.floor(this.x / 50)),
-                y: Util.navPathToWorldCoord(Math.floor(this.y / 50))
-            },
-            {
-                x,
-                y
-            }
-        );
-    }
-
     attack = () => this.client.moves.attackPawn(this.id)
 
     activate = () => this.client.moves.activate(this.id)
-
-    search = ({ worldX, worldY }) => {
-        const target = this.scene.interactionsLayer.getTileAtWorldXY(worldX, worldY);
-
-        if (null === target) {
-            return alert('Nothing to search!');
-        }
-
-        return this.client.moves.searchSpace({
-            x: target.pixelX,
-            y: target.pixelY
-        });
-    }
-
-    move = () => {
-        if (!this.navPath.length || this.navPath.length > this.speed) {
-            return;
-        }
-
-        const path = this.navPath.map(({x, y}) => ({
-            x: Util.navPathToWorldCoord(x),
-            y: Util.navPathToWorldCoord(y)
-        }));
-
-        this.moveToPath(path);
-    }
 
     moveToPosition = ({
         x = 0,
