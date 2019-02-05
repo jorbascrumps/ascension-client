@@ -1,6 +1,4 @@
-import {
-    PHASES,
-} from '../../core/common/game';
+import * as PHASES from '../../core/common/constants/phases';
 import * as Util from '../components/Util';
 
 export default class extends Phaser.GameObjects.Container {

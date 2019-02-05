@@ -1,6 +1,4 @@
-import {
-    PHASES,
-} from '../../core/common/game';
+import * as PHASES from '../../core/common/constants/phases';
 import items from '../../core/common/data/items';
 
 export const key = 'UI';
