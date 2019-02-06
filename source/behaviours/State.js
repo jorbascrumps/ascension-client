@@ -3,6 +3,8 @@ export default class {
     constructor(target) {
         this.target = target;
 
+        this.graphics = target.scene.add.graphics(0, 0);
+
         this.onEnter();
     }
 
