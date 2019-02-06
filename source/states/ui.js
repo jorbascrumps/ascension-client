@@ -151,8 +151,9 @@ export function update () {
 // TODO: Replace with ctx.allowedMoves
 const actions = {
     [PHASES.RESTORATION]: [],
-    [PHASES.ACTIVATION]: [ 'move', 'attack', 'search' ],
+    [PHASES.ACTIVATION]: [ 'move', 'attack', 'search', 'tag' ],
     [PHASES.MOVEMENT]: [ 'cancel' ],
     [PHASES.ATTACK]: [ 'cancel' ],
     [PHASES.SEARCH]: [ 'cancel' ],
+    [PHASES.TAG]: [ 'cancel' ],
 };

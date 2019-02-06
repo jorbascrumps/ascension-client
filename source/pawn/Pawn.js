@@ -8,6 +8,7 @@ import IdleState from '../behaviours/Idle';
 import MovementState from '../behaviours/Movement';
 import RestorationState from '../behaviours/Restoration';
 import SearchState from '../behaviours/Search';
+import TagState from '../behaviours/Tag';
 
 export default class extends Phaser.GameObjects.Container {
 
@@ -213,6 +214,10 @@ export default class extends Phaser.GameObjects.Container {
             case PHASES.SEARCH:
                 if (active) {
                     return this.events.emit('STATE_CHANGE', SearchState);
+                }
+            case PHASES.TAG:
+                if (active) {
+                    return this.events.emit('STATE_CHANGE', TagState);
                 }
             default:
                 return this.events.emit('STATE_CHANGE', IdleState);
