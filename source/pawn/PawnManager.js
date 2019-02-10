@@ -10,7 +10,7 @@ export default class extends Phaser.Plugins.BasePlugin {
 
         this.client.store.subscribe(() => this.sync(this.client.store.getState()));
         this.sync(this.client.store.getState());
-    
+
         const {
             pluginManager: {
                 scene: {
@@ -67,11 +67,17 @@ export default class extends Phaser.Plugins.BasePlugin {
             return;
         }
 
-        if (field) {
-            return this.pawns.children.get(field, value);
+        const children = this.pawns.getChildren();
+
+        if (typeof field === 'string') {
+            return children.find(child => child[field] === value);
         }
 
-        return this.pawns.getChildren();
+        if (typeof field === 'object') {
+            return children.find(matchFilters(field));
+        }
+
+        return children;
     }
 
     getAll (field, value) {
@@ -79,12 +85,17 @@ export default class extends Phaser.Plugins.BasePlugin {
             return;
         }
 
-        if (field) {
-            return this.pawns.getChildren()
-                .filter(child => child[field] === value);
+        const children = this.pawns.getChildren();
+
+        if (typeof field === 'string') {
+            return children.filter(child => child[field] === value);
         }
 
-        return this.pawns.getChildren();
+        if (typeof field === 'object') {
+            return children.filter(matchFilters(field));
+        }
+
+        return children;
     }
 
     sync ({
@@ -108,3 +119,7 @@ export default class extends Phaser.Plugins.BasePlugin {
     }
 
 }
+
+const matchFilters = filters => item => Object
+    .entries(filters)
+    .every(([ key, val ]) => item[key] === val);
