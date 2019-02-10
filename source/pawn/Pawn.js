@@ -3,6 +3,7 @@ import EventEmitter from 'eventemitter3';
 import * as PHASES from '../../core/common/constants/phases';
 import * as Util from '../components/Util';
 
+import AttackState from '../behaviours/Attack';
 import ActivationState from '../behaviours/Activation';
 import IdleState from '../behaviours/Idle';
 import MovementState from '../behaviours/Movement';
@@ -92,24 +93,6 @@ export default class extends Phaser.GameObjects.Container {
         );
         this.sync(this.client.store.getState());
 
-        game.events.on('ATTACK_REGISTER', targetId => {
-            if (!this.isActive || targetId === this.id) {
-                return;
-            }
-
-            const target = manager.get('id', targetId);
-            const isAdjacent = this.pathfinder.isAdjacent(
-                { x: this.x, y: this.y },
-                { x: target.x, y: target.y }
-            );
-
-            if (!isAdjacent) {
-                return console.warn('Target out of range');
-            }
-
-            this.client.moves.attackPawn(this.id, targetId);
-        });
-
         this.on('pointerover', () =>
             this.data.set({
                 showHealthBar: true
@@ -119,9 +102,6 @@ export default class extends Phaser.GameObjects.Container {
             this.data.set({
                 showHealthBar: false
             })
-        );
-        this.on('pointerdown', () =>
-            this.scene.events.emit('ATTACK_REGISTER', this.id)
         );
 
         this.on('destroy', this.onDestroy);
@@ -199,6 +179,10 @@ export default class extends Phaser.GameObjects.Container {
         } = this;
 
         switch (phase) {
+            case PHASES.ATTACK:
+                if (active) {
+                    return this.events.emit('STATE_CHANGE', AttackState);
+                }
             case PHASES.RESTORATION:
                 if (!exhausted) {
                     return this.events.emit('STATE_CHANGE', RestorationState);
