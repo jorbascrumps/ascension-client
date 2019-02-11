@@ -134,8 +134,6 @@ export async function create () {
     });
 
     this.events.on('PAWN_DESTROY', onPawnDeath, this);
-
-    this.events.on('resize', resize, this);
 }
 
 function onPawnDeath (pawn) {
@@ -144,9 +142,4 @@ function onPawnDeath (pawn) {
         pawn.x,
         pawn.y
     );
-}
-
-function resize (width, height) {
-    this.cameras.resize(width, height);
-    this.background.setSize(width, height);
 }

@@ -75,6 +75,4 @@ window.onload = () => {
         type: Phaser.AUTO,
         width: window.innerWidth
     });
-
-    window.addEventListener('resize', () => game.resize(window.innerWidth, window.innerHeight), false);
 };
