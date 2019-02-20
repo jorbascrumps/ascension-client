@@ -103,19 +103,18 @@ export default class extends Phaser.Plugins.BasePlugin {
             pawns
         }
     } = {}) {
-        Object.keys(pawns)
-            .forEach(id => {
-                const pawn = this.get('id', id);
+        for (const [ id, pawn ] of Object.entries(pawns)) {
+            const existingPawn = this.get('id', id);
 
-                if (typeof pawn !== 'undefined' || this.deceased.indexOf(id) > -1) {
-                    return;
-                }
+            if (typeof existingPawn !== 'undefined' || this.deceased.indexOf(id) > -1) {
+                continue;
+            }
 
-                return this.add({
-                    ...pawns[id],
-                    id
-                });
+            this.add({
+                ...pawn,
+                id
             });
+        }
     }
 
 }
