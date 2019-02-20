@@ -13,7 +13,7 @@ export function create () {
         fontFamily: 'Arial'
     });
 
-    this.registry.events.on('changedata', onChangeData, this);
+    this.registry.events.on('changedata-phase', onPhaseChange, this);
     this.phaseContainer = this.add.container(0, this.cameras.main.height / 2)
         .setAlpha(0)
         .add([
@@ -57,28 +57,32 @@ export function create () {
         });
 }
 
-function onChangeData (_, key, val) {
+function onPhaseChange (_, next, prev) {
     const {
         player
     } = this.registry.getAll();
 
-    switch (key) {
-        case 'phase':
-            if (!player.isCurrentTurn) {
-                return;
-            }
-
-            this.phaseContainer
-                .getByName('label')
-                .setText(val.toUpperCase())
-            return this.tweens.add({
-                targets: this.phaseContainer,
-                alpha: 1,
-                yoyo: true,
-                hold: 500,
-                duration: 250
-            })
+    if (!player.isCurrentTurn) {
+        return;
     }
+
+    this.phaseContainer
+        .getByName('label')
+        .setText(next.toUpperCase());
+
+    return this.tweens.add({
+        targets: this.phaseContainer,
+        alpha: 1,
+        yoyo: true,
+        hold: 500,
+        duration: 2500,
+        properties: {
+            alpha: {
+                to: 1,
+                from: 0.5
+            }
+        }
+    });
 }
 
 function onInventoryChange (pawn, next, prev) {
