@@ -35,6 +35,10 @@ window.onload = () => {
         scale: {
             autoCenter: Phaser.Scale.CENTER_BOTH,
             height,
+            max: {
+                height,
+                width,
+            },
             mode: Phaser.Scale.FIT,
             parent: 'game',
             width,
