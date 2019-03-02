@@ -21,21 +21,10 @@ export function create () {
 
     this.server.connect(room, player);
 
-    const {
-        store: {
-            getState,
-            subscribe
-        }
-    } = this.server.client;
-
-    const unsubscribe = subscribe(() => {
+    this.server.subscribe(({ G: { map } }, unsubscribe) => {
         unsubscribe();
 
-        const {
-            G
-        } = getState();
-
-        this.registry.set('levelData', G.map);
+        this.registry.set('levelData', map);
 
         this.scene.launch('PRELOADER');
     });

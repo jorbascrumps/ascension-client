@@ -103,11 +103,7 @@ export async function create () {
         drag: .055
     });
 
-    const unsubscribe = subscribe(() => {
-        const {
-            ctx,
-            G,
-        } = getState();
+    this.server.subscribe(({ ctx, G }, unsubscribe) => {
         const {
             player,
             phase
