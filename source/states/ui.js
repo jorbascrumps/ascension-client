@@ -40,7 +40,7 @@ export function create () {
                 next = PHASES.ACTIVATION;
             }
 
-            window.client.events.endPhase({
+            this.server.client.events.endPhase({
                 next,
             });
         })
@@ -101,12 +101,10 @@ function onInventoryChange (pawn, next, prev) {
 export function update () {
     const currentPlayer = this.registry.get('player');
     const {
-        client: {
-            store: {
-                getState
-            }
+        store: {
+            getState
         }
-    } = window;
+    } = this.server.client;
     const {
         ctx
     } = getState();

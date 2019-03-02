@@ -1,11 +1,4 @@
 import qs from 'querystring';
-import {
-    default as c
-} from 'boardgame.io/client';
-import {
-    default as b
-} from 'boardgame.io/core';
-import gameConfig from '../../core/common/game';
 
 export const key = 'SERVER';
 
@@ -26,23 +19,14 @@ export function create () {
         disableFog,
     });
 
-    const game = gameConfig();
-    window.client = c.Client({
-        game: b.Game(game),
-        multiplayer: {
-            server: 'https://ascension-server.herokuapp.com'
-        },
-        gameID: room,
-        playerID: player
-    });
-    window.client.connect();
+    this.server.connect(room, player);
 
     const {
         store: {
             getState,
             subscribe
         }
-    } = window.client;
+    } = this.server.client;
 
     const unsubscribe = subscribe(() => {
         unsubscribe();
@@ -51,7 +35,6 @@ export function create () {
             G
         } = getState();
 
-        console.log(G);
         this.registry.set('levelData', G.map);
 
         this.scene.launch('PRELOADER');

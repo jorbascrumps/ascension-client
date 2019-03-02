@@ -8,6 +8,7 @@ import * as gameover from './states/gameover';
 import PawnManager from './pawn/PawnManager';
 import Pathfinder from './components/Pathfinder';
 import MapManagerPlugin from './plugins/MapManager';
+import ServerPlugin from './plugins/Server';
 
 import packageJson from '../package.json';
 import ListViewPlugin from 'phaser-plugin-list-view';
@@ -18,7 +19,6 @@ const ratioHeight = 9;
 const ratio = height / ratioHeight;
 const width = ratio * ratioWidth;
 
-window.client = undefined;
 window.onload = () => {
     const game = new Phaser.Game({
         version: packageJson.version,
@@ -52,6 +52,12 @@ window.onload = () => {
         ],
         plugins: {
             global: [
+                {
+                    key: 'serverPlugin',
+                    plugin: ServerPlugin,
+                    mapping: 'server',
+                    start: false,
+                },
             ],
             scene: [
                 {

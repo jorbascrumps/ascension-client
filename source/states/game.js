@@ -38,7 +38,7 @@ export async function create () {
             getState,
             subscribe
         }
-    } = window.client;
+    } = this.server.client;
 
     this.events.on('transitionstart', (fromScene, duration) =>
         this.tweens.add({
@@ -82,7 +82,7 @@ export async function create () {
     this.goreLayer = this.add.renderTexture(0, 0, 800, 600);
 
     this.pathfinder.start(this.mapManager.walkable, this.mapManager.blocked, mapWidth);
-    this.pawnManager.start(window.client, this.pathfinder);
+    this.pawnManager.start(this.server.client, this.pathfinder);
 
     const cameraCentreX = -(window.innerWidth - (mapWidth * 50 / 2));
     const cameraCentreY = -(window.innerHeight - (mapHeight * 50 / 2));

@@ -73,7 +73,7 @@ export default class TagState extends State {
         const x = Math.floor(worldX / 50) * 50;
         const y = Math.floor(worldY / 50) * 50;
 
-        return window.client.moves.tag({ x, y });
+        return this.target.scene.server.client.moves.tag({ x, y });
     }
 
 }

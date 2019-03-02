@@ -41,7 +41,7 @@ export default class AttackState extends State {
         }
 
         // TODO: Pathfinding calculator to determine valid target
-        return window.client.moves.attack(attackTarget.id);
+        return this.target.scene.server.client.moves.attack(attackTarget.id);
     }
 
     onPointerOver () {
