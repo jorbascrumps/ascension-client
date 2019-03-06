@@ -28,8 +28,12 @@ export function update (time, delta) {
 
     controls && controls.update(delta);
 
-    this.background &&
-        this.background.setTilePosition(-this.cameras.main.scrollX / 50, -this.cameras.main.scrollY / 50);
+    if (this.background) {
+        this.background.setTilePosition(
+            -this.cameras.main.scrollX / 100,
+            -this.cameras.main.scrollY / 100
+        );
+    }
 }
 
 export async function create () {
@@ -84,10 +88,10 @@ export async function create () {
     this.pathfinder.start(this.mapManager.walkable, this.mapManager.blocked, mapWidth);
     this.pawnManager.start(this.server.client, this.pathfinder);
 
-    const cameraCentreX = -(window.innerWidth - (mapWidth * 50 / 2));
-    const cameraCentreY = -(window.innerHeight - (mapHeight * 50 / 2));
+    const cameraCentreX = -((mapWidth * 50) - (mapWidth * 50 / 2));
+    const cameraCentreY = -((mapHeight * 50) - (mapHeight * 50 / 2));
     this.cameras.main
-        .setBounds(cameraCentreX, cameraCentreY, window.innerWidth * 2, window.innerHeight * 2, true);
+        .setBounds(cameraCentreX, cameraCentreY, mapWidth * 50 * 2, mapHeight * 50 * 2, true);
 
     const cameraPanControls = this.input.keyboard.addKeys({
         up: 'W',
