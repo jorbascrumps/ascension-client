@@ -9,6 +9,7 @@ import PawnManager from './pawn/PawnManager';
 import Pathfinder from './components/Pathfinder';
 import MapManagerPlugin from './plugins/MapManager';
 import ServerPlugin from './plugins/Server';
+import UIComponentsPlugin from './plugins/UIComponents';
 
 import packageJson from '../package.json';
 import ListViewPlugin from 'phaser-plugin-list-view';
@@ -78,6 +79,11 @@ window.onload = () => {
                 {
                     key: 'mapManager',
                     plugin: MapManagerPlugin,
+                    start: true,
+                },
+                {
+                    key: 'uicomponent',
+                    plugin: UIComponentsPlugin,
                     start: true,
                 },
             ]
