@@ -3,8 +3,6 @@ import items from '../../core/common/data/items';
 
 export const key = 'UI';
 
-let cachedPhase;
-
 export function create () {
     const currentPlayer = this.registry.get('player');
 
@@ -13,7 +11,6 @@ export function create () {
         fontFamily: 'Arial'
     });
 
-    this.registry.events.on('changedata-phase', onPhaseChange, this);
     this.phaseContainer = this.add.container(0, this.cameras.main.height / 2)
         .setAlpha(0)
         .add([
@@ -30,12 +27,9 @@ export function create () {
     this.input.topOnly = false;
 
     this.actions = this.add.listview(10, 30, 150, 300)
-        .on('pointerover', item => item.setAlpha(1))
-        .on('pointerout', item => item.setAlpha(0.5))
         .on('pointerdown', (item, i) => {
-            item.setAlpha(0.75)
+            let next = item.getByName('label').text.toLowerCase();
 
-            let next = item.getByName('action').text.toLowerCase();
             if (next === 'cancel') {
                 next = PHASES.ACTIVATION;
             }
@@ -43,8 +37,7 @@ export function create () {
             this.server.client.events.endPhase({
                 next,
             });
-        })
-        .on('pointerup', item => item.setAlpha(1));
+        });
 
     // Setup temporary inventory UI for each owned Pawn
     const {
@@ -55,6 +48,11 @@ export function create () {
             this[`inventory${pawn.id}`] = this.add.listview(200 * (i + 1), 30, 150, 150);
             pawn.data.events.on('changedata-inventory', onInventoryChange.bind(this))
         });
+
+    this.registry.events.on('changedata-phase', onPhaseChange, this);
+    this.registry.events.on('changedata-phase', updateActionsList, this);
+    this.registry.events.on('setdata-phase', updateActionsList, this);
+    updateActionsList.call(this, undefined, this.registry.get('phase'));
 }
 
 function onPhaseChange (_, next, prev) {
@@ -98,57 +96,32 @@ function onInventoryChange (pawn, next, prev) {
     }
 }
 
-export function update () {
-    const currentPlayer = this.registry.get('player');
+function updateActionsList (_, next, prev) {
     const {
-        store: {
-            getState
-        }
-    } = this.server.client;
-    const {
-        ctx
-    } = getState();
+        isCurrentTurn,
+    } = this.registry.get('player');
 
-    if (ctx.currentPlayer !== currentPlayer.id) {
+    if (!isCurrentTurn) {
         this.actions.clear(true, true);
-        return this.currentPhase.setText('');
-    }
+        this.currentPhase.setText('');
 
-    if (ctx.phase === cachedPhase) {
         return;
     }
 
-    cachedPhase = ctx.phase;
-    this.currentPhase.setText(`Phase: ${ctx.phase}`)
+    this.currentPhase.setText(`Phase: ${next}`)
         .setFixedSize(2000, 0);
 
-    const actionsControls = actions[ctx.phase]
-        .map(action => {
-            const text = this.add.text(0, 0, action.toUpperCase(), {
-                fontSize: 20,
-                fontFamily: 'Arial'
-            })
-                .setName('action')
-                .setPadding({
-                    bottom: 6,
-                    left: 8,
-                    right: 8,
-                    top: 8
-                });
-
-            return this.add.container(0, 0)
-                .add([
-                    this.add.rectangle(0, 0, 150, text.displayHeight, 0x6666ff)
-                        .setOrigin(0, 0),
-                    text,
-                ])
-                .setAlpha(0.5)
-        });
+    const actionsControls = actions[next]
+        .map(action =>
+            this.add.button(action)
+        );
 
     this.actions
         .clear(true, true)
         .add(actionsControls)
 }
+
+export function update () {}
 
 // TODO: Replace with ctx.allowedMoves
 const actions = {

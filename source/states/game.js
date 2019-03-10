@@ -37,27 +37,6 @@ export function update (time, delta) {
 }
 
 export async function create () {
-    const {
-        store: {
-            getState,
-            subscribe
-        }
-    } = this.server.client;
-
-    this.events.on('transitionstart', (fromScene, duration) =>
-        this.tweens.add({
-            targets: this.cameras.main,
-            duration,
-            alpha: 1,
-            onStart: (tween, [ target ]) => {
-                target.alpha = 0;
-            },
-            onComplete: () => {
-                this.scene.launch('UI');
-            }
-        })
-    );
-
     this.background = this.add.tileSprite(0, 0, this.sys.game.config.width + 20, this.sys.game.config.height + 20, 'background')
         .setOrigin(0, 0)
         .setScrollFactor(0);
@@ -105,35 +84,52 @@ export async function create () {
         maxSpeed: 1.0,
         acceleration: 1,
         drag: .055
-    });
+    })
 
-    this.server.subscribe(({ ctx, G }, unsubscribe) => {
-        const {
-            player,
-            phase
-        } = this.registry.getAll();
-
-        if (ctx.gameover) {
-            unsubscribe();
-            this.scene.stop('UI');
-            return this.scene.start('GAMEOVER', {
-                isWinner: ctx.gameover.winner === player.id
-            });
-        }
-
-        if (phase !== ctx.phase) {
-            this.registry.set('phase', ctx.phase);
-        }
-
-        this.registry.set('player', {
-            ...player,
-            isCurrentTurn: player.id === ctx.currentPlayer
-        });
-
-        this.registry.set('levelData', G.map);
-    });
+    this.server.subscribe(updateRegistryData, this);
+    updateRegistryData.call(this, this.server.client.store.getState());
 
     this.events.on('PAWN_DESTROY', onPawnDeath, this);
+
+    this.events.on('transitionstart', (fromScene, duration) =>
+        this.tweens.add({
+            targets: this.cameras.main,
+            duration,
+            alpha: 1,
+            onStart: (tween, [ target ]) => {
+                target.alpha = 0;
+            },
+            onComplete: () => {
+                this.scene.launch('UI');
+            }
+        })
+    );
+}
+
+function updateRegistryData ({ ctx, G }, unsubscribe) {
+    const {
+        player,
+        phase
+    } = this.registry.getAll();
+
+    if (ctx.gameover) {
+        unsubscribe();
+        this.scene.stop('UI');
+        return this.scene.start('GAMEOVER', {
+            isWinner: ctx.gameover.winner === player.id
+        });
+    }
+
+    if (phase !== ctx.phase) {
+        this.registry.set('phase', ctx.phase);
+    }
+
+    this.registry.set('player', {
+        ...player,
+        isCurrentTurn: player.id === ctx.currentPlayer
+    });
+
+    this.registry.set('levelData', G.map);
 }
 
 function onPawnDeath (pawn) {
