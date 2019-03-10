@@ -58,8 +58,6 @@ export default class Map {
         tilesize = 50,
         width = 20,
     } = {}) {
-        this.rooms = rooms.map(room => new Room(room));
-
         this.map = context.make.tilemap({
             height,
             tileHeight: tilesize,
@@ -74,6 +72,10 @@ export default class Map {
             .createBlankDynamicLayer('blocked', tileset);
         this.#layers.interactions = this.map
             .createBlankDynamicLayer('interactions', tileset);
+
+        this.rooms = rooms.map(room =>
+            new Room(context, room)
+        );
 
         this.rooms
             .forEach(this.spawnRoom, this);
@@ -282,6 +284,18 @@ export default class Map {
             .forEach(tile =>
                 tile.properties = room.getTileAt(tile.x - room.x, tile.y - room.y) || {}
             )
+
+    sync = ({
+        G: {
+            map: {
+                rooms,
+            },
+        }
+    }) => {
+        this.rooms.map((room, i) =>
+            room.sync(rooms[i])
+        );
+    }
 
 }
 

@@ -86,6 +86,8 @@ export async function create () {
         drag: .055
     })
 
+    this.server.subscribe(this.mapManager.sync);
+
     this.server.subscribe(updateRegistryData, this);
     updateRegistryData.call(this, this.server.client.store.getState());
 
