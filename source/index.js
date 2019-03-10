@@ -1,10 +1,8 @@
 import "@babel/polyfill";
 
-import * as server from './states/server';
-import * as preloader from './states/preloader';
-import * as level from './states/game';
-import * as ui from './states/ui';
-import * as gameover from './states/gameover';
+
+import * as states from './states';
+
 import PawnManager from './pawn/PawnManager';
 import Pathfinder from './components/Pathfinder';
 import MapManagerPlugin from './plugins/MapManager';
@@ -44,13 +42,7 @@ window.onload = () => {
             parent: 'game',
             width,
         },
-        scene: [
-            server,
-            preloader,
-            level,
-            ui,
-            gameover
-        ],
+        scene: Object.values(states),
         plugins: {
             global: [
                 {
