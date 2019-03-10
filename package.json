@@ -22,21 +22,25 @@
   },
   "homepage": "https://github.com/iamchristopher/ascension-client#readme",
   "devDependencies": {
-    "@babel/core": "7.2.2",
-    "@babel/plugin-proposal-class-properties": "7.3.0",
-    "@babel/polyfill": "7.0.0-beta.54",
-    "@babel/preset-env": "7.3.1",
+    "@babel/core": "^7.3.4",
+    "@babel/plugin-proposal-class-properties": "^7.3.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.2.0",
+    "@babel/polyfill": "^7.2.5",
+    "@babel/preset-env": "^7.3.4",
     "@mikewesthad/dungeon": "1.2.1",
     "boardgame.io": "0.31.1",
     "http-server": "0.11.1",
     "lodash": "4.17.10",
+    "lootastic": "1.1.1",
+    "mrpas": "2.0.0",
     "phaser": "3.11.0",
-    "rollup": "1.1.2",
+    "phaser-plugin-list-view": "^1.1.0",
+    "rollup": "^1.6.0",
     "rollup-plugin-babel": "4.3.2",
-    "rollup-plugin-commonjs": "9.2.0",
+    "rollup-plugin-commonjs": "^9.2.1",
     "rollup-plugin-json": "3.1.0",
     "rollup-plugin-node-builtins": "2.1.2",
-    "rollup-plugin-node-resolve": "4.0.0",
+    "rollup-plugin-node-resolve": "^4.0.1",
     "rollup-plugin-replace": "2.1.0",
     "rollup-plugin-resolve-aliases": "0.2.0",
     "rollup-watch": "4.3.1",
@@ -53,7 +57,8 @@
       "client": {
         "plugins": [
           "@babel/plugin-transform-regenerator",
-          "@babel/plugin-proposal-class-properties"
+          "@babel/plugin-proposal-class-properties",
+          "@babel/plugin-proposal-export-namespace-from"
         ],
         "presets": [
           "@babel/preset-env"
