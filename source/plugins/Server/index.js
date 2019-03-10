@@ -29,11 +29,11 @@ export default class ServerPlugin extends Phaser.Plugins.BasePlugin {
         return this;
     }
 
-    subscribe (fn) {
+    subscribe (fn, context) {
         const unsubscribe = this.#client.store.subscribe(() => {
             const state = this.#client.store.getState();
 
-            return fn(state, unsubscribe);
+            return fn.call(context, state, unsubscribe);
         });
 
         return unsubscribe;
