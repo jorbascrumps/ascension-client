@@ -37,6 +37,8 @@ export function update (time, delta) {
 }
 
 export async function create () {
+    this.tweens.timeScale = this.registry.get('settings').animationSpeed;
+
     this.background = this.add.tileSprite(0, 0, this.sys.game.config.width + 20, this.sys.game.config.height + 20, 'background')
         .setOrigin(0, 0)
         .setScrollFactor(0);

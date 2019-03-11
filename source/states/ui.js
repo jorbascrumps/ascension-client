@@ -4,6 +4,8 @@ import items from '../../core/common/data/items';
 export const key = 'UI';
 
 export function create () {
+    this.tweens.timeScale = this.registry.get('settings').animationSpeed;
+
     const currentPlayer = this.registry.get('player');
 
     this.currentPhase = this.add.text(10, 10, '', {
