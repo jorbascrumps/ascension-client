@@ -52,8 +52,8 @@ export function create () {
         });
 
     this.registry.events.on('changedata-phase', onPhaseChange, this);
+    onPhaseChange.call(this, undefined, this.registry.get('phase'));
     this.registry.events.on('changedata-phase', updateActionsList, this);
-    this.registry.events.on('setdata-phase', updateActionsList, this);
     updateActionsList.call(this, undefined, this.registry.get('phase'));
 }
 
@@ -66,22 +66,24 @@ function onPhaseChange (_, next, prev) {
         return;
     }
 
+    const nextSceneLabel = next.toUpperCase();
+    const nextScene = this.scene.get(nextSceneLabel);
+    if (nextScene) {
+        this.scene.launch(nextSceneLabel);
+    }
+
     this.phaseContainer
         .getByName('label')
         .setText(next.toUpperCase());
 
+    this.phaseContainer.setAlpha(0);
+
     return this.tweens.add({
-        targets: this.phaseContainer,
         alpha: 1,
+        targets: this.phaseContainer,
         yoyo: true,
         hold: 500,
-        duration: 2500,
-        properties: {
-            alpha: {
-                to: 1,
-                from: 0.5
-            }
-        }
+        duration: 750,
     });
 }
 
@@ -127,8 +129,9 @@ export function update () {}
 
 // TODO: Replace with ctx.allowedMoves
 const actions = {
+    [PHASES.OVERLORD]: [ 'tag' ],
     [PHASES.RESTORATION]: [],
-    [PHASES.ACTIVATION]: [ 'move', 'attack', 'search', 'tag' ],
+    [PHASES.ACTIVATION]: [ 'move', 'attack', 'search' ],
     [PHASES.MOVEMENT]: [ 'cancel' ],
     [PHASES.ATTACK]: [ 'cancel' ],
     [PHASES.SEARCH]: [ 'cancel' ],

@@ -3,3 +3,4 @@ export * as preloader from './preloader';
 export * as level from './game';
 export * as ui from './ui';
 export * as gameover from './gameover';
+export { place, select } from './phases/tag';

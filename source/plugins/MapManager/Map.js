@@ -81,7 +81,6 @@ export default class Map {
             .forEach(this.spawnRoom, this);
 
         // context.events.on('MAP_ROOM_REVEAL', this.revealRoom, this);
-        context.registry.events.on('changedata-levelData', this.onLevelDataChange, this);
 
         return this;
     }
