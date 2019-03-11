@@ -6,6 +6,10 @@ const type = (type, assets) => assets
 
 export const IMAGES = type('image', [
     {
+        key: 'overlord_card',
+        url: '/source/assets/overlord_card.png'
+    },
+    {
         key: 'background',
         url: '/source/assets/scene/stars.jpg'
     },
