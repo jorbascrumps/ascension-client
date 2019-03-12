@@ -16,7 +16,7 @@ export default class ServerPlugin extends Phaser.Plugins.BasePlugin {
             game: Game.Game(config()),
             gameID: room,
             multiplayer: {
-                server: 'http://localhost:8080',
+                server: 'https://ascension-server.herokuapp.com',
             },
             playerID: player,
         });
